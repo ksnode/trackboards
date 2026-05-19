@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { listMyBoards, updateBoardMeta, togglePublic } from '../lib/boards';
 import { useHeader } from '../lib/headerContext';
 import { Globe, Lock } from 'lucide-react';
+import pageStyles from '../components/Layout/PageContent.module.css';
 import styles from './Boards.module.css';
 
 function calcBoardPct(board) {
@@ -85,7 +86,7 @@ export default function Boards() {
   if (loading) return <div className={styles.loading}>Ładowanie...</div>;
 
   return (
-    <div className={styles.root}>
+    <div className={`${pageStyles.root} ${styles.root}`}>
       {boards.length === 0 ? (
         <div className={styles.emptyState}>
           <p className={styles.emptyText}>Nie masz jeszcze żadnych boardów</p>
@@ -140,7 +141,7 @@ export default function Boards() {
                   }}
                 >
                   {board.share_guid ? <Globe size={11} /> : <Lock size={11} />}
-                  {board.share_guid ? 'PUBLIC' : 'PRIVATE'}
+                  {board.share_guid ? 'Public' : 'Private'}
                 </button>
               </Link>
             );

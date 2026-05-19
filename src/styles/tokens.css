@@ -66,5 +66,7 @@
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 60px;
   --content-max-width: 860px;
+  --content-padding-x: 24px;
+  --content-padding-y: 24px;
   --transition-fast: 0.15s ease;
 }

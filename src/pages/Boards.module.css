@@ -1,7 +1,5 @@
 .root {
-  max-width: var(--content-max-width);
-  margin-right: auto;
-  padding: var(--space-4) var(--space-6);
+  /* Layout handled by PageContent.module.css */
 }
 
 .boardsList {
@@ -36,7 +34,7 @@
   cursor: pointer;
   position: relative;
   display: block;
-  transition: transform 0.15s;
+  transition: transform var(--transition-fast);
 }
 
 .colorDotLabel:hover {
@@ -93,7 +91,7 @@
 .boardProgressFill {
   height: 100%;
   border-radius: 2px;
-  transition: width 0.3s;
+  transition: width var(--transition-fast);
 }
 
 .boardPct {
@@ -110,7 +108,7 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   padding: var(--space-1) var(--space-2);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border-primary);

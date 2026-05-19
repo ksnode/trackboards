@@ -2,7 +2,7 @@
 .root {
   font-family: var(--font-ui);
   padding: var(--space-6) 0;
-  max-width: 680px;
+  width: 100%;
 }
 
 /* ─── Global progress header ─────────────────────────── */

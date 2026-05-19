@@ -1,0 +1,5 @@
+.root {
+  max-width: var(--content-max-width);
+  padding: var(--content-padding-y) var(--content-padding-x);
+  width: 100%;
+}

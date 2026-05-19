@@ -8,6 +8,7 @@ import {
 } from '../lib/boards';
 import { Link as LinkIcon, Pencil, Check, Trash2, Globe, Lock } from 'lucide-react';
 import BoardFramework from '../components/BoardFramework/BoardFramework';
+import pageStyles from '../components/Layout/PageContent.module.css';
 import styles from './Board.module.css';
 
 const RECENT_KEY = 'trackboards_recent';
@@ -20,7 +21,7 @@ function saveToRecent(guid, title) {
     recent = recent.filter(r => r.guid !== guid);
     recent.unshift({ guid, title, lastVisited: new Date().toISOString() });
     localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 10)));
-  } catch {}
+  } catch { }
 }
 
 export default function Board() {
@@ -179,7 +180,7 @@ export default function Board() {
             const recent = JSON.parse(raw).filter(r => r.guid !== board.share_guid);
             localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
           }
-        } catch {}
+        } catch { }
         navigate('/');
       }
     } catch (err) {
@@ -201,8 +202,8 @@ export default function Board() {
     );
   }
 
-   return (
-    <div className={styles.root}>
+  return (
+    <div className={`${pageStyles.root} ${styles.root}`}>
       {/* Action buttons — left/right split */}
       <div className={styles.boardHeader}>
         <div className={styles.boardHeaderGroup}>
@@ -214,12 +215,12 @@ export default function Board() {
               color: isPublic ? 'var(--color-text-info, #1a6b9a)' : 'var(--color-text-tertiary)',
               cursor: isOwner ? 'pointer' : 'default',
               display: 'inline-flex', alignItems: 'center', gap: '5px',
-              minWidth: '90px', justifyContent: 'center',
+              minWidth: '82px', justifyContent: 'center',
             }}
             title={isOwner ? (isPublic ? 'Kliknij aby ustawić prywatny' : 'Kliknij aby udostępnić') : undefined}
           >
-            {isPublic ? <Globe size={14} /> : <Lock size={14} />}
-            {isPublic ? 'PUBLIC' : 'PRIVATE'}
+            {isPublic ? <Globe size={11} /> : <Lock size={11} />}
+            {isPublic ? 'Public' : 'Private'}
           </button>
 
           {isPublic && (

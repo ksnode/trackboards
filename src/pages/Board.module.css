@@ -1,7 +1,6 @@
 .root {
-  max-width: var(--content-max-width);
-  margin-right: auto;
-  padding: 0 var(--space-6) var(--space-6);
+  /* Layout from PageContent.module.css; override top padding */
+  padding-top: 0;
 }
 
 .loading {
@@ -80,8 +79,8 @@
 }
 
 .badge {
-  font-size: var(--font-size-xs);
-  padding: var(--space-1) 8px;
+  font-size: var(--font-size-sm);
+  padding: var(--space-1) var(--space-2);
   border-radius: var(--border-radius-sm);
   transition: opacity var(--transition-fast);
   user-select: none;
@@ -145,21 +144,21 @@
 
 .copyTooltip {
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + var(--space-2));
   left: 50%;
   transform: translateX(-50%);
   font-size: var(--font-size-xs);
   color: var(--color-text-primary);
   background: var(--color-bg-primary);
-  padding: 6px 12px;
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--border-radius-md);
   white-space: nowrap;
   pointer-events: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-md), var(--shadow-sm);
   border: 1px solid var(--color-border-primary);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-1);
   animation: tooltipFadeIn 0.15s ease-out;
   z-index: 10;
 }
@@ -186,9 +185,9 @@
 }
 
 .copyTooltipCheck {
-  color: #2e8b57;
+  color: var(--color-success);
   font-weight: 700;
-  font-size: 11px;
+  font-size: var(--font-size-xs);
 }
 
 @keyframes tooltipFadeIn {
@@ -205,12 +204,12 @@
 
 .deleteBtn {
   composes: headerBtn;
-  border-color: var(--color-danger, #c03535);
-  color: var(--color-danger, #c03535);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
 }
 
 .deleteBtn:hover {
-  background: var(--color-danger, #c03535);
+  background: var(--color-danger);
   color: white;
 }
 
@@ -226,14 +225,14 @@
 }
 
 .modalContent {
-  background: var(--color-bg-secondary, #ffffff);
+  background: var(--color-bg-secondary);
   border: 1px solid var(--color-border-primary);
   border-radius: var(--border-radius-lg);
   padding: var(--space-8) var(--space-6);
   max-width: 380px;
   width: 90%;
   text-align: center;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18), 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .modalText {
@@ -259,7 +258,7 @@
   padding: var(--space-2) var(--space-6);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border-primary);
-  background: var(--color-bg-tertiary, #f5f5f5);
+  background: var(--color-bg-tertiary);
   color: var(--color-text-secondary);
   cursor: pointer;
   font-size: var(--font-size-sm);
@@ -276,7 +275,7 @@
   padding: var(--space-2) var(--space-6);
   border-radius: var(--border-radius-md);
   border: none;
-  background: var(--color-danger, #c03535);
+  background: var(--color-danger);
   color: white;
   cursor: pointer;
   font-size: var(--font-size-sm);
