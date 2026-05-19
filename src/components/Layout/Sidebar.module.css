@@ -1,11 +1,10 @@
 .root {
-  width: var(--sidebar-width);
   height: 100vh;
   background-color: var(--color-bg-secondary);
   border-right: 1px solid var(--color-border-primary);
   display: flex;
   flex-direction: column;
-  transition: width 0.2s ease, transform 0.2s ease;
+  transition: width 0.25s ease;
   position: sticky;
   top: 0;
   flex-shrink: 0;
@@ -13,40 +12,28 @@
   z-index: 50;
 }
 
-/* Mobile overlay mode: fixed panel over content */
+/* Expanded: full sidebar */
+.rootExpanded {
+  width: var(--sidebar-width);
+}
+
+/* Collapsed: icon strip */
+.rootCollapsed {
+  width: 48px;
+  align-items: center;
+}
+
+/* Mobile overlay: fixed + shadow */
 .rootOverlay {
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  z-index: 50;
   box-shadow: var(--shadow-md);
 }
 
-/* Fixed hamburger button — visible only on mobile when sidebar is closed */
-.hamburgerFixed {
-  position: fixed;
-  top: var(--space-3);
-  left: var(--space-3);
-  z-index: 50;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  color: var(--color-text-primary);
-  cursor: pointer;
-  padding: var(--space-1);
-  transition: background var(--transition-fast);
-}
-
-.hamburgerFixed:hover {
-  background: var(--color-bg-tertiary);
-}
-
-/* Inline hamburger inside sidebar header — mobile only */
-.hamburgerInline {
+/* ── Hamburger toggle ── */
+.hamburger {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -54,24 +41,83 @@
   border: none;
   color: var(--color-text-primary);
   cursor: pointer;
-  padding: var(--space-1);
+  padding: var(--space-2);
   border-radius: var(--border-radius-md);
   flex-shrink: 0;
   transition: background var(--transition-fast);
 }
 
-.hamburgerInline:hover {
+.hamburger:hover {
   background: var(--color-bg-tertiary);
 }
 
+/* Collapsed header — matches expanded header height */
+.collapsedHeader {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--color-border-primary);
+  flex-shrink: 0;
+  width: 100%;
+}
+.collapsedSpacer {
+  flex: 1;
+}
+
+.collapsedFooter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+}
+
+.iconBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--border-radius-md);
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.iconBtn:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+.iconBtnDanger {
+  color: var(--color-danger);
+}
+
+.iconBtnDanger:hover {
+  background: var(--color-background-danger);
+  color: var(--color-danger);
+}
+
+/* Separator line */
+.separator {
+  border-top: 1px solid var(--color-border-primary);
+  margin: var(--space-1) 0;
+  width: 100%;
+}
+
 .header {
-  padding: var(--space-3) var(--space-4);
+  height: var(--header-height);
+  padding: 0 var(--space-3);
   font-weight: 600;
   font-size: var(--font-size-lg);
   border-bottom: 1px solid var(--color-border-primary);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-2);
 }
 
 .headerLogo {
@@ -79,26 +125,57 @@
   text-decoration: none;
 }
 
-.newBoardBtn {
-  display: inline-flex;
+/* Full-width new board button (expanded sidebar) */
+.newBoardBtnFull {
+  display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-1);
-  padding: var(--space-1) var(--space-2);
+  width: calc(100% - var(--space-3) * 2);
+  margin: var(--space-2) var(--space-3);
+  padding: var(--space-2) var(--space-3);
   border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-border-primary);
+  border: 1px solid var(--color-accent);
   background: var(--color-accent);
   color: white;
   cursor: pointer;
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
   transition: all var(--transition-fast);
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.newBoardBtn:hover {
+.newBoardBtnFull:hover {
   filter: brightness(1.15);
 }
 
-.newBoardBtn:disabled {
+.newBoardBtnFull:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.newBoardBtnIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: var(--space-2) auto;
+  border-radius: var(--border-radius-md);
+  border: none;
+  background: var(--color-accent);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.newBoardBtnIcon:hover {
+  filter: brightness(1.15);
+}
+
+.newBoardBtnIcon:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
@@ -311,7 +388,9 @@
 }
 
 .footerLink {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   text-decoration: none;
@@ -324,6 +403,15 @@
 
 .footerLink:hover {
   color: var(--color-text-primary);
+}
+
+.logoutLink {
+  color: var(--color-danger);
+}
+
+.logoutLink:hover {
+  color: var(--color-danger);
+  opacity: 0.8;
 }
 
 .userInfo {
@@ -363,6 +451,10 @@
 
 .segment {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   padding: var(--space-1) 0;
   font-size: var(--font-size-xs);
   background: transparent;
@@ -370,6 +462,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   text-align: center;
+  border: none;
 }
 
 .segment:not(:last-child) {
@@ -383,6 +476,10 @@
 
 .segmentActive {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   padding: var(--space-1) 0;
   font-size: var(--font-size-xs);
   background: var(--color-accent);
@@ -390,6 +487,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   text-align: center;
+  border: none;
 }
 
 .segmentActive:hover {

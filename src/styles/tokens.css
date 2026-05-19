@@ -68,5 +68,6 @@
   --content-max-width: 860px;
   --content-padding-x: 24px;
   --content-padding-y: 24px;
+  --header-height: 48px;
   --transition-fast: 0.15s ease;
 }

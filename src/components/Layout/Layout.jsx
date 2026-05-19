@@ -39,37 +39,41 @@ function ContentHeader() {
 export function Layout() {
   const { user } = useAuth();
   const location = useLocation();
-  const [isMobile, setIsMobile] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [expanded, setExpanded] = useState(window.innerWidth >= 768);
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
+    const check = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      // Auto-expand on desktop, auto-collapse on mobile
+      setExpanded(!mobile);
+    };
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  // Close sidebar on route change (mobile)
+  // Collapse sidebar on route change when mobile
   useEffect(() => {
-    if (isMobile) setSidebarOpen(false);
+    if (isMobile) setExpanded(false);
   }, [location.pathname]);
 
-  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
-  const toggleSidebar = useCallback(() => setSidebarOpen(o => !o), []);
+  const toggleExpanded = useCallback(() => setExpanded(e => !e), []);
+  const collapse = useCallback(() => setExpanded(false), []);
 
   return (
     <HeaderProvider>
       <div className={styles.root}>
         {user && (
           <>
-            {isMobile && sidebarOpen && (
-              <div className={styles.overlay} onClick={closeSidebar} />
+            {isMobile && expanded && (
+              <div className={styles.overlay} onClick={collapse} />
             )}
             <Sidebar
+              expanded={expanded}
               isMobile={isMobile}
-              isOpen={sidebarOpen}
-              onToggle={toggleSidebar}
-              onClose={closeSidebar}
+              onToggle={toggleExpanded}
+              onCollapse={collapse}
             />
           </>
         )}

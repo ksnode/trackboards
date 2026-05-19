@@ -2,7 +2,10 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../lib/auth';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { listMyBoards, createBoardAuthenticated, updateBoardMeta, softDeleteBoard } from '../../lib/boards';
-import { Globe, GripVertical, Menu, Plus } from 'lucide-react';
+import {
+  Globe, GripVertical, Menu, Plus,
+  Shield, User, LogOut, Monitor, Sun, Moon,
+} from 'lucide-react';
 import styles from './Sidebar.module.css';
 
 function resolveTheme(pref) {
@@ -12,7 +15,11 @@ function resolveTheme(pref) {
   return pref;
 }
 
-export function Sidebar({ isMobile, isOpen, onToggle, onClose }) {
+const THEME_CYCLE = ['auto', 'light', 'dark'];
+const THEME_ICONS = { auto: Monitor, light: Sun, dark: Moon };
+const THEME_LABELS = { auto: 'Auto', light: 'Jasny', dark: 'Ciemny' };
+
+export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
   const { user, profile, signInWithGoogle, signOut } = useAuth();
   const navigate = useNavigate();
   const [themePref, setThemePref] = useState(localStorage.getItem('trackboards_theme') || 'auto');
@@ -46,7 +53,7 @@ export function Sidebar({ isMobile, isOpen, onToggle, onClose }) {
     if (!user) return;
     listMyBoards()
       .then(data => setBoards(data || []))
-      .catch(() => {});
+      .catch(() => { });
   }, [user]);
 
   useEffect(() => { refreshBoards(); }, [refreshBoards]);
@@ -65,9 +72,9 @@ export function Sidebar({ isMobile, isOpen, onToggle, onClose }) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [menuOpen]);
 
-  // Close sidebar when a link is clicked (mobile overlay mode)
+  // Close sidebar when a link is clicked (mobile overlay)
   const handleLinkClick = () => {
-    if (isMobile && isOpen) onClose();
+    if (isMobile && expanded) onCollapse();
   };
 
   // Create new board
@@ -127,7 +134,6 @@ export function Sidebar({ isMobile, isOpen, onToggle, onClose }) {
     setBoards(reordered);
     handleDragEnd();
 
-    // Save new positions
     try {
       await Promise.all(
         reordered.map((b, i) => updateBoardMeta(b.id, { position: i }))
@@ -144,130 +150,199 @@ export function Sidebar({ isMobile, isOpen, onToggle, onClose }) {
     return email.length > 28 ? email.slice(0, 28) + '…' : email;
   };
 
-  // Mobile closed: render only the fixed hamburger button
-  if (isMobile && !isOpen) {
-    return (
-      <button className={styles.hamburgerFixed} onClick={onToggle} aria-label="Menu">
-        <Menu size={22} />
-      </button>
-    );
-  }
+  // Theme cycling (for collapsed icon)
+  const cycleTheme = () => {
+    const idx = THEME_CYCLE.indexOf(themePref);
+    setThemePref(THEME_CYCLE[(idx + 1) % THEME_CYCLE.length]);
+  };
+
+  const ThemeIcon = THEME_ICONS[themePref];
 
   return (
-    <aside className={`${styles.root} ${isMobile && isOpen ? styles.rootOverlay : ''}`}>
-      {/* Header: hamburger (mobile) + logo + new board */}
-      <div className={styles.header}>
-        {isMobile && (
-          <button className={styles.hamburgerInline} onClick={onToggle} aria-label="Zamknij menu">
-            <Menu size={20} />
-          </button>
-        )}
-        <NavLink
-          to={user ? "/boards" : "/"}
-          className={styles.headerLogo}
-          onClick={handleLinkClick}
-        >Trackboards</NavLink>
-        {user && (
-          <button
-            onClick={handleCreate}
-            disabled={creating}
-            className={styles.newBoardBtn}
-            title="Nowy board"
-          >
-            <Plus size={14} /> Nowy board
-          </button>
-        )}
-      </div>
-      
-      {/* Board list */}
-      <div className={styles.boardsList}>
-        {user && boards.map((b, idx) => (
-          <div
-            key={b.id}
-            className={`${styles.boardItemRow} ${dragOverIdx === idx ? styles.boardItemDragOver : ''} ${dragIdx === idx ? styles.boardItemDragging : ''}`}
-            draggable
-            onDragStart={(e) => handleDragStart(e, idx)}
-            onDragOver={(e) => handleDragOver(e, idx)}
-            onDragEnd={handleDragEnd}
-            onDrop={(e) => handleDrop(e, idx)}
-          >
-            <span className={styles.dragHandle}>
-              <GripVertical size={14} />
-            </span>
-            <NavLink
-              to={`/board/${b.id}`}
-              className={({ isActive }) => isActive ? `${styles.boardItem} ${styles.active}` : styles.boardItem}
-              onClick={handleLinkClick}
-            >
-              <span className={styles.boardDot} style={{ background: b.color }} />
-              <span className={styles.boardItemTitle}>{b.title}</span>
-              {b.share_guid && <Globe size={12} style={{ opacity: 0.5, flexShrink: 0, color: 'var(--color-text-info)' }} />}
-            </NavLink>
-            <div className={styles.boardMenuWrapper} ref={menuOpen === b.id ? menuRef : null}>
-              <button
-                className={styles.boardMenuBtn}
-                onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === b.id ? null : b.id); }}
-              >⋮</button>
-              {menuOpen === b.id && (
-                <div className={styles.boardMenuDropdown}>
-                  <button
-                    className={styles.boardMenuItemDanger}
-                    onClick={() => setDeleteConfirm(b.id)}
-                  >Usuń</button>
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+    <aside className={[
+      styles.root,
+      expanded ? styles.rootExpanded : styles.rootCollapsed,
+      isMobile && expanded ? styles.rootOverlay : '',
+    ].filter(Boolean).join(' ')}>
 
-      {/* Delete confirm modal */}
-      {deleteConfirm && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <p className={styles.modalText}>Usunąć ten board?</p>
-            <p className={styles.modalSubtext}>Tej operacji nie można cofnąć.</p>
-            <div className={styles.modalActions}>
-              <button onClick={() => { setDeleteConfirm(null); setMenuOpen(null); }} className={styles.modalCancelBtn}>Anuluj</button>
-              <button onClick={() => handleDelete(deleteConfirm)} className={styles.modalDeleteBtn}>Usuń</button>
+      {/* ── EXPANDED view ── */}
+      {expanded && (
+        <>
+          {/* Header: [☰] [Trackboards] */}
+          <div className={styles.header}>
+            <button className={styles.hamburger} onClick={onToggle} aria-label="Menu" title="Zwiń">
+              <Menu size={20} />
+            </button>
+            <NavLink
+              to={user ? "/boards" : "/"}
+              className={styles.headerLogo}
+              onClick={handleLinkClick}
+            >Trackboards</NavLink>
+          </div>
+
+          {/* New board button */}
+          {user && (
+            <button
+              onClick={handleCreate}
+              disabled={creating}
+              className={styles.newBoardBtnFull}
+              title="Nowy board"
+            >
+              <Plus size={14} /> Nowy board
+            </button>
+          )}
+
+          {/* Board list */}
+          <div className={styles.boardsList}>
+            {user && boards.map((b, idx) => (
+              <div
+                key={b.id}
+                className={`${styles.boardItemRow} ${dragOverIdx === idx ? styles.boardItemDragOver : ''} ${dragIdx === idx ? styles.boardItemDragging : ''}`}
+                draggable
+                onDragStart={(e) => handleDragStart(e, idx)}
+                onDragOver={(e) => handleDragOver(e, idx)}
+                onDragEnd={handleDragEnd}
+                onDrop={(e) => handleDrop(e, idx)}
+              >
+                <span className={styles.dragHandle}>
+                  <GripVertical size={14} />
+                </span>
+                <NavLink
+                  to={`/board/${b.id}`}
+                  className={({ isActive }) => isActive ? `${styles.boardItem} ${styles.active}` : styles.boardItem}
+                  onClick={handleLinkClick}
+                >
+                  <span className={styles.boardDot} style={{ background: b.color }} />
+                  <span className={styles.boardItemTitle}>{b.title}</span>
+                  {b.share_guid && <Globe size={12} style={{ opacity: 0.5, flexShrink: 0, color: 'var(--color-text-info)' }} />}
+                </NavLink>
+                <div className={styles.boardMenuWrapper} ref={menuOpen === b.id ? menuRef : null}>
+                  <button
+                    className={styles.boardMenuBtn}
+                    onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === b.id ? null : b.id); }}
+                  >⋮</button>
+                  {menuOpen === b.id && (
+                    <div className={styles.boardMenuDropdown}>
+                      <button
+                        className={styles.boardMenuItemDanger}
+                        onClick={() => setDeleteConfirm(b.id)}
+                      >Usuń</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Delete confirm modal */}
+          {deleteConfirm && (
+            <div className={styles.modalOverlay}>
+              <div className={styles.modalContent}>
+                <p className={styles.modalText}>Usunąć ten board?</p>
+                <p className={styles.modalSubtext}>Tej operacji nie można cofnąć.</p>
+                <div className={styles.modalActions}>
+                  <button onClick={() => { setDeleteConfirm(null); setMenuOpen(null); }} className={styles.modalCancelBtn}>Anuluj</button>
+                  <button onClick={() => handleDelete(deleteConfirm)} className={styles.modalDeleteBtn}>Usuń</button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Footer */}
+          <div className={styles.footer}>
+            {user ? (
+              <>
+                {profile?.role === 'admin' && (
+                  <NavLink to="/admin" className={styles.footerLink} onClick={handleLinkClick}>
+                    <Shield size={14} /> Panel admina
+                  </NavLink>
+                )}
+                <NavLink to="/profile" className={styles.footerLink} onClick={handleLinkClick}>
+                  <User size={14} /> Profil
+                </NavLink>
+                <div className={styles.userInfo}>
+                  <button onClick={signOut} className={`${styles.footerLink} ${styles.logoutLink}`}>
+                    <LogOut size={14} /> Wyloguj
+                  </button>
+                  <span className={styles.email} title={user.email}>({truncateEmail(user.email)})</span>
+                </div>
+              </>
+            ) : (
+              <button onClick={signInWithGoogle} className={styles.loginBtn}>Zaloguj się</button>
+            )}
+            <div className={styles.separator} />
+            <div className={styles.segmentedGroup}>
+              {THEME_CYCLE.map(value => {
+                const Icon = THEME_ICONS[value];
+                return (
+                  <button
+                    key={value}
+                    onClick={() => setThemePref(value)}
+                    className={themePref === value ? styles.segmentActive : styles.segment}
+                  >
+                    <Icon size={12} /> {THEME_LABELS[value]}
+                  </button>
+                );
+              })}
             </div>
           </div>
-        </div>
+        </>
       )}
 
-      {/* Footer */}
-      <div className={styles.footer}>
-        {user ? (
-          <>
-            {profile?.role === 'admin' && (
-              <NavLink to="/admin" className={styles.footerLink} onClick={handleLinkClick}>Panel admina</NavLink>
-            )}
-            <NavLink to="/profile" className={styles.footerLink} onClick={handleLinkClick}>Profil</NavLink>
-            <div className={styles.userInfo}>
-              <button onClick={signOut} className={styles.footerLink}>Wyloguj</button>
-              <span className={styles.email} title={user.email}>({truncateEmail(user.email)})</span>
-            </div>
-          </>
-        ) : (
-          <button onClick={signInWithGoogle} className={styles.loginBtn}>Zaloguj się</button>
-        )}
-        <div style={{ borderTop: '1px solid var(--color-border-primary)', margin: 'var(--space-1) 0' }} />
-        <div className={styles.segmentedGroup}>
-          {[
-            { value: 'auto', label: 'Auto' },
-            { value: 'light', label: 'Jasny' },
-            { value: 'dark', label: 'Ciemny' },
-          ].map(opt => (
-            <button
-              key={opt.value}
-              onClick={() => setThemePref(opt.value)}
-              className={themePref === opt.value ? styles.segmentActive : styles.segment}
-            >
-              {opt.label}
+      {/* ── COLLAPSED view (icons only) ── */}
+      {!expanded && (
+        <>
+          {/* Hamburger at top */}
+          <div className={styles.collapsedHeader}>
+            <button className={styles.hamburger} onClick={onToggle} aria-label="Menu" title="Rozwiń">
+              <Menu size={20} />
             </button>
-          ))}
-        </div>
-      </div>
+          </div>
+
+          {/* New board icon */}
+          {user && (
+            <button
+              onClick={handleCreate}
+              disabled={creating}
+              className={styles.newBoardBtnIcon}
+              title="Nowy board"
+            >
+              <Plus size={18} />
+            </button>
+          )}
+
+          {/* Spacer pushes footer icons to bottom */}
+          <div className={styles.collapsedSpacer} />
+
+          {/* Footer icons at bottom */}
+          <div className={styles.collapsedFooter}>
+            <div className={styles.separator} />
+            {user ? (
+              <>
+                {profile?.role === 'admin' && (
+                  <NavLink to="/admin" className={styles.iconBtn} title="Panel admina" onClick={handleLinkClick}>
+                    <Shield size={18} />
+                  </NavLink>
+                )}
+                <NavLink to="/profile" className={styles.iconBtn} title="Profil" onClick={handleLinkClick}>
+                  <User size={18} />
+                </NavLink>
+                <button onClick={signOut} className={`${styles.iconBtn} ${styles.iconBtnDanger}`} title="Wyloguj">
+                  <LogOut size={18} />
+                </button>
+              </>
+            ) : (
+              <button onClick={signInWithGoogle} className={styles.iconBtn} title="Zaloguj się">
+                <User size={18} />
+              </button>
+            )}
+            <div className={styles.separator} />
+            <button onClick={cycleTheme} className={styles.iconBtn} title={THEME_LABELS[themePref]}>
+              <ThemeIcon size={18} />
+            </button>
+          </div>
+        </>
+      )}
     </aside>
   );
 }
