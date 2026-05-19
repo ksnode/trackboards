@@ -15,4 +15,12 @@
 
   --color-background-info: #0f1f3a;
   --color-text-info: #93c5fd;
+
+  --color-background-success: #052e16;
+  --color-text-success: #86efac;
+  --color-border-success: #166534;
+
+  --color-background-warning: #292211;
+  --color-text-warning: #fde68a;
+  --color-border-warning: #78350f;
 }

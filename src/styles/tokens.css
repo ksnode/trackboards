@@ -25,6 +25,14 @@
   --color-background-info: #eff6ff;
   --color-text-info: #1e40af;
 
+  --color-background-success: #f0fdf4;
+  --color-text-success: #15803d;
+  --color-border-success: #bbf7d0;
+
+  --color-background-warning: #fffbeb;
+  --color-text-warning: #a16207;
+  --color-border-warning: #fde68a;
+
   /* Typography */
   --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', 'Menlo', monospace;

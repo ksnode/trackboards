@@ -1,0 +1,510 @@
+/* ─── Root ────────────────────────────────────────────── */
+.root {
+  font-family: var(--font-ui);
+  padding: var(--space-6) 0;
+  max-width: 680px;
+}
+
+/* ─── Global progress header ─────────────────────────── */
+.globalHeader {
+  margin-bottom: var(--space-6);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+}
+
+.globalRow {
+  display: grid;
+  grid-template-columns: 88px 1fr 40px 110px;
+  align-items: center;
+  gap: 10px;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+
+.globalRowLast {
+  composes: globalRow;
+  border-bottom: none;
+  background: var(--color-bg-secondary);
+}
+
+.globalRowLabel {
+  font-size: var(--font-size-sm);
+}
+
+.globalRowLabelBold {
+  composes: globalRowLabel;
+  font-weight: 600;
+}
+
+.progressBarTrack {
+  position: relative;
+  height: 5px;
+  background: var(--color-border-secondary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressBarFill {
+  position: absolute;
+  inset: 0;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.globalPct {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-align: right;
+}
+
+.globalHours {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-align: right;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+/* ─── Module card ─────────────────────────────────────── */
+.moduleCard {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  margin-bottom: var(--space-3);
+  overflow: hidden;
+}
+
+.moduleCardPlaceholder {
+  composes: moduleCard;
+  opacity: 0.65;
+}
+
+.moduleHeader {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-secondary);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.moduleHeaderCollapsed {
+  composes: moduleHeader;
+  border-bottom: none;
+}
+
+.moduleHeaderEdit {
+  composes: moduleHeader;
+  cursor: default;
+}
+
+.moduleColorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.moduleColorPicker {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  cursor: pointer;
+  display: block;
+}
+
+.moduleColorInput {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.moduleTitle {
+  font-weight: 500;
+  font-size: var(--font-size-base);
+  flex: 1;
+}
+
+.moduleTitleInlineEdit {
+  font-weight: 500;
+  font-size: var(--font-size-base);
+  flex: 1;
+}
+
+.moduleTagBadge {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.moduleTagLabel {
+  font-size: var(--font-size-xs);
+  padding: 2px var(--space-2);
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-info);
+  color: var(--color-text-info);
+  white-space: nowrap;
+}
+
+.moduleTagSelect {
+  font-size: var(--font-size-xs);
+  padding: 2px 6px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+.moduleEditControls {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.moduleStats {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.moduleProgressBar {
+  width: 60px;
+  height: 4px;
+  background: var(--color-border-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.moduleProgressFill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+.modulePct {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  min-width: 28px;
+  text-align: right;
+}
+
+.collapseArrow {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.moduleBody {
+  padding: var(--space-2) 0;
+}
+
+/* ─── Node row ────────────────────────────────────────── */
+.nodeRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-4);
+  cursor: pointer;
+  transition: background 0.1s;
+  min-height: 32px;
+}
+
+.nodeRowEdit {
+  composes: nodeRow;
+  cursor: default;
+}
+
+.nodeRowPlaceholder {
+  composes: nodeRow;
+  cursor: default;
+}
+
+.nodeRowDone {
+  composes: nodeRow;
+  background: var(--color-background-success);
+}
+
+.nodeRowSkip {
+  composes: nodeRow;
+  background: var(--color-bg-secondary);
+}
+
+.nodeRow:hover {
+  background: var(--color-bg-secondary);
+}
+
+.nodeRowDone:hover {
+  background: var(--color-background-success);
+}
+
+.nodeRowSkip:hover {
+  background: var(--color-bg-secondary);
+}
+
+.placeholderDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-border-secondary);
+  flex-shrink: 0;
+}
+
+.nodeLabel {
+  font-size: var(--font-size-base);
+  flex: 1;
+}
+
+.nodeLabelChild {
+  font-size: var(--font-size-sm);
+  flex: 1;
+}
+
+.nodeLabelParent {
+  composes: nodeLabel;
+  font-weight: 500;
+}
+
+.nodeLabelParentChild {
+  composes: nodeLabelChild;
+  font-weight: 500;
+}
+
+.nodeLabelDone {
+  color: var(--color-text-success);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.nodeLabelSkip {
+  color: var(--color-text-secondary);
+  text-decoration: line-through;
+  opacity: 0.7;
+}
+
+.nodeHours {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+.nodeHoursEdit {
+  font-size: var(--font-size-xs);
+  width: 40px;
+  text-align: right;
+  font-family: var(--font-mono);
+}
+
+.nodeHoursUnit {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+}
+
+.nodeEditControls {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+/* ─── Checkbox ────────────────────────────────────────── */
+.checkbox {
+  border-radius: var(--border-radius-sm);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+/* ─── InlineEdit ──────────────────────────────────────── */
+.inlineEditDisplay {
+  cursor: text;
+  border-bottom: 1px dashed var(--color-border-secondary);
+  min-width: 20px;
+}
+
+.inlineEditInput {
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 3px;
+  padding: 2px var(--space-1);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* ─── Icon button (edit mode) ─────────────────────────── */
+.iconBtn {
+  font-size: var(--font-size-xs);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--color-border-tertiary);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.iconBtn:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.iconBtnDanger {
+  composes: iconBtn;
+  border-color: var(--color-border-danger);
+  color: var(--color-text-danger);
+}
+
+.iconBtnDanger:hover {
+  background: var(--color-background-danger);
+}
+
+/* ─── Add buttons ─────────────────────────────────────── */
+.addStepBtn {
+  font-size: var(--font-size-sm);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--border-radius-md);
+  border: 1px dashed var(--color-border-secondary);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  width: 100%;
+}
+
+.addStepBtn:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
+.addModuleBtn {
+  composes: addStepBtn;
+  padding: 6px var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.addModuleWrapper {
+  padding: 6px 0;
+}
+
+/* ─── Confirm Modal ───────────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modalContent {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-6);
+  max-width: 360px;
+  width: 90%;
+}
+
+.modalText {
+  font-size: var(--font-size-base);
+  margin-bottom: var(--space-3);
+}
+
+.modalSubtext {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.modalActions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.modalCancelBtn {
+  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-secondary);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.modalCancelBtn:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.modalDeleteBtn {
+  font-size: var(--font-size-sm);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-danger);
+  background: var(--color-background-danger);
+  color: var(--color-text-danger);
+  cursor: pointer;
+}
+
+.modalDeleteBtn:hover {
+  opacity: 0.9;
+}
+
+/* ─── Footer ──────────────────────────────────────────── */
+.footer {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin-top: var(--space-2);
+}
+
+.editToggle {
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--color-text-secondary);
+}
+
+.editToggleActive {
+  composes: editToggle;
+  color: var(--color-text-warning);
+}
+
+/* ─── Empty state ─────────────────────────────────────── */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-8) var(--space-6);
+  color: var(--color-text-secondary);
+}
+
+.emptyText {
+  font-size: var(--font-size-lg);
+}
+
+.emptyAddBtn {
+  font-size: var(--font-size-base);
+  padding: var(--space-2) var(--space-6);
+  border-radius: var(--border-radius-md);
+  border: 1px dashed var(--color-border-secondary);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.emptyAddBtn:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-accent);
+}
+
+.addStepRow {
+  padding: 6px var(--space-4);
+}

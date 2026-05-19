@@ -15,6 +15,7 @@ import AdminBoards from './pages/AdminBoards';
 import AdminUsers from './pages/AdminUsers';
 import AdminUserBoards from './pages/AdminUserBoards';
 import AdminUserPurgatory from './pages/AdminUserPurgatory';
+import TestFramework from './pages/TestFramework';
 
 export default function App() {
   return (
@@ -26,6 +27,9 @@ export default function App() {
           
           {/* Public or Owner-only Board */}
           <Route path="/board/:guid" element={<Board />} />
+
+          {/* Dev test route */}
+          <Route path="/test-framework" element={<TestFramework />} />
 
           {/* Authenticated Layout */}
           <Route element={<RequireAuth><Layout /></RequireAuth>}>
