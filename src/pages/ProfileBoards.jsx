@@ -1,0 +1,1 @@
+export default function ProfileBoards() { return <div>ProfileBoards Placeholder</div>; }

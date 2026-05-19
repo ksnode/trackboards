@@ -1,0 +1,1 @@
+export default function ProfilePurgatory() { return <div>ProfilePurgatory Placeholder</div>; }

@@ -1,0 +1,1 @@
+export default function Board() { return <div>Board Placeholder</div>; }

@@ -1,0 +1,1 @@
+export default function AdminBoards() { return <div>AdminBoards Placeholder</div>; }
