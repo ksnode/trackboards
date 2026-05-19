@@ -31,10 +31,15 @@
 }
 
 .boardItem {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   padding: var(--space-2) 0;
   color: var(--color-text-secondary);
   font-size: var(--font-size-base);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .boardItem:hover {
@@ -44,6 +49,23 @@
 .boardItem.active {
   color: var(--color-accent);
   font-weight: 500;
+}
+
+.boardDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.profileLink {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  padding: var(--space-1) 0;
+}
+
+.profileLink:hover {
+  color: var(--color-text-primary);
 }
 
 .footer {
@@ -67,12 +89,50 @@
   text-overflow: ellipsis;
 }
 
-.loginBtn, .logoutBtn, .themeBtn {
+.loginBtn, .logoutBtn {
   text-align: left;
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
 }
 
-.loginBtn:hover, .logoutBtn:hover, .themeBtn:hover {
+.loginBtn:hover, .logoutBtn:hover {
   color: var(--color-text-primary);
+}
+
+.segmentedGroup {
+  display: flex;
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.segment {
+  flex: 1;
+  padding: var(--space-1) 0;
+  font-size: var(--font-size-xs);
+  background: transparent;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.segment:not(:last-child) {
+  border-right: 1px solid var(--color-border-primary);
+}
+
+.segment:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+}
+
+.segmentActive {
+  composes: segment;
+  background: var(--color-accent);
+  color: white;
+}
+
+.segmentActive:hover {
+  background: var(--color-accent-hover);
+  color: white;
 }

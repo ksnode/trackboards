@@ -6,8 +6,8 @@ const AuthContext = createContext({
   user: null,
   profile: null,
   loading: true,
-  signInWithGoogle: async () => {},
-  signOut: async () => {},
+  signInWithGoogle: async () => { },
+  signOut: async () => { },
 });
 
 export const AuthProvider = ({ children }) => {
@@ -20,8 +20,8 @@ export const AuthProvider = ({ children }) => {
       .from('profiles')
       .select('*')
       .eq('user_id', userId)
-      .single();
-    
+      .maybeSingle();
+
     if (error) {
       console.error('Error fetching profile:', error);
       return null;
@@ -31,48 +31,55 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     let mounted = true;
+    let resolved = false;
 
-    const initializeAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        if (mounted) setUser(session.user);
-        const profileData = await fetchProfile(session.user.id);
-        if (mounted) {
-          setProfile(profileData);
-          if (profileData && profileData.is_active === false) {
-            await supabase.auth.signOut();
-            alert("Twoje konto zostało zablokowane"); // Should use Toast later
-          }
-        }
+    // Auto-recovery: if auth doesn't resolve within 5s, force-clear.
+    const recoveryTimer = setTimeout(async () => {
+      if (resolved || !mounted) return;
+      console.warn('[auth] Init timeout — clearing stuck session');
+      try { await supabase.auth.signOut(); } catch {}
+      Object.keys(localStorage)
+        .filter(k => k.startsWith('sb-'))
+        .forEach(k => localStorage.removeItem(k));
+      if (mounted) {
+        setUser(null);
+        setProfile(null);
+        setLoading(false);
       }
-      if (mounted) setLoading(false);
-    };
+    }, 5000);
 
-    initializeAuth();
+    // onAuthStateChange callback runs INSIDE Supabase's Web Lock.
+    // supabase.from() internally calls getSession() which needs the SAME lock.
+    // → Deadlock if we do async Supabase calls inside the callback.
+    //
+    // Fix: callback returns synchronously (releases lock), then we
+    // defer async work to setTimeout(0) which runs OUTSIDE the lock.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setTimeout(async () => {
+        if (!mounted) return;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        if (mounted) setUser(session.user);
-        const profileData = await fetchProfile(session.user.id);
-        if (mounted) {
+        if (session?.user) {
+          setUser(session.user);
+          const profileData = await fetchProfile(session.user.id);
+          if (!mounted) return;
           setProfile(profileData);
           if (profileData && profileData.is_active === false) {
             await supabase.auth.signOut();
-            alert("Twoje konto zostało zablokowane"); // Should use Toast later
+            alert("Twoje konto zostało zablokowane");
           }
-        }
-      } else {
-        if (mounted) {
+        } else {
           setUser(null);
           setProfile(null);
         }
-      }
-      if (mounted) setLoading(false);
+        resolved = true;
+        clearTimeout(recoveryTimer);
+        setLoading(false);
+      }, 0);
     });
 
     return () => {
       mounted = false;
+      clearTimeout(recoveryTimer);
       subscription.unsubscribe();
     };
   }, []);

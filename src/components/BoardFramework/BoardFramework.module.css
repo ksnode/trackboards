@@ -474,6 +474,14 @@
   color: var(--color-text-warning);
 }
 
+.saveStatusBar {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  text-align: center;
+  padding: var(--space-1) 0;
+  min-height: 20px;
+}
+
 /* ─── Empty state ─────────────────────────────────────── */
 .emptyState {
   display: flex;

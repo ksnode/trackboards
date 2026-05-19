@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, RequireAuth, RequireAdmin } from './lib/auth';
 import { Layout } from './components/Layout/Layout';
+import { BoardLayout } from './components/Layout/BoardLayout';
 
 // Pages
 import Home from './pages/Home';
@@ -24,33 +25,33 @@ export default function App() {
         <Routes>
           {/* Public Home */}
           <Route path="/" element={<Home />} />
-          
-          {/* Public or Owner-only Board */}
-          <Route path="/board/:guid" element={<Board />} />
+
+          {/* Board — sidebar if logged in, standalone if anon */}
+          <Route path="/board/:guid" element={<BoardLayout />}>
+            <Route index element={<Board />} />
+          </Route>
 
           {/* Dev test route */}
           <Route path="/test-framework" element={<TestFramework />} />
 
           {/* Authenticated Layout */}
-          <Route element={<RequireAuth><Layout /></RequireAuth>}>
-            <Route path="/trackboard" element={<Trackboard />} />
-            
-            {/* Profile Hub */}
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profile/boards" element={<ProfileBoards />} />
-            <Route path="/profile/purgatory" element={<ProfilePurgatory />} />
-            <Route path="/profile/escape" element={<ProfileEscape />} />
+          <Route element={<Layout />}>
+            <Route path="/trackboard" element={<RequireAuth><Trackboard /></RequireAuth>} />
+            <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
+            <Route path="/profile/boards" element={<RequireAuth><ProfileBoards /></RequireAuth>} />
+            <Route path="/profile/purgatory" element={<RequireAuth><ProfilePurgatory /></RequireAuth>} />
+            <Route path="/profile/escape" element={<RequireAuth><ProfileEscape /></RequireAuth>} />
           </Route>
 
           {/* Admin Layout */}
-          <Route element={<RequireAdmin><Layout /></RequireAdmin>}>
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/boards" element={<AdminBoards />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/users/:id/boards" element={<AdminUserBoards />} />
-            <Route path="/admin/users/:id/purgatory" element={<AdminUserPurgatory />} />
+          <Route element={<Layout />}>
+            <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
+            <Route path="/admin/boards" element={<RequireAdmin><AdminBoards /></RequireAdmin>} />
+            <Route path="/admin/users" element={<RequireAdmin><AdminUsers /></RequireAdmin>} />
+            <Route path="/admin/users/:id/boards" element={<RequireAdmin><AdminUserBoards /></RequireAdmin>} />
+            <Route path="/admin/users/:id/purgatory" element={<RequireAdmin><AdminUserPurgatory /></RequireAdmin>} />
           </Route>
-          
+
           {/* 404 */}
           <Route path="*" element={<div>404 - Not Found</div>} />
         </Routes>

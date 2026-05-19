@@ -9,10 +9,13 @@ const handleResponse = ({ data, error }) => {
 };
 
 export const listMyBoards = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
   return handleResponse(
     await supabase
       .from('boards')
       .select('*')
+      .eq('owner_id', user.id)
       .is('deleted_at', null)
       .order('position', { ascending: true })
       .order('created_at', { ascending: false })
@@ -20,10 +23,13 @@ export const listMyBoards = async () => {
 };
 
 export const listMyPurgatory = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
   return handleResponse(
     await supabase
       .from('boards')
       .select('*')
+      .eq('owner_id', user.id)
       .not('deleted_at', 'is', null)
       .order('deleted_at', { ascending: false })
   );
@@ -38,7 +44,7 @@ export const getBoard = async (idOrGuid) => {
       .from('boards')
       .select('*')
       .eq('id', idOrGuid)
-      .single();
+      .maybeSingle();
     if (data) return data;
   }
 
@@ -47,9 +53,10 @@ export const getBoard = async (idOrGuid) => {
     .from('boards')
     .select('*')
     .eq('share_guid', idOrGuid)
-    .single();
+    .maybeSingle();
 
   if (error) throw error;
+  if (!data) throw new Error('Board not found');
   return data;
 };
 
@@ -71,17 +78,23 @@ export const createBoardAuthenticated = async () => {
 
 export const createBoardAnonymous = async () => {
   const shareGuid = crypto.randomUUID();
-  return handleResponse(
-    await supabase
-      .from('boards')
-      .insert({
-        owner_id: null,
-        share_guid: shareGuid,
-        title: 'Nowy board',
-      })
-      .select()
-      .single()
-  );
+  const { data, error } = await supabase
+    .from('boards')
+    .insert({
+      owner_id: null,
+      share_guid: shareGuid,
+      title: 'Nowy board',
+      data: { modules: [] },
+      progress: { states: {}, collapsed: {} },
+    })
+    .select()
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+  if (!data) throw new Error('Failed to create anonymous board (RLS may block anon inserts)');
+  return data;
 };
 
 export const updateBoardData = async (id, data, progress) => {

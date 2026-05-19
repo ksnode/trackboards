@@ -14,8 +14,10 @@ export default function BoardFramework({
   onChange,
   readOnly = false,
   canEditStructure = true,
+  defaultEditMode = false,
+  saveStatus = '',
 }) {
-  const [editMode, setEditMode] = useState(false);
+  const [editMode, setEditMode] = useState(defaultEditMode);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [deleteModuleConfirm, setDeleteModuleConfirm] = useState(null);
 
@@ -88,14 +90,21 @@ export default function BoardFramework({
     updateModules(next);
   };
 
+  const MODULE_COLORS = [
+    '#E24B4A','#7F77DD','#1A6B9A','#2E8B57','#BA7517',
+    '#D85A30','#854F0B','#0C447C','#6B2D8B','#1D9E75',
+    '#C03535','#0F6E56','#4A90D9','#C41E3A','#1BACA6',
+  ];
+
   const addModule = () => {
+    const color = MODULE_COLORS[Math.floor(Math.random() * MODULE_COLORS.length)];
     const newMod = {
       id: genId(),
-      title: 'Nowy kurs',
-      color: '#888780',
+      title: 'Nowy moduł',
+      color,
       tag: 'main',
       tagLabel: 'comment',
-      tree: [{ id: genId(), label: 'Nowy krok', hours: 1, children: [] }],
+      tree: [{ id: genId(), label: 'Nowy punkt', hours: 1, children: [] }],
     };
     updateModules([...modules, newMod]);
   };
@@ -144,7 +153,7 @@ export default function BoardFramework({
   };
 
   const addNode = (moduleId, parentId = null) => {
-    const newNode = { id: genId(), label: 'Nowy krok', hours: 1, children: [] };
+    const newNode = { id: genId(), label: 'Nowy punkt', hours: 1, children: [] };
     const next = modules.map(m => {
       if (m.id !== moduleId) return m;
       const tree = cloneTree(m.tree);
@@ -377,7 +386,7 @@ export default function BoardFramework({
           <span className={styles.emptyText}>Ten board jest pusty</span>
           {!readOnly && canEditStructure && (
             <button className={styles.emptyAddBtn} onClick={addModule}>
-              + Dodaj pierwszy kurs
+              + Dodaj pierwszy moduł
             </button>
           )}
         </div>
@@ -398,7 +407,7 @@ export default function BoardFramework({
       {deleteConfirm && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
-            <p className={styles.modalText}>Usunąć krok i wszystkie podpunkty?</p>
+            <p className={styles.modalText}>Usunąć punkt i wszystkie podpunkty?</p>
             <p className={styles.modalSubtext}>„{deleteConfirm.label}"</p>
             <div className={styles.modalActions}>
               <button onClick={() => setDeleteConfirm(null)} className={styles.modalCancelBtn}>Anuluj</button>
@@ -412,11 +421,11 @@ export default function BoardFramework({
       {deleteModuleConfirm && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContent}>
-            <p className={styles.modalText}>Usunąć cały kurs?</p>
+            <p className={styles.modalText}>Usunąć moduł?</p>
             <p className={styles.modalSubtext}>„{deleteModuleConfirm.title}" — ta operacja jest nieodwracalna.</p>
             <div className={styles.modalActions}>
               <button onClick={() => setDeleteModuleConfirm(null)} className={styles.modalCancelBtn}>Anuluj</button>
-              <button onClick={() => deleteModule(deleteModuleConfirm.id)} className={styles.modalDeleteBtn}>Usuń kurs</button>
+              <button onClick={() => deleteModule(deleteModuleConfirm.id)} className={styles.modalDeleteBtn}>Usuń moduł</button>
             </div>
           </div>
         </div>
@@ -533,7 +542,7 @@ export default function BoardFramework({
                 {module.tree.map(node => renderNode(module.id, node, module.color, 0, isPlaceholder))}
                 {editMode && canEditStructure && !isPlaceholder && (
                   <div className={styles.addStepRow}>
-                    <button onClick={() => addNode(module.id)} className={styles.addStepBtn}>+ Dodaj krok</button>
+                    <button onClick={() => addNode(module.id)} className={styles.addStepBtn}>+ Dodaj punkt</button>
                   </div>
                 )}
               </div>
@@ -545,7 +554,7 @@ export default function BoardFramework({
       {/* Add module button (edit mode) */}
       {editMode && canEditStructure && (
         <div className={styles.addModuleWrapper}>
-          <button onClick={addModule} className={styles.addModuleBtn}>+ Dodaj kurs</button>
+          <button onClick={addModule} className={styles.addModuleBtn}>+ Dodaj moduł</button>
         </div>
       )}
 
@@ -562,6 +571,9 @@ export default function BoardFramework({
             </span>
           )}
         </div>
+      )}
+      {saveStatus && (
+        <div className={styles.saveStatusBar}>{saveStatus}</div>
       )}
     </div>
   );

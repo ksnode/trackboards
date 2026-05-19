@@ -1,0 +1,135 @@
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding: var(--space-6);
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.logo {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.tagline {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+}
+
+.cards {
+  display: flex;
+  gap: var(--space-6);
+  margin-bottom: var(--space-8);
+  max-width: 560px;
+  width: 100%;
+}
+
+.card {
+  flex: 1;
+  padding: var(--space-6);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-bg-secondary);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.card:hover {
+  border-color: var(--color-accent);
+  background: var(--color-bg-tertiary);
+}
+
+.cardTitle {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.cardDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.cardAccent {
+  composes: card;
+  border-color: var(--color-accent);
+}
+
+.cardAccent:hover {
+  background: var(--color-accent);
+}
+
+.cardAccent:hover .cardTitle {
+  color: white;
+}
+
+.cardAccent:hover .cardDesc {
+  color: rgba(255,255,255,0.8);
+}
+
+.recentSection {
+  max-width: 560px;
+  width: 100%;
+}
+
+.recentTitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  margin-bottom: var(--space-3);
+}
+
+.recentList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.recentItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  transition: border-color var(--transition-fast);
+}
+
+.recentItem:hover {
+  border-color: var(--color-accent);
+}
+
+.recentItemTitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+}
+
+.recentItemDate {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 600px) {
+  .cards {
+    flex-direction: column;
+  }
+}

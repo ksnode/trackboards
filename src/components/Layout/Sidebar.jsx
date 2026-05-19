@@ -1,26 +1,45 @@
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../lib/auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { listMyBoards } from '../../lib/boards';
 import styles from './Sidebar.module.css';
 
+function resolveTheme(pref) {
+  if (pref === 'auto') {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  return pref;
+}
+
 export function Sidebar() {
-  const { user, signInWithGoogle, signOut } = useAuth();
-  const [theme, setTheme] = useState(localStorage.getItem('trackboards_theme') || 'light');
+  const { user, profile, signInWithGoogle, signOut } = useAuth();
+  const [themePref, setThemePref] = useState(localStorage.getItem('trackboards_theme') || 'auto');
+  const [boards, setBoards] = useState([]);
+
+  const applyTheme = useCallback((pref) => {
+    document.documentElement.setAttribute('data-theme', resolveTheme(pref));
+  }, []);
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('trackboards_theme', theme);
-  }, [theme]);
+    localStorage.setItem('trackboards_theme', themePref);
+    applyTheme(themePref);
+  }, [themePref, applyTheme]);
 
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
+  // Listen for OS theme changes when in auto mode
+  useEffect(() => {
+    if (themePref !== 'auto') return;
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = () => applyTheme('auto');
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, [themePref, applyTheme]);
 
-  // Mock data for this stage
-  const mockBoards = [
-    { id: '1', title: 'Roadmapa 2026' },
-    { id: '2', title: 'Frontend nauka' },
-  ];
+  useEffect(() => {
+    if (!user) return;
+    listMyBoards()
+      .then(data => setBoards(data || []))
+      .catch(() => {});
+  }, [user]);
 
   return (
     <aside className={styles.root}>
@@ -32,15 +51,24 @@ export function Sidebar() {
         {user && (
           <>
             <h3>Twoje boardy</h3>
-            {mockBoards.map(b => (
+            {boards.map(b => (
               <NavLink 
                 key={b.id} 
                 to={`/board/${b.id}`} 
                 className={({ isActive }) => isActive ? `${styles.boardItem} ${styles.active}` : styles.boardItem}
               >
+                <span className={styles.boardDot} style={{ background: b.color }} />
                 {b.title}
               </NavLink>
             ))}
+          </>
+        )}
+        {user && profile?.role === 'admin' && (
+          <>
+            <h3 style={{ marginTop: 'var(--space-4)' }}>Admin</h3>
+            <NavLink to="/admin" className={({ isActive }) => isActive ? `${styles.boardItem} ${styles.active}` : styles.boardItem}>
+              Panel admina
+            </NavLink>
           </>
         )}
       </div>
@@ -49,15 +77,27 @@ export function Sidebar() {
         {user ? (
           <div className={styles.userInfo}>
             <span className={styles.email}>{user.email}</span>
-            <NavLink to="/profile" className={styles.boardItem} style={{fontSize: 'var(--font-size-sm)', padding: 'var(--space-1) 0'}}>Profil</NavLink>
+            <NavLink to="/profile" className={styles.profileLink}>Profil</NavLink>
             <button onClick={signOut} className={styles.logoutBtn}>Wyloguj</button>
           </div>
         ) : (
           <button onClick={signInWithGoogle} className={styles.loginBtn}>Zaloguj się</button>
         )}
-        <button onClick={toggleTheme} className={styles.themeBtn}>
-          Theme: {theme}
-        </button>
+        <div className={styles.segmentedGroup}>
+          {[
+            { value: 'auto', label: 'Auto' },
+            { value: 'light', label: 'Jasny' },
+            { value: 'dark', label: 'Ciemny' },
+          ].map(opt => (
+            <button
+              key={opt.value}
+              onClick={() => setThemePref(opt.value)}
+              className={themePref === opt.value ? styles.segmentActive : styles.segment}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
     </aside>
   );
