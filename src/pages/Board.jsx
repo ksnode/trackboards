@@ -33,6 +33,7 @@ export default function Board() {
   const [titleDraft, setTitleDraft] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [copyTooltip, setCopyTooltip] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   const debounceRef = useRef(null);
 
@@ -72,6 +73,13 @@ export default function Board() {
   const canDeleteOrphan = isOrphan && board.created_at &&
     (Date.now() - new Date(board.created_at).getTime() < 15 * 60 * 1000);
   const canDelete = isOwner || canDeleteOrphan;
+
+  // Auto-enable edit mode for new empty boards
+  useEffect(() => {
+    if (board && canEdit && !board.data?.modules?.length) {
+      setEditMode(true);
+    }
+  }, [board?.id]);
 
   // Debounced save for board data/progress
   const handleBoardChange = useCallback((newData, newProgress) => {
@@ -232,7 +240,7 @@ export default function Board() {
 
         {isPublic && (
           <span className={styles.copyLinkWrapper}>
-            <button className={styles.headerBtn} onClick={handleCopyLink}>
+            <button className={styles.headerBtn} onClick={handleCopyLink} style={{ borderColor: 'var(--color-success, #2e8b57)', color: 'var(--color-success, #2e8b57)' }}>
               Skopiuj link
             </button>
             {copyTooltip && <span className={styles.copyTooltip}><span className={styles.copyTooltipCheck}>✓</span> Skopiowano!</span>}
@@ -245,9 +253,18 @@ export default function Board() {
           </button>
         )}
 
+        {canEdit && (
+          <button
+            className={styles.adoptBtn}
+            onClick={() => setEditMode(e => !e)}
+          >
+            {editMode ? '✓ Zakończ edycję' : 'Edytuj'}
+          </button>
+        )}
+
         {canDelete && (
           <button className={styles.deleteBtn} onClick={() => setShowDeleteConfirm(true)}>
-            Usuń board
+            Usuń
           </button>
         )}
       </div>
@@ -274,9 +291,17 @@ export default function Board() {
         onChange={handleBoardChange}
         readOnly={!canEdit}
         canEditStructure={canEditStructure}
-        defaultEditMode={canEdit && (!board.data?.modules?.length)}
+        editMode={editMode}
+        onEditModeChange={setEditMode}
         saveStatus={saveStatus}
+        createdAt={board.created_at}
       />
+
+      <div style={{ textAlign: 'center', padding: 'var(--space-3) 0' }}>
+        <button className={styles.backBtn} onClick={() => navigate(user ? '/trackboard' : '/')}>
+          ← Wróć na stronę główną
+        </button>
+      </div>
     </div>
   );
 }

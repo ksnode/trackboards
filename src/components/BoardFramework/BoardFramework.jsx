@@ -14,10 +14,11 @@ export default function BoardFramework({
   onChange,
   readOnly = false,
   canEditStructure = true,
-  defaultEditMode = false,
+  editMode = false,
+  onEditModeChange,
   saveStatus = '',
+  createdAt = null,
 }) {
-  const [editMode, setEditMode] = useState(defaultEditMode);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [deleteModuleConfirm, setDeleteModuleConfirm] = useState(null);
 
@@ -558,20 +559,11 @@ export default function BoardFramework({
         </div>
       )}
 
-      {/* Footer with edit toggle */}
-      {!readOnly && (
-        <div className={styles.footer}>
-          Postęp zapisywany automatycznie · Kliknij nagłówek modułu aby zwinąć ·{' '}
-          {canEditStructure && (
-            <span
-              onClick={() => setEditMode(e => !e)}
-              className={editMode ? styles.editToggleActive : styles.editToggle}
-            >
-              {editMode ? '✓ Zakończ edycję' : 'Kliknij TU, żeby edytować'}
-            </span>
-          )}
-        </div>
-      )}
+      {/* Footer */}
+      <div className={styles.footer}>
+        {createdAt && <>Utworzono: {new Date(createdAt).toLocaleString('pl-PL')} · </>}
+        Postęp zapisywany automatycznie · Kliknij nagłówek modułu aby zwinąć
+      </div>
       {saveStatus && (
         <div className={styles.saveStatusBar}>{saveStatus}</div>
       )}
