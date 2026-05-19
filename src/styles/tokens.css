@@ -39,7 +39,7 @@
 
   --font-size-xs: 11px;
   --font-size-sm: 12px;
-  --font-size-base: 14px;
+  --font-size-base: 15px;
   --font-size-lg: 16px;
   --font-size-xl: 20px;
   --font-size-2xl: 28px;
@@ -65,5 +65,6 @@
   /* Layout */
   --sidebar-width: 260px;
   --sidebar-collapsed-width: 60px;
+  --content-max-width: 860px;
   --transition-fast: 0.15s ease;
 }

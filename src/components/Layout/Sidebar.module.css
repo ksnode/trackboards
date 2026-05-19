@@ -11,35 +11,93 @@
 }
 
 .header {
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-3) var(--space-4);
   font-weight: 600;
   font-size: var(--font-size-lg);
   border-bottom: 1px solid var(--color-border-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
+.headerLogo {
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.newBoardBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-primary);
+  background: var(--color-accent);
+  color: white;
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.newBoardBtn:hover {
+  filter: brightness(1.15);
+}
+
+.newBoardBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Board list ─────────────────────────────────────── */
 .boardsList {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-2) var(--space-3);
 }
 
-.boardsList h3 {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-tertiary);
-  margin-bottom: var(--space-2);
-  text-transform: uppercase;
+.boardItemRow {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  border-radius: var(--border-radius-md);
+  transition: background 0.1s;
 }
+
+.boardItemRow:hover {
+  background: var(--color-bg-tertiary);
+}
+
+.boardItemDragOver {
+  border-top: 2px solid var(--color-accent);
+}
+
+.boardItemDragging {
+  opacity: 0.4;
+}
+
+.dragHandle {
+  cursor: grab;
+  color: var(--color-text-tertiary);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  flex-shrink: 0;
+}
+
+
 
 .boardItem {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) 0;
+  padding: var(--space-1) var(--space-1);
   color: var(--color-text-secondary);
-  font-size: var(--font-size-base);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  flex: 1;
+  min-width: 0;
+  border-radius: var(--border-radius-sm);
 }
 
 .boardItem:hover {
@@ -58,44 +116,188 @@
   flex-shrink: 0;
 }
 
-.profileLink {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  padding: var(--space-1) 0;
+.boardItemTitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
-.profileLink:hover {
+/* ─── Board menu ─────────────────────────────────────── */
+.boardMenuWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.boardMenuBtn {
+  font-size: var(--font-size-base);
+  padding: 0 4px;
+  background: transparent;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+
+
+.boardMenuBtn:hover {
   color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
 }
 
+.boardMenuDropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 2px;
+  background: var(--color-bg-secondary, #fff);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  z-index: 20;
+  min-width: 100px;
+  overflow: hidden;
+}
+
+.boardMenuItemDanger {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-danger);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.boardMenuItemDanger:hover {
+  background: var(--color-background-danger);
+}
+
+/* ─── Delete modal ───────────────────────────────────── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: var(--color-bg-secondary, #fff);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-6);
+  max-width: 340px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+}
+
+.modalText {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.modalSubtext {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin-bottom: var(--space-5);
+}
+
+.modalActions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+.modalCancelBtn {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary, #f5f5f5);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+}
+
+.modalCancelBtn:hover {
+  background: var(--color-border-primary);
+}
+
+.modalDeleteBtn {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--border-radius-md);
+  border: none;
+  background: var(--color-danger, #c03535);
+  color: white;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.modalDeleteBtn:hover {
+  filter: brightness(1.1);
+}
+
+/* ─── Footer ─────────────────────────────────────────── */
 .footer {
-  padding: var(--space-4) var(--space-6);
+  padding: var(--space-3) var(--space-4);
   border-top: 1px solid var(--color-border-primary);
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-1);
+}
+
+.footerLink {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: var(--space-1) 0;
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-align: left;
+}
+
+.footerLink:hover {
+  color: var(--color-text-primary);
 }
 
 .userInfo {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 .email {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.loginBtn, .logoutBtn {
+.loginBtn {
   text-align: left;
   color: var(--color-text-secondary);
   font-size: var(--font-size-sm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) 0;
 }
 
-.loginBtn:hover, .logoutBtn:hover {
+.loginBtn:hover {
   color: var(--color-text-primary);
 }
 

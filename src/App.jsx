@@ -1,11 +1,10 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, RequireAuth, RequireAdmin } from './lib/auth';
 import { Layout } from './components/Layout/Layout';
-import { BoardLayout } from './components/Layout/BoardLayout';
 
 // Pages
 import Home from './pages/Home';
-import Trackboard from './pages/Trackboard';
+import Boards from './pages/Boards';
 import Board from './pages/Board';
 import Profile from './pages/Profile';
 import ProfileBoards from './pages/ProfileBoards';
@@ -26,25 +25,22 @@ export default function App() {
           {/* Public Home */}
           <Route path="/" element={<Home />} />
 
-          {/* Board — sidebar if logged in, standalone if anon */}
-          <Route path="/board/:guid" element={<BoardLayout />}>
-            <Route index element={<Board />} />
-          </Route>
-
           {/* Dev test route */}
           <Route path="/test-framework" element={<TestFramework />} />
 
-          {/* Authenticated Layout */}
+          {/* Shared Layout — sidebar when logged in, content header always */}
           <Route element={<Layout />}>
-            <Route path="/trackboard" element={<RequireAuth><Trackboard /></RequireAuth>} />
+            {/* Board — accessible by anyone (anon or auth) */}
+            <Route path="/board/:guid" element={<Board />} />
+
+            {/* Authenticated routes */}
+            <Route path="/boards" element={<RequireAuth><Boards /></RequireAuth>} />
             <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
             <Route path="/profile/boards" element={<RequireAuth><ProfileBoards /></RequireAuth>} />
             <Route path="/profile/purgatory" element={<RequireAuth><ProfilePurgatory /></RequireAuth>} />
             <Route path="/profile/escape" element={<RequireAuth><ProfileEscape /></RequireAuth>} />
-          </Route>
 
-          {/* Admin Layout */}
-          <Route element={<Layout />}>
+            {/* Admin routes */}
             <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
             <Route path="/admin/boards" element={<RequireAdmin><AdminBoards /></RequireAdmin>} />
             <Route path="/admin/users" element={<RequireAdmin><AdminUsers /></RequireAdmin>} />

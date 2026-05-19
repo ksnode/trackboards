@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
+import { useHeader } from '../lib/headerContext';
 import {
   getBoard, updateBoardData, updateBoardMeta, togglePublic, adoptOrphanBoard,
   softDeleteBoard, hardDeleteBoard,
 } from '../lib/boards';
+import { Link as LinkIcon, Pencil, Check, Trash2, Globe, Lock } from 'lucide-react';
 import BoardFramework from '../components/BoardFramework/BoardFramework';
 import styles from './Board.module.css';
 
@@ -25,6 +27,7 @@ export default function Board() {
   const { guid } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { setHeader } = useHeader();
 
   const [board, setBoard] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -100,39 +103,39 @@ export default function Board() {
   }, [board?.id]);
 
   // Title change
-  const handleTitleBlur = async () => {
+  const handleTitleBlur = useCallback(async () => {
     if (!board || titleDraft === board.title) return;
     if (titleDraft.length > 200) return;
     try {
       await updateBoardMeta(board.id, { title: titleDraft });
       setBoard(prev => ({ ...prev, title: titleDraft }));
-      // Update localStorage for anon
-      if (!user && board.share_guid) {
-        saveToRecent(board.share_guid, titleDraft);
-      }
+      if (!user && board.share_guid) saveToRecent(board.share_guid, titleDraft);
+      window.dispatchEvent(new Event('boardsUpdated'));
     } catch (err) {
       console.error('Title save error:', err);
     }
-  };
+  }, [board, titleDraft, user]);
 
-  // Color change
-  const handleColorChange = async (e) => {
-    const color = e.target.value;
-    try {
-      await updateBoardMeta(board.id, { color });
-      setBoard(prev => ({ ...prev, color }));
-    } catch (err) {
-      console.error('Color save error:', err);
-    }
-  };
+  // Set content header for layout
+  useEffect(() => {
+    if (!board) return;
+    setHeader({
+      title: board.title,
+      titleDraft,
+      editable: canEdit,
+      onTitleChange: (e) => setTitleDraft(e.target.value),
+      onTitleBlur: handleTitleBlur,
+      showBack: !!user,
+    });
+  }, [board?.id, board?.title, titleDraft, canEdit, user, handleTitleBlur, setHeader]);
 
   // Toggle public/private
   const handleTogglePublic = async () => {
     try {
       await togglePublic(board.id, !isPublic);
-      // Refetch board to get new share_guid
       const updated = await getBoard(board.id);
       setBoard(updated);
+      window.dispatchEvent(new Event('boardsUpdated'));
     } catch (err) {
       console.error('Toggle public error:', err);
     }
@@ -166,7 +169,7 @@ export default function Board() {
     try {
       if (isOwner) {
         await softDeleteBoard(board.id);
-        navigate('/trackboard');
+        navigate('/boards');
       } else {
         await hardDeleteBoard(board.id);
         // Remove from localStorage recent
@@ -198,75 +201,69 @@ export default function Board() {
     );
   }
 
-  return (
+   return (
     <div className={styles.root}>
-      {/* Header */}
+      {/* Action buttons — left/right split */}
       <div className={styles.boardHeader}>
-        {canEdit ? (
-          <label className={styles.colorPicker} style={{ background: board.color }} title="Zmień kolor">
-            <input
-              type="color"
-              value={board.color}
-              onChange={handleColorChange}
-              className={styles.colorInput}
-            />
-          </label>
-        ) : (
-          <div className={styles.colorDot} style={{ background: board.color }} />
-        )}
-
-        {canEdit ? (
-          <input
-            className={styles.titleEdit}
-            value={titleDraft}
-            onChange={e => setTitleDraft(e.target.value)}
-            onBlur={handleTitleBlur}
-            onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); }}
-            maxLength={200}
-          />
-        ) : (
-          <span className={styles.titleStatic}>{board.title}</span>
-        )}
-
-        <span className={isPublic ? styles.badgePublic : styles.badgePrivate}>
-          {isPublic ? 'PUBLIC' : 'PRIVATE'}
-        </span>
-
-        {isOwner && (
-          <button className={styles.headerBtn} onClick={handleTogglePublic}>
-            {isPublic ? '🔒 Ustaw prywatny' : '🔗 Udostępnij'}
-          </button>
-        )}
-
-        {isPublic && (
-          <span className={styles.copyLinkWrapper}>
-            <button className={styles.headerBtn} onClick={handleCopyLink} style={{ borderColor: 'var(--color-success, #2e8b57)', color: 'var(--color-success, #2e8b57)' }}>
-              Skopiuj link
-            </button>
-            {copyTooltip && <span className={styles.copyTooltip}><span className={styles.copyTooltipCheck}>✓</span> Skopiowano!</span>}
-          </span>
-        )}
-
-        {canAdopt && (
-          <button className={styles.adoptBtn} onClick={handleAdopt}>
-            Zaadoptuj ten board
-          </button>
-        )}
-
-        {canEdit && (
+        <div className={styles.boardHeaderGroup}>
           <button
-            className={styles.adoptBtn}
-            onClick={() => setEditMode(e => !e)}
+            className={styles.headerBtn}
+            onClick={isOwner ? handleTogglePublic : undefined}
+            style={{
+              borderColor: isPublic ? 'var(--color-text-info, #1a6b9a)' : 'var(--color-border-primary)',
+              color: isPublic ? 'var(--color-text-info, #1a6b9a)' : 'var(--color-text-tertiary)',
+              cursor: isOwner ? 'pointer' : 'default',
+              display: 'inline-flex', alignItems: 'center', gap: '5px',
+              minWidth: '90px', justifyContent: 'center',
+            }}
+            title={isOwner ? (isPublic ? 'Kliknij aby ustawić prywatny' : 'Kliknij aby udostępnić') : undefined}
           >
-            {editMode ? '✓ Zakończ edycję' : 'Edytuj'}
+            {isPublic ? <Globe size={14} /> : <Lock size={14} />}
+            {isPublic ? 'PUBLIC' : 'PRIVATE'}
           </button>
-        )}
 
-        {canDelete && (
-          <button className={styles.deleteBtn} onClick={() => setShowDeleteConfirm(true)}>
-            Usuń
-          </button>
-        )}
+          {isPublic && (
+            <span className={styles.copyLinkWrapper}>
+              <button
+                className={styles.headerBtn}
+                onClick={handleCopyLink}
+                style={{ borderColor: 'var(--color-success, #2e8b57)', color: 'var(--color-success, #2e8b57)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+              >
+                <LinkIcon size={14} /> Skopiuj link
+              </button>
+              {copyTooltip && <span className={styles.copyTooltip}><span className={styles.copyTooltipCheck}>✓</span> Skopiowano!</span>}
+            </span>
+          )}
+        </div>
+
+        <div className={styles.boardHeaderGroup}>
+          {canAdopt && (
+            <button className={styles.adoptBtn} onClick={handleAdopt}>
+              Zaadoptuj ten board
+            </button>
+          )}
+
+          {canEdit && (
+            <button
+              className={styles.adoptBtn}
+              onClick={() => setEditMode(e => !e)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+            >
+              {editMode ? <Check size={14} /> : <Pencil size={14} />}
+              {editMode ? 'Zakończ edycję' : 'Edytuj'}
+            </button>
+          )}
+
+          {canDelete && (
+            <button
+              className={styles.deleteBtn}
+              onClick={() => setShowDeleteConfirm(true)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+            >
+              <Trash2 size={14} /> Usuń
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Delete confirm modal */}
@@ -296,12 +293,6 @@ export default function Board() {
         saveStatus={saveStatus}
         createdAt={board.created_at}
       />
-
-      <div style={{ textAlign: 'center', padding: 'var(--space-3) 0' }}>
-        <button className={styles.backBtn} onClick={() => navigate(user ? '/trackboard' : '/')}>
-          ← Wróć na stronę główną
-        </button>
-      </div>
     </div>
   );
 }

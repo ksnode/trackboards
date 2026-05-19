@@ -11,3 +11,75 @@
   overflow-x: hidden;
   background-color: var(--color-bg);
 }
+
+/* Shared content header bar — matches sidebar header */
+.contentHeader {
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-border-primary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: var(--space-3) var(--space-6);
+}
+
+.contentHeaderInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  max-width: var(--content-max-width);
+}
+
+.contentHeaderLeft {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.contentHeaderTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contentHeaderInput {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border-primary);
+  outline: none;
+  width: 100%;
+  padding: 0;
+  line-height: 1.4;
+}
+
+.contentHeaderInput:focus {
+  border-color: var(--color-accent);
+}
+
+/* Back button — blue filled, matches sidebar "+ Nowy board" hover state */
+.contentHeaderBackBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-accent);
+  background: var(--color-accent);
+  color: white;
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.contentHeaderBackBtn:hover {
+  filter: brightness(1.15);
+}

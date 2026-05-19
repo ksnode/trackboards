@@ -23,7 +23,7 @@ export default function Home() {
   const recentBoards = getRecentBoards();
 
   // Redirect logged-in users only after auth resolves
-  if (!loading && user) return <Navigate to="/trackboard" replace />;
+  if (!loading && user) return <Navigate to="/boards" replace />;
 
   const handleCreateAnonymous = async () => {
     if (creating) return;
