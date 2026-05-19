@@ -5,9 +5,63 @@
   border-right: 1px solid var(--color-border-primary);
   display: flex;
   flex-direction: column;
-  transition: width var(--transition-fast);
+  transition: width 0.2s ease, transform 0.2s ease;
   position: sticky;
   top: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  z-index: 50;
+}
+
+/* Mobile overlay mode: fixed panel over content */
+.rootOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 50;
+  box-shadow: var(--shadow-md);
+}
+
+/* Fixed hamburger button — visible only on mobile when sidebar is closed */
+.hamburgerFixed {
+  position: fixed;
+  top: var(--space-3);
+  left: var(--space-3);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: var(--space-1);
+  transition: background var(--transition-fast);
+}
+
+.hamburgerFixed:hover {
+  background: var(--color-bg-tertiary);
+}
+
+/* Inline hamburger inside sidebar header — mobile only */
+.hamburgerInline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--border-radius-md);
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+}
+
+.hamburgerInline:hover {
+  background: var(--color-bg-tertiary);
 }
 
 .header {

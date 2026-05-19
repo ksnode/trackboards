@@ -65,6 +65,11 @@ export default function Board() {
     return () => { mounted = false; };
   }, [guid, user]);
 
+  // Reset editMode when navigating to a different board
+  useEffect(() => {
+    setEditMode(false);
+  }, [guid]);
+
   // Permissions
   const isOwner = user && board && board.owner_id === user.id;
   const isOrphan = board && board.owner_id === null && board.share_guid;

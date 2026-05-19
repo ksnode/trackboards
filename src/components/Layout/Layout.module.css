@@ -10,6 +10,7 @@
   flex-direction: column;
   overflow-x: hidden;
   background-color: var(--color-bg);
+  min-width: 0;
 }
 
 /* Shared content header bar — matches sidebar header */
@@ -37,6 +38,7 @@
   min-width: 0;
   display: flex;
   align-items: center;
+  gap: var(--space-3);
 }
 
 .contentHeaderTitle {
@@ -65,7 +67,7 @@
   border-color: var(--color-accent);
 }
 
-/* Back button — blue filled, matches sidebar "+ Nowy board" hover state */
+/* Back button — blue filled */
 .contentHeaderBackBtn {
   display: inline-flex;
   align-items: center;
@@ -84,4 +86,12 @@
 
 .contentHeaderBackBtn:hover {
   filter: brightness(1.15);
+}
+
+/* Overlay backdrop for mobile sidebar */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 49;
 }

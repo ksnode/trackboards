@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../lib/auth';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { listMyBoards, createBoardAuthenticated, updateBoardMeta, softDeleteBoard } from '../../lib/boards';
-import { Globe, GripVertical, Plus } from 'lucide-react';
+import { Globe, GripVertical, Menu, Plus } from 'lucide-react';
 import styles from './Sidebar.module.css';
 
 function resolveTheme(pref) {
@@ -12,7 +12,7 @@ function resolveTheme(pref) {
   return pref;
 }
 
-export function Sidebar() {
+export function Sidebar({ isMobile, isOpen, onToggle, onClose }) {
   const { user, profile, signInWithGoogle, signOut } = useAuth();
   const navigate = useNavigate();
   const [themePref, setThemePref] = useState(localStorage.getItem('trackboards_theme') || 'auto');
@@ -64,6 +64,11 @@ export function Sidebar() {
     if (menuOpen) document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [menuOpen]);
+
+  // Close sidebar when a link is clicked (mobile overlay mode)
+  const handleLinkClick = () => {
+    if (isMobile && isOpen) onClose();
+  };
 
   // Create new board
   const handleCreate = async () => {
@@ -139,11 +144,29 @@ export function Sidebar() {
     return email.length > 28 ? email.slice(0, 28) + '…' : email;
   };
 
+  // Mobile closed: render only the fixed hamburger button
+  if (isMobile && !isOpen) {
+    return (
+      <button className={styles.hamburgerFixed} onClick={onToggle} aria-label="Menu">
+        <Menu size={22} />
+      </button>
+    );
+  }
+
   return (
-    <aside className={styles.root}>
-      {/* Header: logo + new board */}
+    <aside className={`${styles.root} ${isMobile && isOpen ? styles.rootOverlay : ''}`}>
+      {/* Header: hamburger (mobile) + logo + new board */}
       <div className={styles.header}>
-        <NavLink to={user ? "/boards" : "/"} className={styles.headerLogo}>Trackboards</NavLink>
+        {isMobile && (
+          <button className={styles.hamburgerInline} onClick={onToggle} aria-label="Zamknij menu">
+            <Menu size={20} />
+          </button>
+        )}
+        <NavLink
+          to={user ? "/boards" : "/"}
+          className={styles.headerLogo}
+          onClick={handleLinkClick}
+        >Trackboards</NavLink>
         {user && (
           <button
             onClick={handleCreate}
@@ -174,6 +197,7 @@ export function Sidebar() {
             <NavLink
               to={`/board/${b.id}`}
               className={({ isActive }) => isActive ? `${styles.boardItem} ${styles.active}` : styles.boardItem}
+              onClick={handleLinkClick}
             >
               <span className={styles.boardDot} style={{ background: b.color }} />
               <span className={styles.boardItemTitle}>{b.title}</span>
@@ -216,9 +240,9 @@ export function Sidebar() {
         {user ? (
           <>
             {profile?.role === 'admin' && (
-              <NavLink to="/admin" className={styles.footerLink}>Panel admina</NavLink>
+              <NavLink to="/admin" className={styles.footerLink} onClick={handleLinkClick}>Panel admina</NavLink>
             )}
-            <NavLink to="/profile" className={styles.footerLink}>Profil</NavLink>
+            <NavLink to="/profile" className={styles.footerLink} onClick={handleLinkClick}>Profil</NavLink>
             <div className={styles.userInfo}>
               <button onClick={signOut} className={styles.footerLink}>Wyloguj</button>
               <span className={styles.email} title={user.email}>({truncateEmail(user.email)})</span>

@@ -1,4 +1,5 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../lib/auth';
 import { HeaderProvider, useHeader } from '../../lib/headerContext';
 import { Sidebar } from './Sidebar';
@@ -37,11 +38,41 @@ function ContentHeader() {
 
 export function Layout() {
   const { user } = useAuth();
+  const location = useLocation();
+  const [isMobile, setIsMobile] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // Close sidebar on route change (mobile)
+  useEffect(() => {
+    if (isMobile) setSidebarOpen(false);
+  }, [location.pathname]);
+
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+  const toggleSidebar = useCallback(() => setSidebarOpen(o => !o), []);
 
   return (
     <HeaderProvider>
       <div className={styles.root}>
-        {user && <Sidebar />}
+        {user && (
+          <>
+            {isMobile && sidebarOpen && (
+              <div className={styles.overlay} onClick={closeSidebar} />
+            )}
+            <Sidebar
+              isMobile={isMobile}
+              isOpen={sidebarOpen}
+              onToggle={toggleSidebar}
+              onClose={closeSidebar}
+            />
+          </>
+        )}
         <main className={styles.content}>
           <ContentHeader />
           <Outlet />
