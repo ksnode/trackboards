@@ -1,5 +1,6 @@
 .root {
   /* Layout handled by PageContent.module.css */
+  padding-top: 0;
 }
 
 .boardsList {

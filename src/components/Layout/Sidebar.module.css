@@ -328,9 +328,14 @@
 }
 
 .segmentActive {
-  composes: segment;
+  flex: 1;
+  padding: var(--space-1) 0;
+  font-size: var(--font-size-xs);
   background: var(--color-accent);
   color: white;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
 }
 
 .segmentActive:hover {

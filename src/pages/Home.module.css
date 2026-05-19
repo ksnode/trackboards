@@ -62,8 +62,14 @@
 }
 
 .cardAccent {
-  composes: card;
-  border-color: var(--color-accent);
+  flex: 1;
+  padding: var(--space-6);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-bg-secondary);
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
 .cardAccent:hover {
@@ -75,7 +81,7 @@
 }
 
 .cardAccent:hover .cardDesc {
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .recentSection {

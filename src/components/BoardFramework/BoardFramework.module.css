@@ -23,7 +23,11 @@
 }
 
 .globalRowLast {
-  composes: globalRow;
+  display: grid;
+  grid-template-columns: 88px 1fr 40px 110px;
+  align-items: center;
+  gap: 10px;
+  padding: var(--space-2) var(--space-3);
   border-bottom: none;
   background: var(--color-bg-secondary);
 }
@@ -33,7 +37,7 @@
 }
 
 .globalRowLabelBold {
-  composes: globalRowLabel;
+  font-size: var(--font-size-sm);
   font-weight: 600;
 }
 
@@ -75,7 +79,10 @@
 }
 
 .moduleCardPlaceholder {
-  composes: moduleCard;
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  margin-bottom: var(--space-3);
+  overflow: hidden;
   opacity: 0.65;
 }
 
@@ -91,13 +98,25 @@
 }
 
 .moduleHeaderCollapsed {
-  composes: moduleHeader;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-secondary);
   border-bottom: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
 }
 
 .moduleHeaderEdit {
-  composes: moduleHeader;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg-secondary);
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
   cursor: default;
+  user-select: none;
 }
 
 .moduleColorDot {
@@ -213,22 +232,44 @@
 }
 
 .nodeRowEdit {
-  composes: nodeRow;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-4);
   cursor: default;
+  transition: background 0.1s;
+  min-height: 32px;
 }
 
 .nodeRowPlaceholder {
-  composes: nodeRow;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-4);
   cursor: default;
+  transition: background 0.1s;
+  min-height: 32px;
 }
 
 .nodeRowDone {
-  composes: nodeRow;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-4);
+  cursor: pointer;
+  transition: background 0.1s;
+  min-height: 32px;
   background: var(--color-background-success);
 }
 
 .nodeRowSkip {
-  composes: nodeRow;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-4);
+  cursor: pointer;
+  transition: background 0.1s;
+  min-height: 32px;
   background: var(--color-bg-secondary);
 }
 
@@ -263,12 +304,14 @@
 }
 
 .nodeLabelParent {
-  composes: nodeLabel;
+  font-size: var(--font-size-base);
+  flex: 1;
   font-weight: 500;
 }
 
 .nodeLabelParentChild {
-  composes: nodeLabelChild;
+  font-size: var(--font-size-sm);
+  flex: 1;
   font-weight: 500;
 }
 
@@ -354,9 +397,14 @@
 }
 
 .iconBtnDanger {
-  composes: iconBtn;
-  border-color: var(--color-border-danger);
+  font-size: var(--font-size-xs);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--color-border-danger);
+  background: transparent;
   color: var(--color-text-danger);
+  cursor: pointer;
+  line-height: 1.4;
 }
 
 .iconBtnDanger:hover {
@@ -381,8 +429,14 @@
 }
 
 .addModuleBtn {
-  composes: addStepBtn;
+  font-size: var(--font-size-sm);
   padding: 6px var(--space-4);
+  border-radius: var(--border-radius-md);
+  border: 1px dashed var(--color-border-secondary);
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  width: 100%;
   margin-bottom: var(--space-2);
 }
 
@@ -470,7 +524,8 @@
 }
 
 .editToggleActive {
-  composes: editToggle;
+  cursor: pointer;
+  text-decoration: underline;
   color: var(--color-text-warning);
 }
 

@@ -92,13 +92,23 @@
 }
 
 .badgePublic {
-  composes: badge;
+  font-size: var(--font-size-sm);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-sm);
+  transition: opacity var(--transition-fast);
+  user-select: none;
+  line-height: 1.4;
   background: var(--color-background-info);
   color: var(--color-text-info);
 }
 
 .badgePrivate {
-  composes: badge;
+  font-size: var(--font-size-sm);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--border-radius-sm);
+  transition: opacity var(--transition-fast);
+  user-select: none;
+  line-height: 1.4;
   background: var(--color-bg-tertiary);
   color: var(--color-text-tertiary);
 }
@@ -121,9 +131,15 @@
 }
 
 .adoptBtn {
-  composes: headerBtn;
-  border-color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-accent);
+  background: transparent;
   color: var(--color-accent);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
 .adoptBtn:hover {
@@ -203,9 +219,15 @@
 }
 
 .deleteBtn {
-  composes: headerBtn;
-  border-color: var(--color-danger);
+  font-size: var(--font-size-sm);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-danger);
+  background: transparent;
   color: var(--color-danger);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
 .deleteBtn:hover {
