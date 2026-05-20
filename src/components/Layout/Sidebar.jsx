@@ -13,17 +13,20 @@ import {
   Globe, Unplug,
 } from 'lucide-react';
 import ConfirmModal from '../ConfirmModal';
+import { subscribeToBoardList } from '../../lib/realtime';
 import styles from './Sidebar.module.css';
 
 const RECENT_KEY = 'trackboards_recent';
 
-function getRecentBoards() {
+function getRecentGuids() {
   try {
     const raw = localStorage.getItem(RECENT_KEY);
     if (!raw) return [];
-    return JSON.parse(raw)
-      .sort((a, b) => new Date(b.lastVisited) - new Date(a.lastVisited))
-      .slice(0, 10);
+    const items = JSON.parse(raw);
+    // Support both old format {guid, title, ...} and new format (plain strings)
+    const guids = items.map(item => typeof item === 'string' ? item : item.guid).filter(Boolean);
+    // Deduplicate, preserving order (first occurrence wins)
+    return [...new Set(guids)].slice(0, 10);
   } catch { return []; }
 }
 
@@ -55,8 +58,10 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
   const [subscribeError, setSubscribeError] = useState('');
   const [subscribing, setSubscribing] = useState(false);
   const [recentBoardStatus, setRecentBoardStatus] = useState({});
+  const [anonBoards, setAnonBoards] = useState([]);
   const [anonRemoveConfirm, setAnonRemoveConfirm] = useState(null);
   const [extUnsubConfirm, setExtUnsubConfirm] = useState(null);
+  const [adoptConfirm, setAdoptConfirm] = useState(null);
   const menuRef = useRef(null);
   const extMenuRef = useRef(null);
 
@@ -101,6 +106,46 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
     return () => window.removeEventListener('boardsUpdated', handler);
   }, [refreshBoards, refreshExtBoards]);
 
+  // Fetch anon boards data from DB
+  const fetchAnonBoards = useCallback(async () => {
+    if (user) return;
+    const guids = getRecentGuids();
+    if (guids.length === 0) { setAnonBoards([]); return; }
+    const results = await Promise.all(
+      guids.map(async (guid) => {
+        try {
+          const board = await getBoard(guid);
+          return board && board.share_mode
+            ? { guid, available: true, title: board.title, owner_id: board.owner_id, share_mode: board.share_mode }
+            : { guid, available: false, title: null, owner_id: null, share_mode: null };
+        } catch {
+          return { guid, available: false, title: null, owner_id: null, share_mode: null };
+        }
+      })
+    );
+    setAnonBoards(results);
+  }, [user]);
+
+  useEffect(() => {
+    fetchAnonBoards();
+    const handler = () => fetchAnonBoards();
+    window.addEventListener('boardsUpdated', handler);
+    return () => window.removeEventListener('boardsUpdated', handler);
+  }, [fetchAnonBoards]);
+
+  // Realtime: subscribe to board list changes (all users)
+  useEffect(() => {
+    const unsub = subscribeToBoardList(() => {
+      if (user) {
+        refreshBoards();
+        refreshExtBoards();
+      } else {
+        fetchAnonBoards();
+      }
+    });
+    return unsub;
+  }, [user, refreshBoards, refreshExtBoards, fetchAnonBoards]);
+
   // Close menu on click outside
   useEffect(() => {
     const handleClick = (e) => {
@@ -137,8 +182,8 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
     setCreating(true);
     try {
       const board = await createBoardAnonymous();
-      const recent = getRecentBoards();
-      recent.unshift({ guid: board.share_guid, title: board.title, lastVisited: new Date().toISOString() });
+      const recent = getRecentGuids().filter(g => g !== board.share_guid);
+      recent.unshift(board.share_guid);
       localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 10)));
       navigate(`/board/${board.share_guid}`);
     } catch (err) {
@@ -267,30 +312,6 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
 
   const ThemeIcon = THEME_ICONS[themePref];
 
-  // Recent anon boards for sidebar
-  const recentBoards = !user ? getRecentBoards() : [];
-
-  // Check availability of recent anon boards
-  useEffect(() => {
-    if (user || recentBoards.length === 0) return;
-    let mounted = true;
-    const checkAll = async () => {
-      const status = {};
-      await Promise.all(
-        recentBoards.map(async (b) => {
-          try {
-            const board = await getBoard(b.guid);
-            status[b.guid] = board && board.share_mode ? true : false;
-          } catch {
-            status[b.guid] = false;
-          }
-        })
-      );
-      if (mounted) setRecentBoardStatus(status);
-    };
-    checkAll();
-    return () => { mounted = false; };
-  }, [user, recentBoards.length]);
 
   return (
     <aside className={[
@@ -429,15 +450,9 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                           {isAvailable && !b.owner_id && (
                             <button
                               className={styles.boardMenuItem}
-                              onClick={async () => {
-                                try {
-                                  await adoptOrphanBoard(b.id);
-                                  try { await unsubscribeFromBoard(b.id); } catch { }
-                                  window.dispatchEvent(new Event('boardsUpdated'));
-                                  setExtMenuOpen(null);
-                                } catch (err) {
-                                  console.error('Adopt error:', err);
-                                }
+                              onClick={() => {
+                                setExtMenuOpen(null);
+                                setAdoptConfirm(b.id);
                               }}
                             >Adoptuj</button>
                           )}
@@ -463,52 +478,50 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
           {/* ── NOT LOGGED IN: anon boards from localStorage ── */}
           {!user && (
             <div className={styles.boardsList}>
-              {recentBoards.map(b => {
-                const isAvailable = recentBoardStatus[b.guid] !== false;
-                const isChecked = b.guid in recentBoardStatus;
-                return (
-                  <div key={b.guid} className={styles.boardItemRow}>
-                    <NavLink
-                      to={isAvailable ? `/board/${b.guid}` : '#'}
-                      className={({ isActive }) => isActive && isAvailable ? `${styles.boardItem} ${styles.active}` : styles.boardItem}
-                      onClick={(e) => {
-                        if (!isAvailable && isChecked) { e.preventDefault(); return; }
-                        handleLinkClick();
-                      }}
-                      style={!isAvailable && isChecked ? { opacity: 0.4, cursor: 'default' } : undefined}
-                      title={!isAvailable && isChecked ? 'Board został ukryty lub usunięty' : undefined}
-                    >
-                      <span className={styles.boardItemTitle}>{b.title}</span>
-                      {isAvailable ? (
-                        b.ownerId ? (
+              {anonBoards.map(b => (
+                <div key={b.guid} className={styles.boardItemRow}>
+                  <NavLink
+                    to={b.available ? `/board/${b.guid}` : '#'}
+                    className={({ isActive }) => isActive && b.available ? `${styles.boardItem} ${styles.active}` : styles.boardItem}
+                    onClick={(e) => {
+                      if (!b.available) { e.preventDefault(); return; }
+                      handleLinkClick();
+                    }}
+                    style={!b.available ? { opacity: 0.4, cursor: 'default' } : undefined}
+                    title={!b.available ? 'Board został ukryty lub usunięty' : undefined}
+                  >
+                    <span className={styles.boardItemTitle}>{b.title || 'Niedostępny board'}</span>
+                    {b.available ? (
+                      b.share_mode ? (
+                        b.owner_id ? (
                           <Globe size={12} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.5 }} />
                         ) : (
                           <span className={styles.anonBadge}>A</span>
                         )
-                      ) : isChecked ? (
-                        <Unplug size={12} style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }} />
-                      ) : null}
-                    </NavLink>
-                    <div className={styles.boardMenuWrapper}>
-                      <button
-                        className={styles.boardMenuBtn}
-                        onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === b.guid ? null : b.guid); }}
-                      >⋮</button>
-                      {menuOpen === b.guid && (
-                        <div className={styles.boardMenuDropdown}>
-                          <button
-                            className={styles.boardMenuItemDanger}
-                            onClick={() => {
-                              setMenuOpen(null);
-                              setAnonRemoveConfirm(b.guid);
-                            }}
-                          >Usuń z listy</button>
-                        </div>
-                      )}
-                    </div>
+                      ) : null
+                    ) : (
+                      <Unplug size={12} style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }} />
+                    )}
+                  </NavLink>
+                  <div className={styles.boardMenuWrapper} ref={menuOpen === b.guid ? menuRef : null}>
+                    <button
+                      className={styles.boardMenuBtn}
+                      onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === b.guid ? null : b.guid); }}
+                    >⋮</button>
+                    {menuOpen === b.guid && (
+                      <div className={styles.boardMenuDropdown}>
+                        <button
+                          className={styles.boardMenuItemDanger}
+                          onClick={() => {
+                            setMenuOpen(null);
+                            setAnonRemoveConfirm(b.guid);
+                          }}
+                        >Usuń z listy</button>
+                      </div>
+                    )}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
 
@@ -528,7 +541,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
           <ConfirmModal
             open={!!extUnsubConfirm}
             title="Odłączyć board?"
-            description="Board zniknie z Twoich Zewnętrznych."
+            description="Board zniknie z listy."
             cancelLabel="Anuluj"
             confirmLabel="Odłącz"
             variant="danger"
@@ -542,6 +555,27 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                 console.error('Unsubscribe error:', err);
               }
               setExtUnsubConfirm(null);
+            }}
+          />
+
+          {/* Adopt confirm modal */}
+          <ConfirmModal
+            open={!!adoptConfirm}
+            title="Zaadoptować ten board?"
+            description="Board zostanie przeniesiony do Twoich boardów. Będziesz jego właścicielem."
+            cancelLabel="Anuluj"
+            confirmLabel="Adoptuj"
+            variant="primary"
+            onCancel={() => setAdoptConfirm(null)}
+            onConfirm={async () => {
+              try {
+                await adoptOrphanBoard(adoptConfirm);
+                try { await unsubscribeFromBoard(adoptConfirm); } catch { }
+                window.dispatchEvent(new Event('boardsUpdated'));
+              } catch (err) {
+                console.error('Adopt error:', err);
+              }
+              setAdoptConfirm(null);
             }}
           />
 

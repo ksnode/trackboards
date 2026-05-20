@@ -6,6 +6,7 @@ import {
   cloneTree, findNode, getDepth, findWithParent, MAX_DEPTH,
 } from './treeHelpers';
 import styles from './BoardFramework.module.css';
+import ConfirmModal from '../ConfirmModal';
 
 export default function BoardFramework({
   boardId,
@@ -92,9 +93,9 @@ export default function BoardFramework({
   };
 
   const MODULE_COLORS = [
-    '#E24B4A','#7F77DD','#1A6B9A','#2E8B57','#BA7517',
-    '#D85A30','#854F0B','#0C447C','#6B2D8B','#1D9E75',
-    '#C03535','#0F6E56','#4A90D9','#C41E3A','#1BACA6',
+    '#E24B4A', '#7F77DD', '#1A6B9A', '#2E8B57', '#BA7517',
+    '#D85A30', '#854F0B', '#0C447C', '#6B2D8B', '#1D9E75',
+    '#C03535', '#0F6E56', '#4A90D9', '#C41E3A', '#1BACA6',
   ];
 
   const addModule = () => {
@@ -326,31 +327,31 @@ export default function BoardFramework({
           {isPlaceholderMod
             ? <div className={styles.placeholderDot} />
             : <Checkbox
-                state={nodeState}
-                color={color}
-                size={depth === 0 ? 18 : 16}
-                onClick={() => !readOnly && !editMode && handleNodeClick(node)}
-              />
+              state={nodeState}
+              color={color}
+              size={depth === 0 ? 18 : 16}
+              onClick={() => !readOnly && !editMode && handleNodeClick(node)}
+            />
           }
 
           {editMode && canEditStructure
             ? <InlineEdit
-                value={node.label}
-                onChange={v => updateNode(moduleId, node.id, 'label', v)}
-                className={isChild ? styles.nodeLabelChild : styles.nodeLabel}
-              />
+              value={node.label}
+              onChange={v => updateNode(moduleId, node.id, 'label', v)}
+              className={isChild ? styles.nodeLabelChild : styles.nodeLabel}
+            />
             : <span className={labelClass}>{node.label}</span>
           }
 
           {editMode && canEditStructure && !hasChildren
             ? <>
-                <InlineEdit
-                  value={hToHMM(node.hours)}
-                  onChange={v => updateNode(moduleId, node.id, 'hours', v)}
-                  className={styles.nodeHoursEdit}
-                />
-                <span className={styles.nodeHoursUnit}>h</span>
-              </>
+              <InlineEdit
+                value={hToHMM(node.hours)}
+                onChange={v => updateNode(moduleId, node.id, 'hours', v)}
+                className={styles.nodeHoursEdit}
+              />
+              <span className={styles.nodeHoursUnit}>h</span>
+            </>
             : (!hasChildren && node.hours > 0)
               ? <span className={styles.nodeHours}>{hToHMM(node.hours)}h</span>
               : null
@@ -405,32 +406,28 @@ export default function BoardFramework({
   return (
     <div className={styles.root}>
       {/* Delete node confirm */}
-      {deleteConfirm && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <p className={styles.modalText}>Usunąć punkt i wszystkie podpunkty?</p>
-            <p className={styles.modalSubtext}>„{deleteConfirm.label}"</p>
-            <div className={styles.modalActions}>
-              <button onClick={() => setDeleteConfirm(null)} className={styles.modalCancelBtn}>Anuluj</button>
-              <button onClick={() => deleteNode(deleteConfirm.moduleId, deleteConfirm.nodeId)} className={styles.modalDeleteBtn}>Usuń</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        open={!!deleteConfirm}
+        title="Usunąć punkt i wszystkie podpunkty?"
+        description={deleteConfirm ? `„${deleteConfirm.label}"` : ''}
+        cancelLabel="Anuluj"
+        confirmLabel="Usuń"
+        variant="danger"
+        onCancel={() => setDeleteConfirm(null)}
+        onConfirm={() => deleteNode(deleteConfirm.moduleId, deleteConfirm.nodeId)}
+      />
 
       {/* Delete module confirm */}
-      {deleteModuleConfirm && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <p className={styles.modalText}>Usunąć moduł?</p>
-            <p className={styles.modalSubtext}>„{deleteModuleConfirm.title}" — ta operacja jest nieodwracalna.</p>
-            <div className={styles.modalActions}>
-              <button onClick={() => setDeleteModuleConfirm(null)} className={styles.modalCancelBtn}>Anuluj</button>
-              <button onClick={() => deleteModule(deleteModuleConfirm.id)} className={styles.modalDeleteBtn}>Usuń moduł</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        open={!!deleteModuleConfirm}
+        title="Usunąć moduł?"
+        description={deleteModuleConfirm ? `„${deleteModuleConfirm.title}" — ta operacja jest nieodwracalna.` : ''}
+        cancelLabel="Anuluj"
+        confirmLabel="Usuń moduł"
+        variant="danger"
+        onCancel={() => setDeleteModuleConfirm(null)}
+        onConfirm={() => deleteModule(deleteModuleConfirm.id)}
+      />
 
       {/* Global progress header */}
       <div className={styles.globalHeader}>
@@ -468,28 +465,28 @@ export default function BoardFramework({
               {/* Color dot / picker */}
               {editMode && canEditStructure
                 ? <label className={styles.moduleColorPicker} style={{ background: module.color }} title="Zmień kolor">
-                    <input
-                      type="color"
-                      value={module.color}
-                      onChange={e => updateModuleField(module.id, 'color', e.target.value)}
-                      className={styles.moduleColorInput}
-                    />
-                  </label>
+                  <input
+                    type="color"
+                    value={module.color}
+                    onChange={e => updateModuleField(module.id, 'color', e.target.value)}
+                    className={styles.moduleColorInput}
+                  />
+                </label>
                 : <div className={styles.moduleColorDot} style={{ background: module.color }} />
               }
 
               {/* Title */}
               {editMode && canEditStructure
                 ? <InlineEdit
-                    value={module.title}
-                    onChange={v => updateModuleField(module.id, 'title', v)}
-                    className={styles.moduleTitleInlineEdit}
-                  />
+                  value={module.title}
+                  onChange={v => updateModuleField(module.id, 'title', v)}
+                  className={styles.moduleTitleInlineEdit}
+                />
                 : <span className={styles.moduleTitle}>
-                    {module.title}
-                    {isOptional && <span className={styles.moduleTagBadge}> (opcjonalne)</span>}
-                    {isPlaceholder && <span className={styles.moduleTagBadge}> (placeholder)</span>}
-                  </span>
+                  {module.title}
+                  {isOptional && <span className={styles.moduleTagBadge}> (opcjonalne)</span>}
+                  {isPlaceholder && <span className={styles.moduleTagBadge}> (placeholder)</span>}
+                </span>
               }
 
               {/* Tag controls (edit) / Tag label (view) */}

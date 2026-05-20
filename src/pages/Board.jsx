@@ -7,19 +7,24 @@ import {
   softDeleteBoard, hardDeleteBoard, subscribeToBoard, unsubscribeFromBoard,
 } from '../lib/boards';
 import { Link as LinkIcon, Pencil, Check, Trash2, Lock, Eye, PenLine, ChevronDown } from 'lucide-react';
+import { subscribeToBoardChanges } from '../lib/realtime';
 import BoardFramework from '../components/BoardFramework/BoardFramework';
+import ConfirmModal from '../components/ConfirmModal';
 import pageStyles from '../components/Layout/PageContent.module.css';
 import styles from './Board.module.css';
 
 const RECENT_KEY = 'trackboards_recent';
 
-function saveToRecent(guid, title, ownerId) {
+function saveToRecent(guid) {
   if (!guid) return;
   try {
     const raw = localStorage.getItem(RECENT_KEY);
     let recent = raw ? JSON.parse(raw) : [];
-    recent = recent.filter(r => r.guid !== guid);
-    recent.unshift({ guid, title, ownerId: ownerId || null, lastVisited: new Date().toISOString() });
+    // Normalize: extract guids from old object format
+    recent = recent.map(r => typeof r === 'string' ? r : r.guid).filter(Boolean);
+    // Deduplicate and move to top
+    recent = recent.filter(g => g !== guid);
+    recent.unshift(guid);
     localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 10)));
   } catch { }
 }
@@ -43,6 +48,7 @@ export default function Board() {
   const [titleDraft, setTitleDraft] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showPrivateConfirm, setShowPrivateConfirm] = useState(false);
+  const [showAdoptConfirm, setShowAdoptConfirm] = useState(false);
   const [pendingShareMode, setPendingShareMode] = useState(null);
   const [copyTooltip, setCopyTooltip] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -80,7 +86,7 @@ export default function Board() {
           setTitleDraft(data.title);
           // Save to localStorage for anon recently visited
           if (!user && data.share_guid) {
-            saveToRecent(data.share_guid, data.title, data.owner_id);
+            saveToRecent(data.share_guid);
           }
         }
       } catch (err) {
@@ -111,6 +117,16 @@ export default function Board() {
         .catch(() => { });
     }
   }, [user, board?.id, board?.owner_id, board?.share_mode]);
+
+  // Realtime: subscribe to board changes
+  useEffect(() => {
+    if (!board?.id) return;
+    const unsub = subscribeToBoardChanges(board.id, (updated) => {
+      setBoard(prev => ({ ...prev, ...updated }));
+      if (updated.title !== undefined) setTitleDraft(updated.title);
+    });
+    return unsub;
+  }, [board?.id]);
 
   // Reset editMode when navigating to a different board
   useEffect(() => {
@@ -162,7 +178,7 @@ export default function Board() {
     try {
       await updateBoardMeta(board.id, { title: titleDraft });
       setBoard(prev => ({ ...prev, title: titleDraft }));
-      if (!user && board.share_guid) saveToRecent(board.share_guid, titleDraft, board.owner_id);
+      if (!user && board.share_guid) saveToRecent(board.share_guid);
       window.dispatchEvent(new Event('boardsUpdated'));
     } catch (err) {
       console.error('Title save error:', err);
@@ -200,9 +216,12 @@ export default function Board() {
       const updated = await getBoard(board.id);
       setBoard(updated);
       window.dispatchEvent(new Event('boardsUpdated'));
-      // Navigate to canonical share_guid URL if it changed
+      // Navigate to canonical URL if share_guid changed
       if (updated.share_guid && updated.share_guid !== guid) {
         navigate(`/board/${updated.share_guid}`, { replace: true });
+      } else if (!updated.share_guid && isOwner) {
+        // Private mode: share_guid removed, redirect owner to real board ID
+        navigate(`/board/${updated.id}`, { replace: true });
       }
     } catch (err) {
       console.error('Share mode change error:', err);
@@ -253,7 +272,10 @@ export default function Board() {
         try {
           const raw = localStorage.getItem(RECENT_KEY);
           if (raw) {
-            const recent = JSON.parse(raw).filter(r => r.guid !== board.share_guid);
+            const recent = JSON.parse(raw).filter(r => {
+              const g = typeof r === 'string' ? r : r.guid;
+              return g !== board.share_guid;
+            });
             localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
           }
         } catch { }
@@ -315,7 +337,7 @@ export default function Board() {
             /* Badge for non-owners */
             board.share_mode && (
               <span className={board.share_mode === 'write' ? styles.badgeWrite : styles.badgeRead}>
-                {board.share_mode === 'write' ? <><PenLine size={11} /> Odczyt/zapis</> : <><Eye size={11} /> Tylko odczyt</>}
+                {board.share_mode === 'write' ? <><PenLine size={11} /> Public edit</> : <><Eye size={11} /> Public view</>}
               </span>
             )
           )}
@@ -336,7 +358,7 @@ export default function Board() {
 
         <div className={styles.boardHeaderGroup}>
           {canAdopt && (
-            <button className={styles.adoptBtn} onClick={handleAdopt}>
+            <button className={styles.adoptBtn} onClick={() => setShowAdoptConfirm(true)}>
               Zaadoptuj ten board
             </button>
           )}
@@ -365,32 +387,40 @@ export default function Board() {
       </div>
 
       {/* Delete confirm modal */}
-      {showDeleteConfirm && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <p className={styles.modalText}>Usunąć ten board?</p>
-            <p className={styles.modalSubtext}>Tej operacji nie można cofnąć.</p>
-            <div className={styles.modalActions}>
-              <button onClick={() => setShowDeleteConfirm(false)} className={styles.modalCancelBtn}>Anuluj</button>
-              <button onClick={handleDelete} className={styles.modalDeleteBtn}>Usuń</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        open={showDeleteConfirm}
+        title="Usunąć ten board?"
+        description="Tej operacji nie można cofnąć."
+        cancelLabel="Anuluj"
+        confirmLabel="Usuń"
+        variant="danger"
+        onCancel={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+      />
 
       {/* Private confirm modal */}
-      {showPrivateConfirm && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <p className={styles.modalText}>Ustawić jako prywatny?</p>
-            <p className={styles.modalSubtext}>Osoby które mają link do tego boardu stracą dostęp. Kontynuować?</p>
-            <div className={styles.modalActions}>
-              <button onClick={() => { setShowPrivateConfirm(false); setPendingShareMode(null); }} className={styles.modalCancelBtn}>Anuluj</button>
-              <button onClick={confirmPrivate} className={styles.modalDeleteBtn} style={{ background: 'var(--color-accent)' }}>Kontynuuj</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        open={showPrivateConfirm}
+        title="Ustawić jako prywatny?"
+        description="Osoby które mają link do tego boardu stracą dostęp. Kontynuować?"
+        cancelLabel="Anuluj"
+        confirmLabel="Kontynuuj"
+        variant="primary"
+        onCancel={() => { setShowPrivateConfirm(false); setPendingShareMode(null); }}
+        onConfirm={confirmPrivate}
+      />
+
+      {/* Adopt confirm modal */}
+      <ConfirmModal
+        open={showAdoptConfirm}
+        title="Zaadoptować ten board?"
+        description="Board zostanie przypisany do Twojego konta. Staniesz się jego właścicielem."
+        cancelLabel="Anuluj"
+        confirmLabel="Adoptuj"
+        variant="primary"
+        onCancel={() => setShowAdoptConfirm(false)}
+        onConfirm={() => { setShowAdoptConfirm(false); handleAdopt(); }}
+      />
 
       {/* Board Framework */}
       <BoardFramework

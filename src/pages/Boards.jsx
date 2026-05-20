@@ -1,23 +1,25 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { listMyBoards, listSubscribedBoards, updateBoardMeta, toggleShareMode } from '../lib/boards';
+import { listMyBoards, listSubscribedBoards, updateBoardMeta, toggleShareMode, getBoard } from '../lib/boards';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
 import { Lock, Eye, PenLine, ChevronDown, Globe } from 'lucide-react';
 import { createBoardAnonymous } from '../lib/boards';
+import { subscribeToBoardList } from '../lib/realtime';
 import { useNavigate } from 'react-router-dom';
+import ConfirmModal from '../components/ConfirmModal';
 import pageStyles from '../components/Layout/PageContent.module.css';
 import styles from './Boards.module.css';
 
 const RECENT_KEY = 'trackboards_recent';
 
-function getRecentBoards() {
+function getRecentGuids() {
   try {
     const raw = localStorage.getItem(RECENT_KEY);
     if (!raw) return [];
-    return JSON.parse(raw)
-      .sort((a, b) => new Date(b.lastVisited) - new Date(a.lastVisited))
-      .slice(0, 10);
+    const items = JSON.parse(raw);
+    const guids = items.map(item => typeof item === 'string' ? item : item.guid).filter(Boolean);
+    return [...new Set(guids)].slice(0, 10);
   } catch { return []; }
 }
 
@@ -61,6 +63,7 @@ export default function Boards() {
   const [creating, setCreating] = useState(false);
   const [privateConfirm, setPrivateConfirm] = useState(null);
   const [shareModeOpenId, setShareModeOpenId] = useState(null);
+  const [recentBoards, setRecentBoards] = useState([]);
   const shareModeRef = useRef(null);
 
   // Close share mode dropdown on outside click
@@ -104,6 +107,31 @@ export default function Boards() {
     window.addEventListener('boardsUpdated', fetchBoards);
     return () => window.removeEventListener('boardsUpdated', fetchBoards);
   }, [user]);
+
+  // Realtime: subscribe to board list changes
+  useEffect(() => {
+    if (!user) return;
+    const unsub = subscribeToBoardList(() => fetchBoards());
+    return unsub;
+  }, [user]);
+
+  // Fetch recent boards from DB for anon welcome screen
+  const fetchRecentBoards = useCallback(async () => {
+    if (user) return;
+    const guids = getRecentGuids();
+    if (guids.length === 0) { setRecentBoards([]); return; }
+    const results = await Promise.all(
+      guids.map(async (guid) => {
+        try {
+          const board = await getBoard(guid);
+          return board ? { guid, title: board.title, created_at: board.created_at } : null;
+        } catch { return null; }
+      })
+    );
+    setRecentBoards(results.filter(Boolean));
+  }, [user]);
+
+  useEffect(() => { fetchRecentBoards(); }, [fetchRecentBoards]);
 
   // Color change from card dot
   const handleColorChange = async (boardId, newColor) => {
@@ -150,8 +178,8 @@ export default function Boards() {
     setCreating(true);
     try {
       const board = await createBoardAnonymous();
-      const recent = getRecentBoards();
-      recent.unshift({ guid: board.share_guid, title: board.title, lastVisited: new Date().toISOString() });
+      const recent = getRecentGuids().filter(g => g !== board.share_guid);
+      recent.unshift(board.share_guid);
       localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 10)));
       navigate(`/board/${board.share_guid}`);
     } catch (err) {
@@ -162,7 +190,6 @@ export default function Boards() {
 
   // ── Welcome screen for unauthenticated ──
   if (!user) {
-    const recentBoards = getRecentBoards();
     return (
       <div className={`${pageStyles.root} ${styles.root}`}>
         <div className={styles.welcomeCards}>
@@ -183,9 +210,9 @@ export default function Boards() {
             <div className={styles.recentList}>
               {recentBoards.map(b => (
                 <Link key={b.guid} to={`/board/${b.guid}`} className={styles.recentItem}>
-                  <span className={styles.recentItemTitle}>{b.title}</span>
+                  <span className={styles.recentItemTitle}>{b.title || 'Board bez nazwy'}</span>
                   <span className={styles.recentItemDate}>
-                    {new Date(b.lastVisited).toLocaleString('pl-PL')}
+                    {new Date(b.created_at).toLocaleString('pl-PL')}
                   </span>
                 </Link>
               ))}
@@ -335,18 +362,16 @@ export default function Boards() {
       </div>
 
       {/* Private confirm modal */}
-      {privateConfirm && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modalContent}>
-            <p className={styles.modalText}>Ustawić jako prywatny?</p>
-            <p className={styles.modalSubtext}>Osoby które mają link do tego boardu stracą dostęp. Kontynuować?</p>
-            <div className={styles.modalActions}>
-              <button onClick={() => setPrivateConfirm(null)} className={styles.modalCancelBtn}>Anuluj</button>
-              <button onClick={confirmPrivate} className={styles.modalConfirmBtn}>Kontynuuj</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmModal
+        open={!!privateConfirm}
+        title="Ustawić jako prywatny?"
+        description="Osoby które mają link do tego boardu stracą dostęp. Kontynuować?"
+        cancelLabel="Anuluj"
+        confirmLabel="Kontynuuj"
+        variant="primary"
+        onCancel={() => setPrivateConfirm(null)}
+        onConfirm={confirmPrivate}
+      />
     </div>
   );
 }
