@@ -1,12 +1,31 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../lib/auth';
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { listMyBoards, createBoardAuthenticated, updateBoardMeta, softDeleteBoard } from '../../lib/boards';
 import {
-  Globe, GripVertical, Menu, Plus,
+  listMyBoards, createBoardAuthenticated, createBoardAnonymous,
+  updateBoardMeta, softDeleteBoard, adoptOrphanBoard,
+  listSubscribedBoards, subscribeToBoard, unsubscribeFromBoard,
+  parseBoardGuidFromUrl, getBoard,
+} from '../../lib/boards';
+import {
+  GripVertical, Menu, Plus,
   Shield, User, LogOut, Monitor, Sun, Moon,
+  Globe, Unplug,
 } from 'lucide-react';
+import ConfirmModal from '../ConfirmModal';
 import styles from './Sidebar.module.css';
+
+const RECENT_KEY = 'trackboards_recent';
+
+function getRecentBoards() {
+  try {
+    const raw = localStorage.getItem(RECENT_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw)
+      .sort((a, b) => new Date(b.lastVisited) - new Date(a.lastVisited))
+      .slice(0, 10);
+  } catch { return []; }
+}
 
 function resolveTheme(pref) {
   if (pref === 'auto') {
@@ -24,12 +43,22 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
   const navigate = useNavigate();
   const [themePref, setThemePref] = useState(localStorage.getItem('trackboards_theme') || 'auto');
   const [boards, setBoards] = useState([]);
+  const [extBoards, setExtBoards] = useState([]);
   const [creating, setCreating] = useState(false);
   const [menuOpen, setMenuOpen] = useState(null);
+  const [extMenuOpen, setExtMenuOpen] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [dragIdx, setDragIdx] = useState(null);
   const [dragOverIdx, setDragOverIdx] = useState(null);
+  const [showSubscribeModal, setShowSubscribeModal] = useState(false);
+  const [subscribeUrl, setSubscribeUrl] = useState('');
+  const [subscribeError, setSubscribeError] = useState('');
+  const [subscribing, setSubscribing] = useState(false);
+  const [recentBoardStatus, setRecentBoardStatus] = useState({});
+  const [anonRemoveConfirm, setAnonRemoveConfirm] = useState(null);
+  const [extUnsubConfirm, setExtUnsubConfirm] = useState(null);
   const menuRef = useRef(null);
+  const extMenuRef = useRef(null);
 
   const applyTheme = useCallback((pref) => {
     document.documentElement.setAttribute('data-theme', resolveTheme(pref));
@@ -48,7 +77,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
     return () => mq.removeEventListener('change', handler);
   }, [themePref, applyTheme]);
 
-  // Fetch boards + listen for updates
+  // Fetch own boards
   const refreshBoards = useCallback(() => {
     if (!user) return;
     listMyBoards()
@@ -56,28 +85,38 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
       .catch(() => { });
   }, [user]);
 
-  useEffect(() => { refreshBoards(); }, [refreshBoards]);
+  // Fetch subscribed boards
+  const refreshExtBoards = useCallback(() => {
+    if (!user) return;
+    listSubscribedBoards()
+      .then(data => setExtBoards(data || []))
+      .catch(() => { });
+  }, [user]);
+
+  useEffect(() => { refreshBoards(); refreshExtBoards(); }, [refreshBoards, refreshExtBoards]);
 
   useEffect(() => {
-    window.addEventListener('boardsUpdated', refreshBoards);
-    return () => window.removeEventListener('boardsUpdated', refreshBoards);
-  }, [refreshBoards]);
+    const handler = () => { refreshBoards(); refreshExtBoards(); };
+    window.addEventListener('boardsUpdated', handler);
+    return () => window.removeEventListener('boardsUpdated', handler);
+  }, [refreshBoards, refreshExtBoards]);
 
   // Close menu on click outside
   useEffect(() => {
     const handleClick = (e) => {
       if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(null);
+      if (extMenuRef.current && !extMenuRef.current.contains(e.target)) setExtMenuOpen(null);
     };
-    if (menuOpen) document.addEventListener('mousedown', handleClick);
+    if (menuOpen || extMenuOpen) document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
-  }, [menuOpen]);
+  }, [menuOpen, extMenuOpen]);
 
   // Close sidebar when a link is clicked (mobile overlay)
   const handleLinkClick = () => {
     if (isMobile && expanded) onCollapse();
   };
 
-  // Create new board
+  // Create new board (authenticated)
   const handleCreate = async () => {
     if (creating) return;
     setCreating(true);
@@ -92,16 +131,86 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
     }
   };
 
-  // Delete board
-  const handleDelete = async (id) => {
+  // Create new anonymous board
+  const handleCreateAnonymous = async () => {
+    if (creating) return;
+    setCreating(true);
     try {
-      await softDeleteBoard(id);
+      const board = await createBoardAnonymous();
+      const recent = getRecentBoards();
+      recent.unshift({ guid: board.share_guid, title: board.title, lastVisited: new Date().toISOString() });
+      localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 10)));
+      navigate(`/board/${board.share_guid}`);
+    } catch (err) {
+      console.error('Error creating anonymous board:', err);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  // Delete board
+  const handleDelete = async ({ id, ownerId }) => {
+    try {
+      await softDeleteBoard(id, ownerId);
       setBoards(prev => prev.filter(b => b.id !== id));
       setDeleteConfirm(null);
       setMenuOpen(null);
       window.dispatchEvent(new Event('boardsUpdated'));
     } catch (err) {
       console.error('Error deleting board:', err);
+    }
+  };
+
+  // Unsubscribe from external board
+  const handleUnsubscribe = async (boardId) => {
+    try {
+      await unsubscribeFromBoard(boardId);
+      setExtBoards(prev => prev.filter(s => s.board_id !== boardId));
+      setExtMenuOpen(null);
+      window.dispatchEvent(new Event('boardsUpdated'));
+    } catch (err) {
+      console.error('Error unsubscribing:', err);
+    }
+  };
+
+  // Subscribe modal
+  const handleSubscribeSubmit = async () => {
+    setSubscribeError('');
+    const guid = parseBoardGuidFromUrl(subscribeUrl);
+    if (!guid) {
+      setSubscribeError('Nieprawidłowy link do boardu');
+      return;
+    }
+    setSubscribing(true);
+    try {
+      const board = await getBoard(guid);
+      if (!board) {
+        setSubscribeError('Board nie istnieje lub brak dostępu');
+        return;
+      }
+      // Check if board is private
+      if (!board.share_mode) {
+        setSubscribeError('Ten board jest prywatny lub nie istnieje');
+        return;
+      }
+      // Check if user owns this board
+      if (user && board.owner_id === user.id) {
+        setSubscribeError('Ten board jest już na Twojej liście');
+        return;
+      }
+      // Check if already subscribed
+      if (extBoards.some(s => s.board_id === board.id)) {
+        setSubscribeError('Ten board jest już w Zewnętrznych');
+        return;
+      }
+      await subscribeToBoard(board.id);
+      await refreshExtBoards();
+      setShowSubscribeModal(false);
+      setSubscribeUrl('');
+    } catch (err) {
+      setSubscribeError('Board nie istnieje lub brak dostępu');
+    } finally {
+      setSubscribing(false);
     }
   };
 
@@ -158,6 +267,31 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
 
   const ThemeIcon = THEME_ICONS[themePref];
 
+  // Recent anon boards for sidebar
+  const recentBoards = !user ? getRecentBoards() : [];
+
+  // Check availability of recent anon boards
+  useEffect(() => {
+    if (user || recentBoards.length === 0) return;
+    let mounted = true;
+    const checkAll = async () => {
+      const status = {};
+      await Promise.all(
+        recentBoards.map(async (b) => {
+          try {
+            const board = await getBoard(b.guid);
+            status[b.guid] = board && board.share_mode ? true : false;
+          } catch {
+            status[b.guid] = false;
+          }
+        })
+      );
+      if (mounted) setRecentBoardStatus(status);
+    };
+    checkAll();
+    return () => { mounted = false; };
+  }, [user, recentBoards.length]);
+
   return (
     <aside className={[
       styles.root,
@@ -174,79 +308,289 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
               <Menu size={20} />
             </button>
             <NavLink
-              to={user ? "/boards" : "/"}
+              to={user ? "/boards" : "/boards"}
               className={styles.headerLogo}
               onClick={handleLinkClick}
             >Trackboards</NavLink>
           </div>
 
           {/* New board button */}
+          <button
+            onClick={user ? handleCreate : handleCreateAnonymous}
+            disabled={creating}
+            className={styles.newBoardBtnFull}
+            title={user ? "Nowy board" : "Nowy anonim board"}
+          >
+            <Plus size={14} /> {user ? 'Nowy board' : 'Nowy anonim board'}
+          </button>
+
+          {/* ── LOGGED IN: own boards + external ── */}
           {user && (
-            <button
-              onClick={handleCreate}
-              disabled={creating}
-              className={styles.newBoardBtnFull}
-              title="Nowy board"
-            >
-              <Plus size={14} /> Nowy board
-            </button>
-          )}
-
-          {/* Board list */}
-          <div className={styles.boardsList}>
-            {user && boards.map((b, idx) => (
-              <div
-                key={b.id}
-                className={`${styles.boardItemRow} ${dragOverIdx === idx ? styles.boardItemDragOver : ''} ${dragIdx === idx ? styles.boardItemDragging : ''}`}
-                draggable
-                onDragStart={(e) => handleDragStart(e, idx)}
-                onDragOver={(e) => handleDragOver(e, idx)}
-                onDragEnd={handleDragEnd}
-                onDrop={(e) => handleDrop(e, idx)}
-              >
-                <span className={styles.dragHandle}>
-                  <GripVertical size={14} />
-                </span>
-                <NavLink
-                  to={`/board/${b.id}`}
-                  className={({ isActive }) => isActive ? `${styles.boardItem} ${styles.active}` : styles.boardItem}
-                  onClick={handleLinkClick}
+            <div className={styles.boardsList}>
+              {/* Section: MOJE BOARDY */}
+              <div className={styles.sectionTitle}>Moje boardy</div>
+              {boards.map((b, idx) => (
+                <div
+                  key={b.id}
+                  className={`${styles.boardItemRow} ${dragOverIdx === idx ? styles.boardItemDragOver : ''} ${dragIdx === idx ? styles.boardItemDragging : ''}`}
+                  draggable
+                  onDragStart={(e) => handleDragStart(e, idx)}
+                  onDragOver={(e) => handleDragOver(e, idx)}
+                  onDragEnd={handleDragEnd}
+                  onDrop={(e) => handleDrop(e, idx)}
                 >
-                  <span className={styles.boardDot} style={{ background: b.color }} />
-                  <span className={styles.boardItemTitle}>{b.title}</span>
-                  {b.share_guid && <Globe size={12} style={{ opacity: 0.5, flexShrink: 0, color: 'var(--color-text-info)' }} />}
-                </NavLink>
-                <div className={styles.boardMenuWrapper} ref={menuOpen === b.id ? menuRef : null}>
-                  <button
-                    className={styles.boardMenuBtn}
-                    onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === b.id ? null : b.id); }}
-                  >⋮</button>
-                  {menuOpen === b.id && (
-                    <div className={styles.boardMenuDropdown}>
-                      <button
-                        className={styles.boardMenuItemDanger}
-                        onClick={() => setDeleteConfirm(b.id)}
-                      >Usuń</button>
-                    </div>
-                  )}
+                  <span className={styles.dragHandle}>
+                    <GripVertical size={14} />
+                  </span>
+                  <NavLink
+                    to={`/board/${b.id}`}
+                    className={({ isActive }) => isActive ? `${styles.boardItem} ${styles.active}` : styles.boardItem}
+                    onClick={handleLinkClick}
+                  >
+                    <span className={styles.boardDot} style={{ background: b.color }} />
+                    <span className={styles.boardItemTitle}>{b.title}</span>
+                    {b.share_mode ? (
+                      b.owner_id ? (
+                        <Globe size={12} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.6 }} />
+                      ) : (
+                        <span className={styles.anonBadge}>A</span>
+                      )
+                    ) : null}
+                  </NavLink>
+                  <div className={styles.boardMenuWrapper} ref={menuOpen === b.id ? menuRef : null}>
+                    <button
+                      className={styles.boardMenuBtn}
+                      onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === b.id ? null : b.id); }}
+                    >⋮</button>
+                    {menuOpen === b.id && (
+                      <div className={styles.boardMenuDropdown}>
+                        <button
+                          className={styles.boardMenuItemDanger}
+                          onClick={() => setDeleteConfirm({ id: b.id, ownerId: b.owner_id })}
+                        >Usuń</button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
 
-          {/* Delete confirm modal */}
-          {deleteConfirm && (
-            <div className={styles.modalOverlay}>
-              <div className={styles.modalContent}>
-                <p className={styles.modalText}>Usunąć ten board?</p>
-                <p className={styles.modalSubtext}>Tej operacji nie można cofnąć.</p>
-                <div className={styles.modalActions}>
-                  <button onClick={() => { setDeleteConfirm(null); setMenuOpen(null); }} className={styles.modalCancelBtn}>Anuluj</button>
-                  <button onClick={() => handleDelete(deleteConfirm)} className={styles.modalDeleteBtn}>Usuń</button>
-                </div>
+              {/* Section: ZEWNĘTRZNE */}
+              <div className={styles.sectionTitleRow}>
+                <span className={styles.sectionTitle}>Zewnętrzne</span>
+                <button
+                  className={styles.addExtBtn}
+                  onClick={() => setShowSubscribeModal(true)}
+                  title="Dodaj zewnętrzny board"
+                >
+                  <Plus size={12} />
+                </button>
               </div>
+              {extBoards.map(sub => {
+                const b = sub.boards;
+                const isAvailable = b && b.share_mode;
+                return (
+                  <div key={sub.id} className={`${styles.boardItemRow} ${!isAvailable ? styles.extBoardDisabled : ''}`}>
+                    <NavLink
+                      to={isAvailable ? `/board/${b.share_guid || b.id}` : '#'}
+                      className={({ isActive }) =>
+                        isActive && isAvailable ? `${styles.boardItem} ${styles.active}` : styles.boardItem
+                      }
+                      onClick={(e) => {
+                        if (!isAvailable) { e.preventDefault(); return; }
+                        handleLinkClick();
+                      }}
+                      title={!isAvailable ? 'Board został ukryty lub usunięty' : undefined}
+                      style={!isAvailable ? { opacity: 0.4, cursor: 'default' } : undefined}
+                    >
+                      {isAvailable ? (
+                        <>
+                          <span className={styles.boardDot} style={{ background: b.color || '#888' }} />
+                          <span className={styles.boardItemTitle}>{b.title}</span>
+                          {b.owner_id ? (
+                            <Globe size={12} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.5 }} />
+                          ) : (
+                            <span className={styles.anonBadge}>A</span>
+                          )}
+                        </>
+                      ) : (
+                        <>
+                          <Unplug size={12} style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }} />
+                          <span className={styles.boardItemTitle}>{b?.title || 'Niedostępny board'}</span>
+                        </>
+                      )}
+                    </NavLink>
+                    <div className={styles.boardMenuWrapper} ref={extMenuOpen === sub.id ? extMenuRef : null}>
+                      <button
+                        className={styles.boardMenuBtn}
+                        onClick={(e) => { e.stopPropagation(); setExtMenuOpen(extMenuOpen === sub.id ? null : sub.id); }}
+                      >⋮</button>
+                      {extMenuOpen === sub.id && (
+                        <div className={styles.boardMenuDropdown}>
+                          {isAvailable && !b.owner_id && (
+                            <button
+                              className={styles.boardMenuItem}
+                              onClick={async () => {
+                                try {
+                                  await adoptOrphanBoard(b.id);
+                                  try { await unsubscribeFromBoard(b.id); } catch { }
+                                  window.dispatchEvent(new Event('boardsUpdated'));
+                                  setExtMenuOpen(null);
+                                } catch (err) {
+                                  console.error('Adopt error:', err);
+                                }
+                              }}
+                            >Adoptuj</button>
+                          )}
+                          <button
+                            className={styles.boardMenuItemDanger}
+                            onClick={() => {
+                              setExtMenuOpen(null);
+                              setExtUnsubConfirm(sub.board_id);
+                            }}
+                          >Odłącz</button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+              {extBoards.length === 0 && (
+                <div className={styles.extEmpty}>Brak zewnętrznych boardów</div>
+              )}
             </div>
           )}
+
+          {/* ── NOT LOGGED IN: anon boards from localStorage ── */}
+          {!user && (
+            <div className={styles.boardsList}>
+              {recentBoards.map(b => {
+                const isAvailable = recentBoardStatus[b.guid] !== false;
+                const isChecked = b.guid in recentBoardStatus;
+                return (
+                  <div key={b.guid} className={styles.boardItemRow}>
+                    <NavLink
+                      to={isAvailable ? `/board/${b.guid}` : '#'}
+                      className={({ isActive }) => isActive && isAvailable ? `${styles.boardItem} ${styles.active}` : styles.boardItem}
+                      onClick={(e) => {
+                        if (!isAvailable && isChecked) { e.preventDefault(); return; }
+                        handleLinkClick();
+                      }}
+                      style={!isAvailable && isChecked ? { opacity: 0.4, cursor: 'default' } : undefined}
+                      title={!isAvailable && isChecked ? 'Board został ukryty lub usunięty' : undefined}
+                    >
+                      <span className={styles.boardItemTitle}>{b.title}</span>
+                      {isAvailable ? (
+                        b.ownerId ? (
+                          <Globe size={12} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.5 }} />
+                        ) : (
+                          <span className={styles.anonBadge}>A</span>
+                        )
+                      ) : isChecked ? (
+                        <Unplug size={12} style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }} />
+                      ) : null}
+                    </NavLink>
+                    <div className={styles.boardMenuWrapper}>
+                      <button
+                        className={styles.boardMenuBtn}
+                        onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === b.guid ? null : b.guid); }}
+                      >⋮</button>
+                      {menuOpen === b.guid && (
+                        <div className={styles.boardMenuDropdown}>
+                          <button
+                            className={styles.boardMenuItemDanger}
+                            onClick={() => {
+                              setMenuOpen(null);
+                              setAnonRemoveConfirm(b.guid);
+                            }}
+                          >Usuń z listy</button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Delete confirm modal */}
+          <ConfirmModal
+            open={!!deleteConfirm}
+            title="Usunąć ten board?"
+            description="Tej operacji nie można cofnąć."
+            cancelLabel="Anuluj"
+            confirmLabel="Usuń"
+            variant="danger"
+            onCancel={() => { setDeleteConfirm(null); setMenuOpen(null); }}
+            onConfirm={() => handleDelete(deleteConfirm)}
+          />
+
+          {/* Ext board unsubscribe confirm */}
+          <ConfirmModal
+            open={!!extUnsubConfirm}
+            title="Odłączyć board?"
+            description="Board zniknie z Twoich Zewnętrznych."
+            cancelLabel="Anuluj"
+            confirmLabel="Odłącz"
+            variant="danger"
+            onCancel={() => setExtUnsubConfirm(null)}
+            onConfirm={async () => {
+              try {
+                await unsubscribeFromBoard(extUnsubConfirm);
+                setExtBoards(prev => prev.filter(s => s.board_id !== extUnsubConfirm));
+                window.dispatchEvent(new Event('boardsUpdated'));
+              } catch (err) {
+                console.error('Unsubscribe error:', err);
+              }
+              setExtUnsubConfirm(null);
+            }}
+          />
+
+          {/* Subscribe modal */}
+          <ConfirmModal
+            open={showSubscribeModal}
+            title="Dodaj zewnętrzny board"
+            description="Wklej link do boardu"
+            cancelLabel="Anuluj"
+            confirmLabel={subscribing ? 'Dodaję...' : 'Dodaj'}
+            variant="primary"
+            disabled={subscribing}
+            error={subscribeError}
+            onCancel={() => { setShowSubscribeModal(false); setSubscribeUrl(''); setSubscribeError(''); }}
+            onConfirm={handleSubscribeSubmit}
+          >
+            <input
+              className={styles.subscribeInput}
+              type="text"
+              placeholder="https://trackboards.web.app/board/..."
+              value={subscribeUrl}
+              onChange={e => { setSubscribeUrl(e.target.value); setSubscribeError(''); }}
+              onKeyDown={e => { if (e.key === 'Enter') handleSubscribeSubmit(); }}
+              autoFocus
+            />
+          </ConfirmModal>
+
+          {/* Anon board remove confirm modal */}
+          <ConfirmModal
+            open={!!anonRemoveConfirm}
+            title="Usunąć board z listy?"
+            description="Board nie zostanie usunięty z bazy — tylko z Twojej listy."
+            cancelLabel="Anuluj"
+            confirmLabel="Usuń z listy"
+            variant="danger"
+            onCancel={() => setAnonRemoveConfirm(null)}
+            onConfirm={() => {
+              try {
+                const raw = localStorage.getItem(RECENT_KEY);
+                if (raw) {
+                  const updated = JSON.parse(raw).filter(r => r.guid !== anonRemoveConfirm);
+                  localStorage.setItem(RECENT_KEY, JSON.stringify(updated));
+                }
+              } catch { }
+              setAnonRemoveConfirm(null);
+              window.dispatchEvent(new Event('boardsUpdated'));
+              navigate('/boards');
+            }}
+          />
 
           {/* Footer */}
           <div className={styles.footer}>
@@ -254,7 +598,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
               <>
                 {profile?.role === 'admin' && (
                   <NavLink to="/admin" className={styles.footerLink} onClick={handleLinkClick}>
-                    <Shield size={14} /> Panel admina
+                    <Shield size={14} /> Admin
                   </NavLink>
                 )}
                 <NavLink to="/profile" className={styles.footerLink} onClick={handleLinkClick}>
@@ -268,7 +612,12 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                 </div>
               </>
             ) : (
-              <button onClick={signInWithGoogle} className={styles.loginBtn}>Zaloguj się</button>
+              <>
+                <span className={styles.anonLabel}>Anonim</span>
+                <button onClick={signInWithGoogle} className={styles.loginBtnAccent}>
+                  Zaloguj przez Google
+                </button>
+              </>
             )}
             <div className={styles.separator} />
             <div className={styles.segmentedGroup}>
@@ -300,16 +649,14 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
           </div>
 
           {/* New board icon */}
-          {user && (
-            <button
-              onClick={handleCreate}
-              disabled={creating}
-              className={styles.newBoardBtnIcon}
-              title="Nowy board"
-            >
-              <Plus size={18} />
-            </button>
-          )}
+          <button
+            onClick={user ? handleCreate : handleCreateAnonymous}
+            disabled={creating}
+            className={styles.newBoardBtnIcon}
+            title={user ? "Nowy board" : "Nowy anonim board"}
+          >
+            <Plus size={18} />
+          </button>
 
           {/* Spacer pushes footer icons to bottom */}
           <div className={styles.collapsedSpacer} />

@@ -34,7 +34,7 @@ export default function App() {
             <Route path="/board/:guid" element={<Board />} />
 
             {/* Authenticated routes */}
-            <Route path="/boards" element={<RequireAuth><Boards /></RequireAuth>} />
+            <Route path="/boards" element={<Boards />} />
             <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
             <Route path="/profile/boards" element={<RequireAuth><ProfileBoards /></RequireAuth>} />
             <Route path="/profile/purgatory" element={<RequireAuth><ProfilePurgatory /></RequireAuth>} />

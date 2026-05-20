@@ -3,30 +3,36 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
 import {
-  getBoard, updateBoardData, updateBoardMeta, togglePublic, adoptOrphanBoard,
-  softDeleteBoard, hardDeleteBoard,
+  getBoard, updateBoardData, updateBoardMeta, toggleShareMode, adoptOrphanBoard,
+  softDeleteBoard, hardDeleteBoard, subscribeToBoard, unsubscribeFromBoard,
 } from '../lib/boards';
-import { Link as LinkIcon, Pencil, Check, Trash2, Globe, Lock } from 'lucide-react';
+import { Link as LinkIcon, Pencil, Check, Trash2, Lock, Eye, PenLine, ChevronDown } from 'lucide-react';
 import BoardFramework from '../components/BoardFramework/BoardFramework';
 import pageStyles from '../components/Layout/PageContent.module.css';
 import styles from './Board.module.css';
 
 const RECENT_KEY = 'trackboards_recent';
 
-function saveToRecent(guid, title) {
+function saveToRecent(guid, title, ownerId) {
   if (!guid) return;
   try {
     const raw = localStorage.getItem(RECENT_KEY);
     let recent = raw ? JSON.parse(raw) : [];
     recent = recent.filter(r => r.guid !== guid);
-    recent.unshift({ guid, title, lastVisited: new Date().toISOString() });
+    recent.unshift({ guid, title, ownerId: ownerId || null, lastVisited: new Date().toISOString() });
     localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 10)));
   } catch { }
 }
 
+const SHARE_MODES = [
+  { value: null, label: 'Private', icon: Lock, emoji: '🔒' },
+  { value: 'read', label: 'Public view', icon: Eye, emoji: '👁' },
+  { value: 'write', label: 'Public edit', icon: PenLine, emoji: '✏️' },
+];
+
 export default function Board() {
   const { guid } = useParams();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const { setHeader } = useHeader();
 
@@ -36,27 +42,57 @@ export default function Board() {
   const [saveStatus, setSaveStatus] = useState('');
   const [titleDraft, setTitleDraft] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showPrivateConfirm, setShowPrivateConfirm] = useState(false);
+  const [pendingShareMode, setPendingShareMode] = useState(null);
   const [copyTooltip, setCopyTooltip] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [shareModeOpen, setShareModeOpen] = useState(false);
+  const shareModeRef = useRef(null);
 
   const debounceRef = useRef(null);
+
+  // Close share mode dropdown on outside click
+  useEffect(() => {
+    if (!shareModeOpen) return;
+    const handler = (e) => {
+      if (shareModeRef.current && !shareModeRef.current.contains(e.target)) setShareModeOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [shareModeOpen]);
 
   // Fetch board
   useEffect(() => {
     let mounted = true;
+    setError(null);
+    setLoading(true);
+    setBoard(null);
     const fetch = async () => {
       try {
         const data = await getBoard(guid);
         if (mounted) {
+          // Redirect to share_guid URL if accessed by id and board is public
+          if (data.share_guid && guid !== data.share_guid) {
+            navigate(`/board/${data.share_guid}`, { replace: true });
+            return;
+          }
           setBoard(data);
           setTitleDraft(data.title);
           // Save to localStorage for anon recently visited
           if (!user && data.share_guid) {
-            saveToRecent(data.share_guid, data.title);
+            saveToRecent(data.share_guid, data.title, data.owner_id);
           }
         }
       } catch (err) {
-        if (mounted) setError('Brak dostępu lub board nie istnieje');
+        if (mounted) {
+          setError('Brak dostępu lub board nie istnieje');
+          setHeader({
+            title: 'Brak dostępu',
+            editable: false,
+            showBack: true,
+            backLabel: user ? '← Wróć do listy' : '← Wróć do głównej',
+          });
+        }
       } finally {
         if (mounted) setLoading(false);
       }
@@ -65,18 +101,29 @@ export default function Board() {
     return () => { mounted = false; };
   }, [guid, user]);
 
+  // Auto-subscribe: logged-in user visiting a board they don't own
+  useEffect(() => {
+    if (!user || !board) return;
+    if (board.owner_id === user.id) return;
+    if (board.share_mode) {
+      subscribeToBoard(board.id)
+        .then(() => window.dispatchEvent(new Event('boardsUpdated')))
+        .catch(() => { });
+    }
+  }, [user, board?.id, board?.owner_id, board?.share_mode]);
+
   // Reset editMode when navigating to a different board
   useEffect(() => {
     setEditMode(false);
   }, [guid]);
 
   // Permissions
+  const isAdmin = profile?.role === 'admin';
   const isOwner = user && board && board.owner_id === user.id;
   const isOrphan = board && board.owner_id === null && board.share_guid;
-  const canEdit = isOwner || isOrphan;
+  const canEdit = isOwner || (board && board.share_mode === 'write') || isAdmin;
   const canEditStructure = canEdit;
   const canAdopt = user && isOrphan;
-  const isPublic = board && board.share_guid !== null;
 
   // Anon can delete only within 15 min of creation
   const canDeleteOrphan = isOrphan && board.created_at &&
@@ -115,7 +162,7 @@ export default function Board() {
     try {
       await updateBoardMeta(board.id, { title: titleDraft });
       setBoard(prev => ({ ...prev, title: titleDraft }));
-      if (!user && board.share_guid) saveToRecent(board.share_guid, titleDraft);
+      if (!user && board.share_guid) saveToRecent(board.share_guid, titleDraft, board.owner_id);
       window.dispatchEvent(new Event('boardsUpdated'));
     } catch (err) {
       console.error('Title save error:', err);
@@ -131,20 +178,41 @@ export default function Board() {
       editable: canEdit,
       onTitleChange: (e) => setTitleDraft(e.target.value),
       onTitleBlur: handleTitleBlur,
-      showBack: !!user,
+      showBack: true,
+      backLabel: user ? '← Wróć do listy' : '← Wróć do głównej',
     });
   }, [board?.id, board?.title, titleDraft, canEdit, user, handleTitleBlur, setHeader]);
 
-  // Toggle public/private
-  const handleTogglePublic = async () => {
+  // Share mode change
+  const handleShareModeChange = async (newMode) => {
+    // Going from public to private → confirm
+    if (board.share_mode && !newMode) {
+      setPendingShareMode(newMode);
+      setShowPrivateConfirm(true);
+      return;
+    }
+    await applyShareMode(newMode);
+  };
+
+  const applyShareMode = async (newMode) => {
     try {
-      await togglePublic(board.id, !isPublic);
+      await toggleShareMode(board.id, newMode, board.share_guid);
       const updated = await getBoard(board.id);
       setBoard(updated);
       window.dispatchEvent(new Event('boardsUpdated'));
+      // Navigate to canonical share_guid URL if it changed
+      if (updated.share_guid && updated.share_guid !== guid) {
+        navigate(`/board/${updated.share_guid}`, { replace: true });
+      }
     } catch (err) {
-      console.error('Toggle public error:', err);
+      console.error('Share mode change error:', err);
     }
+  };
+
+  const confirmPrivate = async () => {
+    setShowPrivateConfirm(false);
+    await applyShareMode(pendingShareMode);
+    setPendingShareMode(null);
   };
 
   // Copy link
@@ -161,10 +229,13 @@ export default function Board() {
   const handleAdopt = async () => {
     try {
       await adoptOrphanBoard(board.id);
+      // Remove from current user's subscriptions (now it's in MOJE BOARDY)
+      try { await unsubscribeFromBoard(board.id); } catch { }
       const updated = await getBoard(board.id);
       setBoard(updated);
       setSaveStatus('Board zaadoptowany!');
       setTimeout(() => setSaveStatus(''), 2000);
+      window.dispatchEvent(new Event('boardsUpdated'));
     } catch (err) {
       console.error('Adopt error:', err);
     }
@@ -174,7 +245,7 @@ export default function Board() {
   const handleDelete = async () => {
     try {
       if (isOwner) {
-        await softDeleteBoard(board.id);
+        await softDeleteBoard(board.id, board.owner_id);
         navigate('/boards');
       } else {
         await hardDeleteBoard(board.id);
@@ -212,23 +283,44 @@ export default function Board() {
       {/* Action buttons — left/right split */}
       <div className={styles.boardHeader}>
         <div className={styles.boardHeaderGroup}>
-          <button
-            className={styles.headerBtn}
-            onClick={isOwner ? handleTogglePublic : undefined}
-            style={{
-              borderColor: isPublic ? 'var(--color-text-info, #1a6b9a)' : 'var(--color-border-primary)',
-              color: isPublic ? 'var(--color-text-info, #1a6b9a)' : 'var(--color-text-tertiary)',
-              cursor: isOwner ? 'pointer' : 'default',
-              display: 'inline-flex', alignItems: 'center', gap: '5px',
-              minWidth: '82px', justifyContent: 'center',
-            }}
-            title={isOwner ? (isPublic ? 'Kliknij aby ustawić prywatny' : 'Kliknij aby udostępnić') : undefined}
-          >
-            {isPublic ? <Globe size={11} /> : <Lock size={11} />}
-            {isPublic ? 'Public' : 'Private'}
-          </button>
+          {/* Share mode dropdown — owner only */}
+          {isOwner ? (
+            <div className={styles.shareModeDropdown} ref={shareModeRef}>
+              <button
+                className={board.share_mode ? styles.shareModeTogglePublic : styles.shareModeToggle}
+                onClick={() => setShareModeOpen(o => !o)}
+              >
+                {(() => { const cur = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0]; const Icon = cur.icon; return <><Icon size={11} /> {cur.label}</>; })()}
+                <ChevronDown size={12} className={shareModeOpen ? styles.chevronOpen : ''} />
+              </button>
+              {shareModeOpen && (
+                <div className={styles.shareModeMenu}>
+                  {SHARE_MODES.map(m => {
+                    const isActive = board.share_mode === m.value;
+                    const Icon = m.icon;
+                    return (
+                      <button
+                        key={m.label}
+                        className={isActive ? styles.shareModeMenuItem_active : styles.shareModeMenuItem}
+                        onClick={() => { handleShareModeChange(m.value); setShareModeOpen(false); }}
+                      >
+                        <Icon size={12} /> {m.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Badge for non-owners */
+            board.share_mode && (
+              <span className={board.share_mode === 'write' ? styles.badgeWrite : styles.badgeRead}>
+                {board.share_mode === 'write' ? <><PenLine size={11} /> Odczyt/zapis</> : <><Eye size={11} /> Tylko odczyt</>}
+              </span>
+            )
+          )}
 
-          {isPublic && (
+          {board.share_mode && (
             <span className={styles.copyLinkWrapper}>
               <button
                 className={styles.headerBtn}
@@ -281,6 +373,20 @@ export default function Board() {
             <div className={styles.modalActions}>
               <button onClick={() => setShowDeleteConfirm(false)} className={styles.modalCancelBtn}>Anuluj</button>
               <button onClick={handleDelete} className={styles.modalDeleteBtn}>Usuń</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Private confirm modal */}
+      {showPrivateConfirm && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <p className={styles.modalText}>Ustawić jako prywatny?</p>
+            <p className={styles.modalSubtext}>Osoby które mają link do tego boardu stracą dostęp. Kontynuować?</p>
+            <div className={styles.modalActions}>
+              <button onClick={() => { setShowPrivateConfirm(false); setPendingShareMode(null); }} className={styles.modalCancelBtn}>Anuluj</button>
+              <button onClick={confirmPrivate} className={styles.modalDeleteBtn} style={{ background: 'var(--color-accent)' }}>Kontynuuj</button>
             </div>
           </div>
         </div>

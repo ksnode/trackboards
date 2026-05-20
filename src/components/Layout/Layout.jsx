@@ -8,6 +8,18 @@ import styles from './Layout.module.css';
 function ContentHeader() {
   const { header } = useHeader();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Route-based fallback title
+  const fallbackTitle = (() => {
+    const p = location.pathname;
+    if (p === '/' || p === '/boards') return 'Lista boardów';
+    if (p.startsWith('/admin')) return 'Admin';
+    if (p.startsWith('/profile')) return 'Profil';
+    return '';
+  })();
+
+  const displayTitle = header.title || fallbackTitle;
 
   return (
     <div className={styles.contentHeader}>
@@ -23,12 +35,12 @@ function ContentHeader() {
               maxLength={200}
             />
           ) : (
-            <span className={styles.contentHeaderTitle}>{header.title}</span>
+            <span className={styles.contentHeaderTitle}>{displayTitle}</span>
           )}
         </div>
         {header.showBack && (
           <button className={styles.contentHeaderBackBtn} onClick={() => navigate('/boards')}>
-            ← Wróć do listy
+            {header.backLabel || '← Wróć do listy'}
           </button>
         )}
       </div>
@@ -64,19 +76,15 @@ export function Layout() {
   return (
     <HeaderProvider>
       <div className={styles.root}>
-        {user && (
-          <>
-            {isMobile && expanded && (
-              <div className={styles.overlay} onClick={collapse} />
-            )}
-            <Sidebar
-              expanded={expanded}
-              isMobile={isMobile}
-              onToggle={toggleExpanded}
-              onCollapse={collapse}
-            />
-          </>
+        {isMobile && expanded && (
+          <div className={styles.overlay} onClick={collapse} />
         )}
+        <Sidebar
+          expanded={expanded}
+          isMobile={isMobile}
+          onToggle={toggleExpanded}
+          onCollapse={collapse}
+        />
         <main className={styles.content}>
           <ContentHeader />
           <Outlet />

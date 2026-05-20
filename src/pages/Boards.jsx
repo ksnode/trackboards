@@ -1,10 +1,31 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { listMyBoards, updateBoardMeta, togglePublic } from '../lib/boards';
+import { listMyBoards, listSubscribedBoards, updateBoardMeta, toggleShareMode } from '../lib/boards';
+import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
-import { Globe, Lock } from 'lucide-react';
+import { Lock, Eye, PenLine, ChevronDown, Globe } from 'lucide-react';
+import { createBoardAnonymous } from '../lib/boards';
+import { useNavigate } from 'react-router-dom';
 import pageStyles from '../components/Layout/PageContent.module.css';
 import styles from './Boards.module.css';
+
+const RECENT_KEY = 'trackboards_recent';
+
+function getRecentBoards() {
+  try {
+    const raw = localStorage.getItem(RECENT_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw)
+      .sort((a, b) => new Date(b.lastVisited) - new Date(a.lastVisited))
+      .slice(0, 10);
+  } catch { return []; }
+}
+
+const SHARE_MODES = [
+  { value: null, label: 'Private', icon: Lock },
+  { value: 'read', label: 'Public', icon: Eye },
+  { value: 'write', label: 'Public', icon: PenLine },
+];
 
 function calcBoardPct(board) {
   const states = board.progress?.states || {};
@@ -31,20 +52,45 @@ function calcBoardPct(board) {
 }
 
 export default function Boards() {
+  const { user, signInWithGoogle } = useAuth();
   const { setHeader } = useHeader();
+  const navigate = useNavigate();
   const [boards, setBoards] = useState([]);
+  const [extBoards, setExtBoards] = useState([]);
   const [loading, setLoading] = useState(true);
-  const colorInputRef = useRef(null);
+  const [creating, setCreating] = useState(false);
+  const [privateConfirm, setPrivateConfirm] = useState(null);
+  const [shareModeOpenId, setShareModeOpenId] = useState(null);
+  const shareModeRef = useRef(null);
+
+  // Close share mode dropdown on outside click
+  useEffect(() => {
+    if (!shareModeOpenId) return;
+    const handler = (e) => {
+      if (shareModeRef.current && !shareModeRef.current.contains(e.target)) setShareModeOpenId(null);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [shareModeOpenId]);
 
   // Set content header
   useEffect(() => {
-    setHeader({ title: 'Lista boardów', editable: false, showBack: false });
-  }, [setHeader]);
+    setHeader({
+      title: user ? 'Lista boardów' : '.',
+      editable: false,
+      showBack: false,
+    });
+  }, [setHeader, user]);
 
   const fetchBoards = async () => {
+    if (!user) { setLoading(false); return; }
     try {
-      const data = await listMyBoards();
-      setBoards(data || []);
+      const [own, ext] = await Promise.all([
+        listMyBoards(),
+        listSubscribedBoards(),
+      ]);
+      setBoards(own || []);
+      setExtBoards(ext || []);
     } catch (err) {
       console.error('Error loading boards:', err);
     } finally {
@@ -52,12 +98,12 @@ export default function Boards() {
     }
   };
 
-  useEffect(() => { fetchBoards(); }, []);
+  useEffect(() => { fetchBoards(); }, [user]);
 
   useEffect(() => {
     window.addEventListener('boardsUpdated', fetchBoards);
     return () => window.removeEventListener('boardsUpdated', fetchBoards);
-  }, []);
+  }, [user]);
 
   // Color change from card dot
   const handleColorChange = async (boardId, newColor) => {
@@ -70,82 +116,235 @@ export default function Boards() {
     }
   };
 
-  // Toggle public/private from card badge
-  const handleTogglePublic = async (e, board) => {
+  // Share mode change from card dropdown
+  const handleShareModeChange = async (e, board, newMode) => {
     e.preventDefault();
     e.stopPropagation();
+    // Going from public to private → confirm
+    if (board.share_mode && !newMode) {
+      setPrivateConfirm({ boardId: board.id, newMode, shareGuid: board.share_guid });
+      return;
+    }
+    await applyShareMode(board.id, newMode, board.share_guid);
+  };
+
+  const applyShareMode = async (boardId, newMode, shareGuid) => {
     try {
-      await togglePublic(board.id, !board.share_guid);
+      await toggleShareMode(boardId, newMode, shareGuid);
       await fetchBoards();
       window.dispatchEvent(new Event('boardsUpdated'));
     } catch (err) {
-      console.error('Toggle public error:', err);
+      console.error('Share mode change error:', err);
     }
   };
+
+  const confirmPrivate = async () => {
+    if (!privateConfirm) return;
+    await applyShareMode(privateConfirm.boardId, privateConfirm.newMode, privateConfirm.shareGuid);
+    setPrivateConfirm(null);
+  };
+
+  // Create anon board
+  const handleCreateAnonymous = async () => {
+    if (creating) return;
+    setCreating(true);
+    try {
+      const board = await createBoardAnonymous();
+      const recent = getRecentBoards();
+      recent.unshift({ guid: board.share_guid, title: board.title, lastVisited: new Date().toISOString() });
+      localStorage.setItem(RECENT_KEY, JSON.stringify(recent.slice(0, 10)));
+      navigate(`/board/${board.share_guid}`);
+    } catch (err) {
+      console.error('Error creating anonymous board:', err);
+      setCreating(false);
+    }
+  };
+
+  // ── Welcome screen for unauthenticated ──
+  if (!user) {
+    const recentBoards = getRecentBoards();
+    return (
+      <div className={`${pageStyles.root} ${styles.root}`}>
+        <div className={styles.welcomeCards}>
+          <button className={styles.welcomeCard} onClick={handleCreateAnonymous} disabled={creating}>
+            <div className={styles.welcomeCardTitle}>
+              {creating ? 'Tworzę...' : 'Utwórz board bez logowania'}
+            </div>
+            <div className={styles.welcomeCardDesc}>Publiczny link, bez konta</div>
+          </button>
+          <button className={styles.welcomeCardAccent} onClick={signInWithGoogle}>
+            <div className={styles.welcomeCardTitle}>Zaloguj się przez Google</div>
+            <div className={styles.welcomeCardDesc}>Prywatne boardy, pełna kontrola</div>
+          </button>
+        </div>
+        {recentBoards.length > 0 && (
+          <div className={styles.recentSection}>
+            <h2 className={styles.recentTitle}>Ostatnio odwiedzane</h2>
+            <div className={styles.recentList}>
+              {recentBoards.map(b => (
+                <Link key={b.guid} to={`/board/${b.guid}`} className={styles.recentItem}>
+                  <span className={styles.recentItemTitle}>{b.title}</span>
+                  <span className={styles.recentItemDate}>
+                    {new Date(b.lastVisited).toLocaleString('pl-PL')}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   if (loading) return <div className={styles.loading}>Ładowanie...</div>;
 
   return (
     <div className={`${pageStyles.root} ${styles.root}`}>
-      {boards.length === 0 ? (
-        <div className={styles.emptyState}>
-          <p className={styles.emptyText}>Nie masz jeszcze żadnych boardów</p>
-          <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-tertiary)' }}>
-            Użyj przycisku „+ Nowy board" w sidebarze
-          </p>
-        </div>
-      ) : (
-        <div className={styles.boardsList}>
-          {boards.map(board => {
-            const pct = calcBoardPct(board);
-            return (
-              <Link key={board.id} to={`/board/${board.id}`} className={styles.boardCard}>
-                <label
-                  className={styles.colorDotLabel}
-                  style={{ background: board.color }}
-                  title="Zmień kolor"
-                  onClick={e => e.stopPropagation()}
-                >
-                  <input
-                    type="color"
-                    value={board.color}
-                    onChange={e => handleColorChange(board.id, e.target.value)}
-                    className={styles.colorInput}
-                    onClick={e => { e.preventDefault(); e.stopPropagation(); e.target.showPicker?.(); }}
+      <div className={styles.boardsList}>
+        {/* ── MOJE BOARDY ── */}
+        <div className={styles.sectionTitle}>Moje boardy</div>
+        {boards.map(board => {
+          const pct = calcBoardPct(board);
+          const isPublic = !!board.share_mode;
+          return (
+            <Link key={board.id} to={`/board/${board.id}`} className={styles.boardCard}>
+              <label
+                className={styles.colorDotLabel}
+                style={{ background: board.color }}
+                title="Zmień kolor"
+                onClick={e => e.stopPropagation()}
+              >
+                <input
+                  type="color"
+                  value={board.color}
+                  onChange={e => handleColorChange(board.id, e.target.value)}
+                  className={styles.colorInput}
+                  onClick={e => { e.preventDefault(); e.stopPropagation(); e.target.showPicker?.(); }}
+                />
+              </label>
+              <div className={styles.boardInfo}>
+                <span className={styles.boardTitle}>{board.title}</span>
+                <div className={styles.boardMeta}>
+                  {new Date(board.updated_at).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </div>
+              </div>
+
+              <div className={styles.progressSection}>
+                <div className={styles.boardProgressBar}>
+                  <div
+                    className={styles.boardProgressFill}
+                    style={{ width: `${pct}%`, background: board.color }}
                   />
-                </label>
-                <div className={styles.boardInfo}>
-                  <span className={styles.boardTitle}>{board.title}</span>
-                  <div className={styles.boardMeta}>
-                    {new Date(board.updated_at).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </div>
                 </div>
+                <span className={styles.boardPct}>{pct}%</span>
+              </div>
 
-                <div className={styles.progressSection}>
-                  <div className={styles.boardProgressBar}>
-                    <div
-                      className={styles.boardProgressFill}
-                      style={{ width: `${pct}%`, background: board.color }}
-                    />
-                  </div>
-                  <span className={styles.boardPct}>{pct}%</span>
-                </div>
-
+              {/* Share mode dropdown (small) */}
+              <div
+                className={styles.shareModeDropdownSm}
+                ref={shareModeOpenId === board.id ? shareModeRef : null}
+                onClick={e => e.preventDefault()}
+              >
                 <button
-                  className={styles.badgeBtn}
-                  onClick={(e) => handleTogglePublic(e, board)}
-                  title={board.share_guid ? 'Kliknij aby ustawić prywatny' : 'Kliknij aby udostępnić'}
-                  style={{
-                    borderColor: board.share_guid ? 'var(--color-text-info, #1a6b9a)' : 'var(--color-border-primary)',
-                    color: board.share_guid ? 'var(--color-text-info, #1a6b9a)' : 'var(--color-text-tertiary)',
-                  }}
+                  className={isPublic ? styles.shareModeToggleSmPublic : styles.shareModeToggleSm}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShareModeOpenId(shareModeOpenId === board.id ? null : board.id); }}
                 >
-                  {board.share_guid ? <Globe size={11} /> : <Lock size={11} />}
-                  {board.share_guid ? 'Public' : 'Private'}
+                  {(() => { const cur = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0]; const Icon = cur.icon; return <><Icon size={10} /> {cur.label}</>; })()}
+                  <ChevronDown size={10} className={shareModeOpenId === board.id ? styles.chevronOpen : ''} />
                 </button>
-              </Link>
-            );
-          })}
+                {shareModeOpenId === board.id && (
+                  <div className={styles.shareModeMenuSm}>
+                    {SHARE_MODES.map(m => {
+                      const isActive = board.share_mode === m.value;
+                      const Icon = m.icon;
+                      return (
+                        <button
+                          key={m.label}
+                          className={isActive ? styles.shareModeMenuItemSm_active : styles.shareModeMenuItemSm}
+                          onClick={(e) => { handleShareModeChange(e, board, m.value); setShareModeOpenId(null); }}
+                        >
+                          <Icon size={11} /> {m.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </Link>
+          );
+        })}
+        {boards.length === 0 && (
+          <div className={styles.emptyState}>
+            <p className={styles.emptyText}>Nie masz jeszcze żadnych boardów</p>
+            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-tertiary)' }}>
+              Użyj przycisku „+ Nowy board" w sidebarze
+            </p>
+          </div>
+        )}
+
+        {/* ── ZEWNĘTRZNE ── */}
+        {extBoards.length > 0 && (
+          <>
+            <div className={styles.sectionTitle} style={{ marginTop: 'var(--space-6)' }}>Zewnętrzne</div>
+            {extBoards.map(sub => {
+              const b = sub.boards;
+              const isAvailable = b && b.share_mode;
+              const pct = isAvailable ? calcBoardPct(b) : 0;
+              return (
+                <Link
+                  key={sub.id}
+                  to={isAvailable ? `/board/${b.share_guid || b.id}` : '#'}
+                  className={`${styles.boardCard} ${!isAvailable ? styles.boardCardDisabled : ''}`}
+                  onClick={e => { if (!isAvailable) e.preventDefault(); }}
+                >
+                  <span className={styles.colorDotLabel} style={{ background: isAvailable ? (b.color || '#888') : '#666' }} />
+                  <div className={styles.boardInfo}>
+                    <span className={styles.boardTitle}>{b?.title || 'Niedostępny board'}</span>
+                    {isAvailable && (
+                      <div className={styles.boardMeta}>
+                        {new Date(b.updated_at).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </div>
+                    )}
+                  </div>
+
+                  {isAvailable && (
+                    <div className={styles.progressSection}>
+                      <div className={styles.boardProgressBar}>
+                        <div
+                          className={styles.boardProgressFill}
+                          style={{ width: `${pct}%`, background: b.color || '#888' }}
+                        />
+                      </div>
+                      <span className={styles.boardPct}>{pct}%</span>
+                    </div>
+                  )}
+
+                  {/* Static badge instead of dropdown */}
+                  {isAvailable ? (
+                    <span className={styles.extBadge}>
+                      <Globe size={10} /> {b.owner_id ? 'Shared' : 'Anon'}
+                    </span>
+                  ) : (
+                    <span className={styles.extBadgeHidden}>Ukryty</span>
+                  )}
+                </Link>
+              );
+            })}
+          </>
+        )}
+      </div>
+
+      {/* Private confirm modal */}
+      {privateConfirm && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <p className={styles.modalText}>Ustawić jako prywatny?</p>
+            <p className={styles.modalSubtext}>Osoby które mają link do tego boardu stracą dostęp. Kontynuować?</p>
+            <div className={styles.modalActions}>
+              <button onClick={() => setPrivateConfirm(null)} className={styles.modalCancelBtn}>Anuluj</button>
+              <button onClick={confirmPrivate} className={styles.modalConfirmBtn}>Kontynuuj</button>
+            </div>
+          </div>
         </div>
       )}
     </div>

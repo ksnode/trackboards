@@ -292,6 +292,23 @@
   overflow: hidden;
 }
 
+.boardMenuItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  background: transparent;
+  border: none;
+}
+
+.boardMenuItem:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+
 .boardMenuItemDanger {
   display: block;
   width: 100%;
@@ -493,4 +510,138 @@
 .segmentActive:hover {
   background: var(--color-accent-hover);
   color: white;
+}
+
+/* ─── Section titles ─────────────────────────────────── */
+.sectionTitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--space-2) 0 var(--space-1) 0;
+  user-select: none;
+}
+
+.sectionTitleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) 0 var(--space-1) 0;
+}
+
+.sectionTitleRow .sectionTitle {
+  padding: 0;
+}
+
+.addExtBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--color-border-primary);
+  background: transparent;
+  color: var(--color-text-tertiary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.addExtBtn:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+  border-color: var(--color-accent);
+}
+
+/* ─── External board disabled state ──────────────────── */
+.extBoardDisabled {
+  opacity: 0.5;
+}
+
+.extEmpty {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  padding: var(--space-1) 0;
+  font-style: italic;
+}
+
+/* ─── Anonymous label & accent login ─────────────────── */
+.anonLabel {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  padding: var(--space-1) 0;
+}
+
+.loginBtnAccent {
+  text-align: left;
+  color: var(--color-accent);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-1) 0;
+  transition: opacity var(--transition-fast);
+}
+
+.loginBtnAccent:hover {
+  opacity: 0.8;
+}
+
+/* ─── Subscribe modal input ──────────────────────────── */
+.subscribeInput {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-3);
+  outline: none;
+  font-family: var(--font-ui);
+}
+
+.subscribeInput:focus {
+  border-color: var(--color-accent);
+}
+
+.subscribeError {
+  font-size: var(--font-size-xs);
+  color: var(--color-danger);
+  margin-bottom: var(--space-3);
+}
+
+.modalConfirmBtn {
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--border-radius-md);
+  border: none;
+  background: var(--color-accent);
+  color: white;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.modalConfirmBtn:hover {
+  filter: brightness(1.1);
+}
+
+.modalConfirmBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ─── Anon badge ─────────────────────────────────────── */
+.anonBadge {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: var(--border-radius-sm);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-tertiary);
+  user-select: none;
 }

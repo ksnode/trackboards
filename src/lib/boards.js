@@ -36,28 +36,38 @@ export const listMyPurgatory = async () => {
 };
 
 export const getBoard = async (idOrGuid) => {
-  // Check if it's a valid UUID
+  // Check if it's a valid UUID format
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(idOrGuid);
 
   if (isUuid) {
-    const { data, error } = await supabase
+    // Try by id first — RLS ensures only owner/admin can see private boards
+    const { data: byId } = await supabase
       .from('boards')
       .select('*')
       .eq('id', idOrGuid)
       .maybeSingle();
+    if (byId) return byId;
+
+    // Then try by share_guid
+    const { data: byGuid, error } = await supabase
+      .from('boards')
+      .select('*')
+      .eq('share_guid', idOrGuid)
+      .maybeSingle();
+    if (error) throw error;
+    if (byGuid) return byGuid;
+  } else {
+    // Non-UUID string — can only be share_guid
+    const { data, error } = await supabase
+      .from('boards')
+      .select('*')
+      .eq('share_guid', idOrGuid)
+      .maybeSingle();
+    if (error) throw error;
     if (data) return data;
   }
 
-  // If not UUID or not found by id, try share_guid
-  const { data, error } = await supabase
-    .from('boards')
-    .select('*')
-    .eq('share_guid', idOrGuid)
-    .maybeSingle();
-
-  if (error) throw error;
-  if (!data) throw new Error('Board not found');
-  return data;
+  throw new Error('Board not found');
 };
 
 export const createBoardAuthenticated = async () => {
@@ -83,6 +93,7 @@ export const createBoardAnonymous = async () => {
     .insert({
       owner_id: null,
       share_guid: shareGuid,
+      share_mode: 'write',
       title: 'Nowy board',
       data: { modules: [] },
       progress: { states: {}, collapsed: {} },
@@ -115,11 +126,16 @@ export const updateBoardMeta = async (id, fields) => {
   );
 };
 
-export const softDeleteBoard = async (id) => {
+export const softDeleteBoard = async (id, ownerId) => {
+  const updates = { deleted_at: new Date().toISOString() };
+  if (ownerId !== null && ownerId !== undefined) {
+    updates.share_mode = null;
+    updates.share_guid = null;
+  }
   return handleResponse(
     await supabase
       .from('boards')
-      .update({ deleted_at: new Date().toISOString() })
+      .update(updates)
       .eq('id', id)
   );
 };
@@ -142,14 +158,59 @@ export const hardDeleteBoard = async (id) => {
   );
 };
 
-export const togglePublic = async (id, makePublic) => {
-  const share_guid = makePublic ? crypto.randomUUID() : null;
+export const toggleShareMode = async (id, mode, currentShareGuid) => {
+  const share_guid = mode === null
+    ? null
+    : (currentShareGuid ?? crypto.randomUUID());
   return handleResponse(
     await supabase
       .from('boards')
-      .update({ share_guid })
+      .update({ share_mode: mode, share_guid })
       .eq('id', id)
   );
+};
+
+export const listSubscribedBoards = async () => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return [];
+  return handleResponse(
+    await supabase
+      .from('board_subscriptions')
+      .select('*, boards(*)')
+      .eq('user_id', user.id)
+      .order('added_at', { ascending: false })
+  );
+};
+
+export const subscribeToBoard = async (boardId) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  return handleResponse(
+    await supabase
+      .from('board_subscriptions')
+      .upsert({ user_id: user.id, board_id: boardId }, { onConflict: 'user_id,board_id' })
+  );
+};
+
+export const unsubscribeFromBoard = async (boardId) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  return handleResponse(
+    await supabase
+      .from('board_subscriptions')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('board_id', boardId)
+  );
+};
+
+export const parseBoardGuidFromUrl = (url) => {
+  try {
+    const match = url.match(
+      /board\/([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})/i
+    );
+    return match ? match[1] : null;
+  } catch { return null; }
 };
 
 export const adoptOrphanBoard = async (boardId) => {
