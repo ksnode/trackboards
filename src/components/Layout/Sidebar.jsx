@@ -62,6 +62,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
   const [anonRemoveConfirm, setAnonRemoveConfirm] = useState(null);
   const [extUnsubConfirm, setExtUnsubConfirm] = useState(null);
   const [adoptConfirm, setAdoptConfirm] = useState(null);
+  const [signOutConfirm, setSignOutConfirm] = useState(false);
   const menuRef = useRef(null);
   const extMenuRef = useRef(null);
 
@@ -603,6 +604,18 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
             />
           </ConfirmModal>
 
+          {/* Sign out confirm */}
+          <ConfirmModal
+            open={signOutConfirm}
+            title="Wylogować się?"
+            description="Zostaniesz wylogowany z aplikacji."
+            cancelLabel="Anuluj"
+            confirmLabel="Wyloguj"
+            variant="danger"
+            onCancel={() => setSignOutConfirm(false)}
+            onConfirm={() => { setSignOutConfirm(false); signOut(); }}
+          />
+
           {/* Anon board remove confirm modal */}
           <ConfirmModal
             open={!!anonRemoveConfirm}
@@ -639,7 +652,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                   <User size={14} /> Profil
                 </NavLink>
                 <div className={styles.userInfo}>
-                  <button onClick={signOut} className={`${styles.footerLink} ${styles.logoutLink}`}>
+                  <button onClick={() => setSignOutConfirm(true)} className={`${styles.footerLink} ${styles.logoutLink}`}>
                     <LogOut size={14} /> Wyloguj
                   </button>
                   <span className={styles.email} title={user.email}>({truncateEmail(user.email)})</span>
@@ -708,7 +721,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                 <NavLink to="/profile" className={styles.iconBtn} title="Profil" onClick={handleLinkClick}>
                   <User size={18} />
                 </NavLink>
-                <button onClick={signOut} className={`${styles.iconBtn} ${styles.iconBtnDanger}`} title="Wyloguj">
+                <button onClick={() => setSignOutConfirm(true)} className={`${styles.iconBtn} ${styles.iconBtnDanger}`} title="Wyloguj">
                   <LogOut size={18} />
                 </button>
               </>

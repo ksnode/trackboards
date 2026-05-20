@@ -285,7 +285,23 @@ export const assignOrphanToUser = async (boardId, userId) => {
   return handleResponse(
     await supabase
       .from('boards')
-      .update({ owner_id: userId, share_guid: null })
+      .update({ owner_id: userId })
       .eq('id', boardId)
   );
+};
+
+export const forceSignOutUser = async (userId) => {
+  return handleResponse(
+    await supabase.rpc('admin_force_signout', { target_user_id: userId })
+  );
+};
+
+export const getUserProfile = async (userId) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
 };

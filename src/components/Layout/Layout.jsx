@@ -39,7 +39,7 @@ function ContentHeader() {
           )}
         </div>
         {header.showBack && (
-          <button className={styles.contentHeaderBackBtn} onClick={() => navigate('/boards')}>
+          <button className={styles.contentHeaderBackBtn} onClick={() => navigate(header.backTo || '/boards')}>
             {header.backLabel || '← Wróć do listy'}
           </button>
         )}

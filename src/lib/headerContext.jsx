@@ -10,6 +10,7 @@ export function HeaderProvider({ children }) {
     onTitleChange: null,
     onTitleBlur: null,
     showBack: false,
+    backTo: null,
   });
   return <HeaderContext.Provider value={{ header, setHeader }}>{children}</HeaderContext.Provider>;
 }

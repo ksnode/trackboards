@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
 import {
   getBoard, updateBoardData, updateBoardMeta, toggleShareMode, adoptOrphanBoard,
   softDeleteBoard, hardDeleteBoard, subscribeToBoard, unsubscribeFromBoard,
 } from '../lib/boards';
-import { Link as LinkIcon, Pencil, Check, Trash2, Lock, Eye, PenLine, ChevronDown } from 'lucide-react';
+import { Link as LinkIcon, Pencil, Check, Trash2, Lock, Eye, PenLine, ChevronDown, Shield } from 'lucide-react';
+import paStyles from './ProfileAdmin.module.css';
 import { subscribeToBoardChanges } from '../lib/realtime';
 import BoardFramework from '../components/BoardFramework/BoardFramework';
 import ConfirmModal from '../components/ConfirmModal';
@@ -37,9 +38,12 @@ const SHARE_MODES = [
 
 export default function Board() {
   const { guid } = useParams();
+  const [searchParams] = useSearchParams();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const { setHeader } = useHeader();
+
+  const adminPreview = searchParams.get('adminPreview') === 'true';
 
   const [board, setBoard] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -78,7 +82,8 @@ export default function Board() {
         const data = await getBoard(guid);
         if (mounted) {
           // Redirect to share_guid URL if accessed by id and board is public
-          if (data.share_guid && guid !== data.share_guid) {
+          // But preserve adminPreview param
+          if (data.share_guid && guid !== data.share_guid && !adminPreview) {
             navigate(`/board/${data.share_guid}`, { replace: true });
             return;
           }
@@ -108,7 +113,9 @@ export default function Board() {
   }, [guid, user]);
 
   // Auto-subscribe: logged-in user visiting a board they don't own
+  // Disabled in admin preview mode
   useEffect(() => {
+    if (adminPreview) return;
     if (!user || !board) return;
     if (board.owner_id === user.id) return;
     if (board.share_mode) {
@@ -116,7 +123,7 @@ export default function Board() {
         .then(() => window.dispatchEvent(new Event('boardsUpdated')))
         .catch(() => { });
     }
-  }, [user, board?.id, board?.owner_id, board?.share_mode]);
+  }, [user, board?.id, board?.owner_id, board?.share_mode, adminPreview]);
 
   // Realtime: subscribe to board changes
   useEffect(() => {
@@ -137,14 +144,18 @@ export default function Board() {
   const isAdmin = profile?.role === 'admin';
   const isOwner = user && board && board.owner_id === user.id;
   const isOrphan = board && board.owner_id === null && board.share_guid;
-  const canEdit = isOwner || (board && board.share_mode === 'write') || isAdmin;
+
+  // Admin preview: full access always
+  const canEdit = (adminPreview && isAdmin)
+    ? true
+    : (isOwner || (board && board.share_mode === 'write') || (isAdmin && !adminPreview));
   const canEditStructure = canEdit;
-  const canAdopt = user && isOrphan;
+  const canAdopt = user && isOrphan && !adminPreview;
 
   // Anon can delete only within 15 min of creation
   const canDeleteOrphan = isOrphan && board.created_at &&
     (Date.now() - new Date(board.created_at).getTime() < 15 * 60 * 1000);
-  const canDelete = isOwner || canDeleteOrphan;
+  const canDelete = (adminPreview && isAdmin) || isOwner || canDeleteOrphan;
 
   // Auto-enable edit mode for new empty boards
   useEffect(() => {
@@ -305,8 +316,16 @@ export default function Board() {
       {/* Action buttons — left/right split */}
       <div className={styles.boardHeader}>
         <div className={styles.boardHeaderGroup}>
-          {/* Share mode dropdown — owner only */}
-          {isOwner ? (
+          {/* Admin mode badge — only in admin preview */}
+          {adminPreview && isAdmin && (
+            <span className={paStyles.adminBadge}>
+              <Shield size={14} />
+              Admin mode
+            </span>
+          )}
+
+          {/* Share mode dropdown — owner or admin preview */}
+          {(isOwner || (adminPreview && isAdmin)) ? (
             <div className={styles.shareModeDropdown} ref={shareModeRef}>
               <button
                 className={board.share_mode ? styles.shareModeTogglePublic : styles.shareModeToggle}

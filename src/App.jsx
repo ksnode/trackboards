@@ -7,11 +7,10 @@ import Home from './pages/Home';
 import Boards from './pages/Boards';
 import Board from './pages/Board';
 import Profile from './pages/Profile';
-import ProfileBoards from './pages/ProfileBoards';
 import ProfilePurgatory from './pages/ProfilePurgatory';
 import ProfileEscape from './pages/ProfileEscape';
 import Admin from './pages/Admin';
-import AdminBoards from './pages/AdminBoards';
+import AdminAnonyms from './pages/AdminAnonyms';
 import AdminUsers from './pages/AdminUsers';
 import AdminUserBoards from './pages/AdminUserBoards';
 import AdminUserPurgatory from './pages/AdminUserPurgatory';
@@ -36,13 +35,12 @@ export default function App() {
             {/* Authenticated routes */}
             <Route path="/boards" element={<Boards />} />
             <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
-            <Route path="/profile/boards" element={<RequireAuth><ProfileBoards /></RequireAuth>} />
             <Route path="/profile/purgatory" element={<RequireAuth><ProfilePurgatory /></RequireAuth>} />
             <Route path="/profile/escape" element={<RequireAuth><ProfileEscape /></RequireAuth>} />
 
             {/* Admin routes */}
             <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />
-            <Route path="/admin/boards" element={<RequireAdmin><AdminBoards /></RequireAdmin>} />
+            <Route path="/admin/anonyms" element={<RequireAdmin><AdminAnonyms /></RequireAdmin>} />
             <Route path="/admin/users" element={<RequireAdmin><AdminUsers /></RequireAdmin>} />
             <Route path="/admin/users/:id/boards" element={<RequireAdmin><AdminUserBoards /></RequireAdmin>} />
             <Route path="/admin/users/:id/purgatory" element={<RequireAdmin><AdminUserPurgatory /></RequireAdmin>} />

@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useHeader } from '../lib/headerContext';
 import {
-  getUserProfile, listUserBoards, listUsers,
-  toggleShareMode, softDeleteBoard, hardDeleteBoard,
-  assignOrphanToUser,
+  listAnonymousBoards, hardDeleteBoard, assignOrphanToUser, listUsers,
+  toggleShareMode,
 } from '../lib/boards';
-import { supabase } from '../lib/supabase';
 import { Lock, Eye, PenLine, ChevronDown } from 'lucide-react';
 import ConfirmModal from '../components/ConfirmModal';
 import pageStyles from '../components/Layout/PageContent.module.css';
@@ -19,14 +17,13 @@ const SHARE_MODES = [
   { value: 'write', label: 'Public', icon: PenLine },
 ];
 
-export default function AdminUserBoards() {
-  const { id: userId } = useParams();
+export default function AdminAnonyms() {
   const { setHeader } = useHeader();
-
-  const [targetUser, setTargetUser] = useState(null);
   const [boards, setBoards] = useState([]);
-  const [allUsers, setAllUsers] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [copiedId, setCopiedId] = useState(null);
 
   // Share mode (portal)
   const [shareModeOpenId, setShareModeOpenId] = useState(null);
@@ -39,44 +36,32 @@ export default function AdminUserBoards() {
   const [optionsPos, setOptionsPos] = useState({ top: 0, left: 0 });
   const optionsBtnRefs = useRef({});
 
-  // Action modals
-  const [orphanConfirm, setOrphanConfirm] = useState(null);
-  const [trashConfirm, setTrashConfirm] = useState(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
-
   // Assign modal
-  const [assignModal, setAssignModal] = useState(null);
+  const [assignModal, setAssignModal] = useState(null); // { boardId, boardTitle }
   const [assignSearch, setAssignSearch] = useState('');
-  const [assignSelected, setAssignSelected] = useState(null);
-
-  // Copy
-  const [copiedId, setCopiedId] = useState(null);
+  const [assignSelected, setAssignSelected] = useState(null); // { userId, email }
 
   useEffect(() => {
-    setHeader({ title: 'Boardy użytkownika', editable: false, showBack: true, backLabel: '← Użytkownicy', backTo: '/admin/users' });
+    setHeader({ title: 'Anonimowe boardy', editable: false, showBack: true, backLabel: '← Admin', backTo: '/admin' });
   }, [setHeader]);
 
   const fetchData = async () => {
     try {
-      const [profile, userBoards, users] = await Promise.all([
-        getUserProfile(userId),
-        listUserBoards(userId),
-        listUsers(),
-      ]);
-      setTargetUser(profile);
-      const sorted = (userBoards || []).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+      const [b, u] = await Promise.all([listAnonymousBoards(), listUsers()]);
+      // Sort by updated_at DESC
+      const sorted = (b || []).sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
       setBoards(sorted);
-      setAllUsers(users || []);
+      setUsers(u || []);
     } catch (err) {
-      console.error('Error loading user boards:', err);
+      console.error('Error loading anonymous boards:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => { fetchData(); }, [userId]);
+  useEffect(() => { fetchData(); }, []);
 
-  // Close share mode
+  // Close share mode on outside click
   useEffect(() => {
     if (!shareModeOpenId) return;
     const handler = () => setShareModeOpenId(null);
@@ -84,10 +69,11 @@ export default function AdminUserBoards() {
     return () => { clearTimeout(t); document.removeEventListener('mousedown', handler); };
   }, [shareModeOpenId]);
 
-  // Close portal options
+  // Close portal options on outside click
   useEffect(() => {
     if (!optionsOpenId) return;
     const handler = () => setOptionsOpenId(null);
+    // Delay to avoid immediate close from the same click
     const t = setTimeout(() => document.addEventListener('mousedown', handler), 0);
     return () => { clearTimeout(t); document.removeEventListener('mousedown', handler); };
   }, [optionsOpenId]);
@@ -136,33 +122,7 @@ export default function AdminUserBoards() {
     setPrivateConfirm(null);
   };
 
-  // Make orphan
-  const handleMakeOrphan = async () => {
-    if (!orphanConfirm) return;
-    try {
-      const { error } = await supabase.from('boards').update({ owner_id: null }).eq('id', orphanConfirm);
-      if (error) throw error;
-      setBoards(prev => prev.filter(b => b.id !== orphanConfirm));
-    } catch (err) {
-      console.error('Make orphan error:', err);
-    } finally {
-      setOrphanConfirm(null);
-    }
-  };
-
-  const handleTrash = async () => {
-    if (!trashConfirm) return;
-    try {
-      await softDeleteBoard(trashConfirm, userId);
-      setBoards(prev => prev.filter(b => b.id !== trashConfirm));
-    } catch (err) {
-      console.error('Trash error:', err);
-    } finally {
-      setTrashConfirm(null);
-    }
-  };
-
-  const handleHardDelete = async () => {
+  const handleDelete = async () => {
     if (!deleteConfirm) return;
     try {
       await hardDeleteBoard(deleteConfirm);
@@ -199,26 +159,22 @@ export default function AdminUserBoards() {
 
   const truncate = (str, max = 30) => str && str.length > max ? str.slice(0, max) + '…' : str;
 
-  const filteredUsers = allUsers.filter(u =>
-    u.user_id !== userId && u.email.toLowerCase().includes(assignSearch.toLowerCase())
+  const filteredUsers = users.filter(u =>
+    u.email.toLowerCase().includes(assignSearch.toLowerCase())
   );
 
   if (loading) return <div className={s.loading}>Ładowanie...</div>;
-
-  const email = targetUser?.email || 'Nieznany';
 
   return (
     <div className={pageStyles.root}>
       <div className={s.breadcrumb}>
         <Link to="/admin" className={s.breadcrumbLink}>Admin</Link>
         <span className={s.breadcrumbSep}>›</span>
-        <Link to="/admin/users" className={s.breadcrumbLink}>Użytkownicy</Link>
-        <span className={s.breadcrumbSep}>›</span>
-        <span className={s.breadcrumbCurrent}>Boardy ({email})</span>
+        <span className={s.breadcrumbCurrent}>Anonimowe boardy</span>
       </div>
 
       {boards.length === 0 ? (
-        <div className={s.emptyState}>Brak aktywnych boardów</div>
+        <div className={s.emptyState}>Brak anonimowych boardów</div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
           <table className={s.table}>
@@ -301,7 +257,7 @@ export default function AdminUserBoards() {
                             onMouseDown={e => e.stopPropagation()}
                           >
                             <Link
-                              to={`/board/${board.id}?adminPreview=true`}
+                              to={`/board/${board.share_guid || board.id}?adminPreview=true`}
                               className={s.optionsItem}
                               onClick={() => setOptionsOpenId(null)}
                             >
@@ -316,13 +272,7 @@ export default function AdminUserBoards() {
                                 setOptionsOpenId(null);
                               }}
                             >
-                              Przepisz do innego usera
-                            </button>
-                            <button
-                              className={s.optionsItem}
-                              onClick={() => { setOrphanConfirm(board.id); setOptionsOpenId(null); }}
-                            >
-                              Przepisz do anonima
+                              Przypisz do usera
                             </button>
                             {board.share_mode && (
                               <button
@@ -333,12 +283,6 @@ export default function AdminUserBoards() {
                               </button>
                             )}
                             <div className={s.optionsSep} />
-                            <button
-                              className={s.optionsItemDanger}
-                              onClick={() => { setTrashConfirm(board.id); setOptionsOpenId(null); }}
-                            >
-                              Przenieś do kosza
-                            </button>
                             <button
                               className={s.optionsItemDanger}
                               onClick={() => { setDeleteConfirm(board.id); setOptionsOpenId(null); }}
@@ -358,42 +302,46 @@ export default function AdminUserBoards() {
         </div>
       )}
 
-      {/* Private confirm */}
-      <ConfirmModal open={!!privateConfirm} title="Ustawić jako prywatny?"
-        description="Osoby które mają link do tego boardu stracą dostęp."
-        cancelLabel="Anuluj" confirmLabel="Kontynuuj" variant="primary"
-        onCancel={() => setPrivateConfirm(null)} onConfirm={confirmPrivate} />
-
-      {/* Orphan confirm */}
-      <ConfirmModal open={!!orphanConfirm} title="Przepisać do anonima?"
-        description="Board stanie się bezpański i pojawi się w /admin/anonyms."
-        cancelLabel="Anuluj" confirmLabel="Przepisz" variant="primary"
-        onCancel={() => setOrphanConfirm(null)} onConfirm={handleMakeOrphan} />
-
-      {/* Trash confirm */}
-      <ConfirmModal open={!!trashConfirm} title="Przenieść do kosza?"
-        description="Board trafi do czyśćca użytkownika."
-        cancelLabel="Anuluj" confirmLabel="Przenieś" variant="danger"
-        onCancel={() => setTrashConfirm(null)} onConfirm={handleTrash} />
-
-      {/* Hard delete confirm */}
-      <ConfirmModal open={!!deleteConfirm} title="Usunąć board na zawsze?"
+      {/* Delete confirm */}
+      <ConfirmModal
+        open={!!deleteConfirm}
+        title="Usunąć board na zawsze?"
         description="Tej operacji nie można cofnąć. Board zostanie trwale usunięty."
-        cancelLabel="Anuluj" confirmLabel="Usuń na zawsze" variant="danger"
-        onCancel={() => setDeleteConfirm(null)} onConfirm={handleHardDelete} />
+        cancelLabel="Anuluj"
+        confirmLabel="Usuń na zawsze"
+        variant="danger"
+        onCancel={() => setDeleteConfirm(null)}
+        onConfirm={handleDelete}
+      />
 
-      {/* Assign modal */}
+      {/* Private confirm */}
+      <ConfirmModal
+        open={!!privateConfirm}
+        title="Ustawić jako prywatny?"
+        description="Osoby które mają link do tego boardu stracą dostęp."
+        cancelLabel="Anuluj"
+        confirmLabel="Kontynuuj"
+        variant="primary"
+        onCancel={() => setPrivateConfirm(null)}
+        onConfirm={confirmPrivate}
+      />
+
+      {/* Assign modal — with search inside ConfirmModal children */}
       <ConfirmModal
         open={!!assignModal}
-        title="Przepisz board do innego usera"
+        title="Przypisz board do usera"
         description={assignModal ? `Board: „${assignModal.boardTitle}"` : ''}
-        cancelLabel="Anuluj" confirmLabel="Przepisz" variant="primary"
+        cancelLabel="Anuluj"
+        confirmLabel="Przypisz"
+        variant="primary"
         disabled={!assignSelected}
         onCancel={() => { setAssignModal(null); setAssignSelected(null); setAssignSearch(''); }}
         onConfirm={handleAssign}
       >
         <input
-          type="text" className={s.userPickerSearch} placeholder="Szukaj po emailu…"
+          type="text"
+          className={s.userPickerSearch}
+          placeholder="Szukaj po emailu…"
           value={assignSearch}
           onChange={(e) => { setAssignSearch(e.target.value); setAssignSelected(null); }}
           autoFocus
@@ -404,8 +352,12 @@ export default function AdminUserBoards() {
             <div className={s.userPickerEmpty}>Brak wyników</div>
           ) : (
             filteredUsers.map(u => (
-              <button key={u.user_id} className={s.userPickerItem}
-                style={assignSelected?.userId === u.user_id ? { background: 'var(--color-accent)', color: 'white' } : {}}
+              <button
+                key={u.user_id}
+                className={s.userPickerItem}
+                style={assignSelected?.userId === u.user_id
+                  ? { background: 'var(--color-accent)', color: 'white' }
+                  : {}}
                 onClick={() => setAssignSelected({ userId: u.user_id, email: u.email })}
               >
                 {u.email}
