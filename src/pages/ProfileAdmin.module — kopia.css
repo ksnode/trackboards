@@ -1,6 +1,6 @@
 /* ── Shared styles for Profile & Admin pages ── */
 
-/* ── Section title ── */
+/* ── Section title (matches Sidebar/Boards pattern) ── */
 .sectionTitle {
   font-size: var(--font-size-xs);
   color: var(--color-text-tertiary);
@@ -160,10 +160,80 @@
   font-weight: 500;
 }
 
+/* ── Page heading (for sub-pages) ── */
+.pageHeading {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.pageSubHeading {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-6);
+}
+
+/* ── Board cards (Purgatory etc.) ── */
+.boardCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-bg-secondary);
+  transition: border-color var(--transition-fast);
+}
+
+.boardCard:hover {
+  border-color: var(--color-border-secondary);
+}
+
+.boardCardList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.colorDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.boardCardInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.boardCardTitle {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.boardCardMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+}
+
+.boardCardActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
 /* ── Buttons ── */
 .btnPrimary {
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-accent);
   background: transparent;
@@ -178,43 +248,9 @@
   color: white;
 }
 
-.btnInfo {
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-text-info);
-  background: transparent;
-  color: var(--color-text-info);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.btnInfo:hover {
-  background: var(--color-info);
-  color: white;
-}
-
-.btnWarning {
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-text-warning);
-  background: transparent;
-  color: var(--color-text-warning);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.btnWarning:hover {
-  background: var(--color-warning);
-  color: white;
-}
-
 .btnDanger {
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-danger);
   background: transparent;
@@ -230,60 +266,25 @@
 }
 
 .btnGhost {
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border-primary);
   background: transparent;
   color: var(--color-text-secondary);
   cursor: pointer;
-  min-width: 85px;
   transition: all var(--transition-fast);
   white-space: nowrap;
 }
 
 .btnGhost:hover {
-  border-color: var(--color-primary);
   background: var(--color-bg-tertiary);
   color: var(--color-text-primary);
 }
 
-.btnGhostInfo {
-  composes: btnGhost;
-  color: var(--color-info);
-}
-
-.btnGhostInfo:hover {
-  border-color: var(--color-info);
-  background: var(--color-bg-tertiary);
-  color: var(--color-info);
-}
-
-.btnGhostWarning {
-  composes: btnGhost;
-  color: var(--color-warning);
-}
-
-.btnGhostWarning:hover {
-  border-color: var(--color-warning);
-  background: var(--color-bg-tertiary);
-  color: var(--color-info);
-}
-
-.btnGhostDanger {
-  composes: btnGhost;
-  color: var(--color-danger);
-}
-
-.btnGhostDanger:hover {
-  border-color: var(--color-danger);
-  background: var(--color-bg-tertiary);
-  color: var(--color-danger);
-}
-
 .btnDisabled {
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-border-primary);
   background: var(--color-bg-tertiary);
@@ -291,11 +292,6 @@
   cursor: not-allowed;
   white-space: nowrap;
   opacity: 0.6;
-}
-
-.btnDisabled:hover {
-  border-color: var(--color-primary);
-  background: var(--color-bg-tertiary);
 }
 
 /* ── Table layout ── */
@@ -358,25 +354,142 @@
   flex-wrap: wrap;
 }
 
-/* ── Color dot ── */
-.colorDot {
-  width: 12px;
-  height: 12px;
+/* ── Dropdown select (role etc.) ── */
+.selectSmall {
+  padding: 2px var(--space-2);
+  font-size: var(--font-size-xs);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  font-family: var(--font-ui);
+}
+
+.selectSmall:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Role badges ── */
+.roleAdmin {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--font-size-xs);
+  padding: 1px var(--space-2);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-background-warning);
+  color: var(--color-warning);
+  font-weight: 500;
+}
+
+.roleUser {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--font-size-xs);
+  padding: 1px var(--space-2);
+  border-radius: var(--border-radius-sm);
+  /*background: var(--color-bg-tertiary);*/
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* ── Status badges ── */
+.statusActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--font-size-xs);
+  padding: 1px var(--space-2);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-background-success);
+  color: var(--color-text-success);
+  font-weight: 500;
+}
+
+.statusBlocked {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--font-size-xs);
+  padding: 1px var(--space-2);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-background-danger);
+  color: var(--color-text-danger);
+  font-weight: 500;
+}
+
+/* ── Toggle switch ── */
+.toggle {
+  position: relative;
+  display: inline-flex;
+  width: 36px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.toggleInput {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggleSlider {
+  position: absolute;
+  inset: 0;
+  background: var(--color-border-secondary);
+  border-radius: 10px;
+  transition: background var(--transition-fast);
+}
+
+.toggleSlider::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  flex-shrink: 0;
+  background: white;
+  top: 2px;
+  left: 2px;
+  transition: transform var(--transition-fast);
 }
 
-/* ── Table title truncation ── */
-.titleTruncate {
+.toggleInput:checked+.toggleSlider {
+  background: var(--color-success);
+}
+
+.toggleInput:checked+.toggleSlider::before {
+  transform: translateX(16px);
+}
+
+.toggleInput:disabled+.toggleSlider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── User picker dropdown ── */
+.userPickerWrapper {
+  position: relative;
   display: inline-block;
-  max-width: 240px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  vertical-align: middle;
 }
 
-/* ── User picker ── */
+.userPickerDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 260px;
+  max-height: 260px;
+  overflow-y: auto;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 30;
+}
+
 .userPickerSearch {
   width: 100%;
   padding: var(--space-2) var(--space-3);
@@ -418,6 +531,20 @@
   text-align: center;
 }
 
+/* ── Copy guid ── */
+.guidCopy {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+  user-select: all;
+}
+
+.guidCopy:hover {
+  color: var(--color-accent);
+}
+
 /* ── Escape page ── */
 .escapeWarning {
   padding: var(--space-6);
@@ -457,13 +584,18 @@
   border-color: var(--color-danger);
 }
 
-/* ── Share mode dropdown ── */
+/* ── Share mode dropdown (used in AdminUserBoards) ── */
+.shareModeDropdown {
+  position: relative;
+  display: inline-flex;
+}
+
 .shareModeToggle {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
   border: 1px solid var(--color-border-primary);
   border-radius: var(--border-radius-md);
   background: transparent;
@@ -471,12 +603,9 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
-  min-width: 85px;
-  justify-content: space-between;
 }
 
 .shareModeToggle:hover {
-  border-color: var(--color-primary);
   background: var(--color-bg-tertiary);
   color: var(--color-text-primary);
 }
@@ -485,8 +614,8 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
   border: 1px solid var(--color-border-primary);
   border-radius: var(--border-radius-md);
   background: var(--color-background-info);
@@ -494,13 +623,23 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
-  min-width: 85px;
-  justify-content: space-between;
 }
 
 .shareModeTogglePublic:hover {
-  border-color: var(--color-primary);
   color: var(--color-text-info);
+}
+
+.shareModeMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 20;
+  min-width: 100px;
+  overflow: hidden;
 }
 
 .shareModeMenuItem {
@@ -514,7 +653,6 @@
   color: var(--color-text-secondary);
   border: none;
   cursor: pointer;
-  min-width: 85px;
   text-align: left;
   transition: background var(--transition-fast);
 }
@@ -547,87 +685,124 @@
   transition: transform var(--transition-fast);
 }
 
-/* ── Admin mode badge ── */
-.adminBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-sm);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-background-warning);
-  border-color: var(--color-primary);
-  background: var(--color-background-warning);
-  color: var(--color-text-warning);
-  white-space: nowrap;
-  user-select: none;
-}
-
-/* ── Base toggle button (role + status) ── */
-.toggleBtn {
+/* ── Admin mode toggle ── */
+.adminModeBtn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  min-width: 75px;
-  justify-content: space-between;
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
-  border: 1px solid var(--color-border-primary);
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
   border-radius: var(--border-radius-md);
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-secondary);
+  border: 1px solid var(--color-warning);
+  background: transparent;
+  color: var(--color-warning);
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
-  font-weight: 500;
 }
 
-.toggleBtn:hover:not(:disabled) {
-  border-color: var(--color-primary);
-}
-
-.toggleBtnSuccess {
-  background: var(--color-background-success);
-  color: var(--color-success);
-}
-
-.toggleBtnSuccess:hover:not(:disabled) {
-  border-color: var(--color-success);
-}
-
-.toggleBtnInfo {
-  background: var(--color-background-info);
-  color: var(--color-info);
-}
-
-.toggleBtnInfo:hover:not(:disabled) {
-  border-color: var(--color-info);
-}
-
-.toggleBtnDanger {
-  background: var(--color-background-danger);
-  color: var(--color-danger);
-}
-
-.toggleBtnDanger:hover:not(:disabled) {
-  border-color: var(--color-danger);
-}
-
-.toggleBtnWarning {
+.adminModeBtn:hover {
   background: var(--color-background-warning);
-  color: var(--color-warning);
 }
 
-.toggleBtnWarning:hover:not(:disabled) {
-  border-color: var(--color-warning);
+.adminModeBtnActive {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-warning);
+  background: var(--color-warning);
+  color: white;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
 }
 
-.toggleBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.adminModeBtnActive:hover {
+  filter: brightness(1.1);
 }
 
-/* ── Options dropdown ── */
+/* ── Empty + Loading ── */
+.emptyState {
+  text-align: center;
+  padding: var(--space-8) var(--space-6);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.loading {
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+/* ── Tooltip ── */
+.tooltipWrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.tooltipWrapper:hover .tooltipText {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.tooltipText {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-1) var(--space-2);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  z-index: 10;
+}
+
+@media (max-width: 600px) {
+  .navCards {
+    grid-template-columns: 1fr;
+  }
+
+  .accountSection {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .actionsRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ── Options dropdown ("Opcje...") ── */
+.optionsWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.optionsDropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 200px;
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 30;
+  overflow: hidden;
+}
+
 .optionsItem {
   display: block;
   width: 100%;
@@ -670,7 +845,74 @@
   margin: 2px 0;
 }
 
-/* ── Portal dropdown ── */
+/* ── Status cell (vertical toggle + label) ── */
+.statusCell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+/* ── Actions grid (2-row layout) ── */
+.actionsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.actionsGridRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ── Admin mode badge (info, non-clickable) ── */
+.adminBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-sm);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-background-warning);
+  background: var(--color-background-warning);
+  color: var(--color-text-warning);
+  white-space: nowrap;
+  user-select: none;
+  font-weight: 500;
+}
+
+/* ── Table title truncation ── */
+.titleTruncate {
+  display: inline-block;
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+/* ── Fixed-width share mode toggle ── */
+.shareModeToggle,
+.shareModeTogglePublic {
+  min-width: 95px;
+  justify-content: space-between;
+}
+
+/* ── Status cell fixed width ── */
+.statusCell {
+  min-width: 80px;
+}
+
+/* ── Vertical separator between action groups ── */
+.actionSep {
+  width: 1px;
+  height: 20px;
+  background: var(--color-border-primary);
+  flex-shrink: 0;
+}
+
+/* ── Portal/fixed options dropdown ── */
 .optionsDropdownPortal {
   position: fixed;
   min-width: 150px;
@@ -680,116 +922,6 @@
   box-shadow: var(--shadow-md);
   z-index: 9999;
   overflow: hidden;
-}
-
-/* ── Actions panel (2x2) ── */
-.actionsPanel {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-2);
-}
-
-.actionsPanelGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.actionsPanelSep {
-  width: 1px;
-  background: var(--color-border-primary);
-  align-self: stretch;
-  flex-shrink: 0;
-}
-
-/* ── Fixed-width action buttons ── */
-.btnGhostFixed {
-  composes: btnGhost;
-  min-width: 75px;
-  text-align: center;
-  justify-content: center;
-}
-
-.btnInfoFixed {
-  composes: btnInfo;
-  min-width: 75px;
-  text-align: center;
-  justify-content: center;
-}
-
-.btnWarningFixed {
-  composes: btnWarning;
-  min-width: 75px;
-  text-align: center;
-  justify-content: center;
-}
-
-.btnDangerFixed {
-  composes: btnDanger;
-  min-width: 75px;
-  text-align: center;
-  justify-content: center;
-}
-
-.btnDisabledFixed {
-  composes: btnDisabled;
-  min-width: 75px;
-  text-align: center;
-  justify-content: center;
-}
-
-/* ── Search input ── */
-.searchInput {
-  width: 100%;
-  max-width: 320px;
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-ui);
-  color: var(--color-text-primary);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  outline: none;
-  transition: border-color var(--transition-fast);
-  margin-bottom: var(--space-4);
-}
-
-.searchInput:focus {
-  border-color: var(--color-accent);
-}
-
-.searchInput::placeholder {
-  color: var(--color-text-tertiary);
-}
-
-/* ── Tooltip ── */
-.tooltipWrapper {
-  position: relative;
-  display: inline-flex;
-}
-
-.tooltipWrapper:hover .tooltipText {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.tooltipText {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-primary);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  padding: var(--space-1) var(--space-2);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--transition-fast);
-  box-shadow: var(--shadow-sm);
-  z-index: 10;
 }
 
 /* ── Board preview modal ── */
@@ -846,47 +978,128 @@
   flex-shrink: 0;
 }
 
-/* ── Copy guid ── */
-.guidCopy {
-  cursor: pointer;
-  font-family: var(--font-mono);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  transition: color var(--transition-fast);
-  user-select: all;
-}
-
-.guidCopy:hover {
-  color: var(--color-accent);
-}
-
-/* ── Empty + Loading ── */
-.emptyState {
-  text-align: center;
-  padding: var(--space-8) var(--space-6);
-  color: var(--color-text-secondary);
+/* ── Search / filter input ── */
+.searchInput {
+  width: 100%;
+  max-width: 320px;
+  padding: var(--space-2) var(--space-3);
   font-size: var(--font-size-sm);
+  font-family: var(--font-ui);
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  outline: none;
+  transition: border-color var(--transition-fast);
+  margin-bottom: var(--space-4);
 }
 
-.loading {
-  padding: var(--space-8) var(--space-6);
-  text-align: center;
+.searchInput:focus {
+  border-color: var(--color-accent);
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+
+/* ── Base toggle button (role + status dropdowns) ── */
+.toggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 75px;
+  justify-content: space-between;
+  padding: 2px var(--space-2);
+  font-size: var(--font-size-xs);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg-tertiary);
   color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  font-weight: 500;
 }
 
-/* ── Responsive ── */
-@media (max-width: 600px) {
-  .navCards {
-    grid-template-columns: 1fr;
-  }
+.toggleBtnSuccess {
+  background: var(--color-background-success);
+  color: var(--color-success);
+  border-color: var(--color-border-primary);
+}
 
-  .accountSection {
-    flex-direction: column;
-    text-align: center;
-  }
+.toggleBtnSuccess:hover:not(:disabled) {
+  border-color: var(--color-success);
+}
 
-  .actionsRow {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+.toggleBtnDanger {
+  background: var(--color-background-danger);
+  color: var(--color-danger);
+  border-color: var(--color-border-primary);
+}
+
+.toggleBtnDanger:hover:not(:disabled) {
+  border-color: var(--color-danger);
+}
+
+.toggleBtnInfo {
+  background: var(--color-background-info);
+  color: var(--color-info);
+  border-color: var(--color-border-primary);
+}
+
+.toggleBtnInfo:hover:not(:disabled) {
+  border-color: var(--color-info);
+}
+
+.toggleBtnWarning {
+  background: var(--color-background-warning);
+  color: var(--color-warning);
+  border-color: var(--color-border-primary);
+}
+
+.toggleBtnWarning:hover:not(:disabled) {
+  border-color: var(--color-warning);
+}
+
+/* ── Actions panel (2x2 with vertical separator) ── */
+.actionsPanel {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+.actionsPanelGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.actionsPanelSep {
+  width: 1px;
+  background: var(--color-border-primary);
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+/* ── Fixed-width action buttons ── */
+.btnGhostFixed {
+  composes: btnGhost;
+  min-width: 90px;
+  text-align: center;
+  justify-content: center;
+}
+
+.btnDangerFixed {
+  composes: btnDanger;
+  min-width: 90px;
+  text-align: center;
+  justify-content: center;
+}
+
+.btnDisabledFixed {
+  composes: btnDisabled;
+  min-width: 90px;
+  text-align: center;
+  justify-content: center;
 }

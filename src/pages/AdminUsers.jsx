@@ -16,13 +16,13 @@ export default function AdminUsers() {
   const { setHeader } = useHeader();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [roleConfirm, setRoleConfirm] = useState(null);
   const [signoutConfirm, setSignoutConfirm] = useState(null);
-  const [blockConfirm, setBlockConfirm] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
-  // Status dropdown (portal)
+  const [roleOpenId, setRoleOpenId] = useState(null);
+  const [rolePos, setRolePos] = useState({ top: 0, left: 0 });
+  const roleBtnRefs = useRef({});
   const [statusOpenId, setStatusOpenId] = useState(null);
   const [statusPos, setStatusPos] = useState({ top: 0, left: 0 });
   const statusBtnRefs = useRef({});
@@ -44,13 +44,25 @@ export default function AdminUsers() {
 
   useEffect(() => { fetchUsers(); }, []);
 
-  // Close status dropdown on outside click
   useEffect(() => {
-    if (!statusOpenId) return;
-    const handler = () => setStatusOpenId(null);
+    if (!statusOpenId && !roleOpenId) return;
+    const handler = () => {
+      setStatusOpenId(null);
+      setRoleOpenId(null);
+    };
     const t = setTimeout(() => document.addEventListener('mousedown', handler), 0);
     return () => { clearTimeout(t); document.removeEventListener('mousedown', handler); };
-  }, [statusOpenId]);
+  }, [statusOpenId, roleOpenId]);
+
+  const openRole = useCallback((userId) => {
+    if (roleOpenId === userId) { setRoleOpenId(null); return; }
+    const btn = roleBtnRefs.current[userId];
+    if (btn) {
+      const rect = btn.getBoundingClientRect();
+      setRolePos({ top: rect.bottom + 4, left: rect.left });
+    }
+    setRoleOpenId(userId);
+  }, [roleOpenId]);
 
   const openStatus = useCallback((userId) => {
     if (statusOpenId === userId) { setStatusOpenId(null); return; }
@@ -62,31 +74,14 @@ export default function AdminUsers() {
     setStatusOpenId(userId);
   }, [statusOpenId]);
 
-  const handleRoleChange = (userId, newRole, email) => {
-    setRoleConfirm({ userId, newRole, email });
-  };
-
-  const confirmRoleChange = async () => {
-    if (!roleConfirm) return;
+  const handleRoleChange = async (userId, newRole) => {
     try {
-      await updateUserRole(roleConfirm.userId, roleConfirm.newRole);
+      await updateUserRole(userId, newRole);
       setUsers(prev => prev.map(u =>
-        u.user_id === roleConfirm.userId ? { ...u, role: roleConfirm.newRole } : u
+        u.user_id === userId ? { ...u, role: newRole } : u
       ));
     } catch (err) {
       console.error('Role change error:', err);
-    } finally {
-      setRoleConfirm(null);
-    }
-  };
-
-  const handleStatusChange = (userId, currentlyActive, email) => {
-    if (currentlyActive) {
-      // Blocking — needs confirm
-      setBlockConfirm({ userId, email });
-    } else {
-      // Unblocking — immediate
-      doToggleActive(userId, true);
     }
   };
 
@@ -104,12 +99,6 @@ export default function AdminUsers() {
     } catch (err) {
       console.error('Toggle active error:', err);
     }
-  };
-
-  const confirmBlock = async () => {
-    if (!blockConfirm) return;
-    await doToggleActive(blockConfirm.userId, true);
-    setBlockConfirm(null);
   };
 
   const handleForceSignout = async () => {
@@ -175,60 +164,73 @@ export default function AdminUsers() {
                   <tr key={u.user_id} className={s.tableRow}>
                     <td className={s.tableCell}>{u.email}</td>
                     <td className={s.tableCell}>
-                      <select
-                        className={s.selectSmall}
-                        value={u.role}
+                      <button
+                        className={u.role === 'admin'
+                          ? `${s.toggleBtn} ${s.toggleBtnWarning}`
+                          : s.toggleBtn}
+                        ref={el => { roleBtnRefs.current[u.user_id] = el; }}
+                        onClick={() => !isSelf && openRole(u.user_id)}
                         disabled={isSelf}
-                        onChange={(e) => handleRoleChange(u.user_id, e.target.value, u.email)}
+                        title={isSelf ? 'Nie możesz zmienić własnej roli' : ''}
                       >
-                        <option value="user">user</option>
-                        <option value="admin">admin</option>
-                      </select>
+                        {u.role} {!isSelf && <ChevronDown size={10} />}
+                      </button>
+                      {roleOpenId === u.user_id && createPortal(
+                        <div
+                          className={s.optionsDropdownPortal}
+                          style={{ top: rolePos.top, left: rolePos.left, minWidth: 75 }}
+                          onMouseDown={e => e.stopPropagation()}
+                        >
+                          {['admin', 'user'].map(role => (
+                            <button
+                              key={role}
+                              className={u.role === role ? s.shareModeMenuItemActive : s.shareModeMenuItem}
+                              onClick={() => { handleRoleChange(u.user_id, role); setRoleOpenId(null); }}
+                            >
+                              {role}
+                            </button>
+                          ))}
+                        </div>,
+                        document.body
+                      )}
                     </td>
                     <td className={s.tableCell}>
-                      {/* Status dropdown */}
                       <button
-                        className={u.is_active ? s.statusToggleActive : s.statusToggleBlocked}
+                        className={`${s.toggleBtn} ${u.is_active ? s.toggleBtnSuccess : s.toggleBtnDanger}`}
                         ref={el => { statusBtnRefs.current[u.user_id] = el; }}
                         onClick={() => !isSelf && openStatus(u.user_id)}
                         disabled={isSelf}
                         title={isSelf ? 'Nie możesz zablokować siebie' : ''}
-                        style={isSelf ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
                       >
-                        {u.is_active ? 'Aktywny' : 'Zablokowany'}
+                        {u.is_active ? 'Active' : 'Blocked'}
                         {!isSelf && <ChevronDown size={10} className={statusOpenId === u.user_id ? s.chevronOpen : ''} />}
                       </button>
                       {statusOpenId === u.user_id && createPortal(
                         <div
                           className={s.optionsDropdownPortal}
-                          style={{ top: statusPos.top, left: statusPos.left, minWidth: 110 }}
+                          style={{ top: statusPos.top, left: statusPos.left, minWidth: 75 }}
                           onMouseDown={e => e.stopPropagation()}
                         >
-                          <button
-                            className={u.is_active ? s.shareModeMenuItemActive : s.shareModeMenuItem}
-                            onClick={() => {
-                              if (!u.is_active) handleStatusChange(u.user_id, u.is_active, u.email);
-                              setStatusOpenId(null);
-                            }}
-                          >
-                            Aktywny
-                          </button>
-                          <button
-                            className={!u.is_active ? s.shareModeMenuItemActive : s.shareModeMenuItem}
-                            onClick={() => {
-                              if (u.is_active) handleStatusChange(u.user_id, u.is_active, u.email);
-                              setStatusOpenId(null);
-                            }}
-                          >
-                            Zablokowany
-                          </button>
+                          {['Active', 'Blocked'].map(label => {
+                            const isActive = label === 'Active';
+                            return (
+                              <button
+                                key={label}
+                                className={u.is_active === isActive ? s.shareModeMenuItemActive : s.shareModeMenuItem}
+                                onClick={() => {
+                                  if (u.is_active !== isActive) doToggleActive(u.user_id, u.is_active);
+                                  setStatusOpenId(null);
+                                }}
+                              >
+                                {label}
+                              </button>
+                            );
+                          })}
                         </div>,
                         document.body
                       )}
                     </td>
-                    <td className={`${s.tableCell} ${s.tableCellMono}`}>
-                      {boardCount}
-                    </td>
+                    <td className={`${s.tableCell} ${s.tableCellMono}`}>{boardCount}</td>
                     <td className={`${s.tableCell} ${s.tableCellMono}`}>
                       {new Date(u.created_at).toLocaleDateString('pl-PL', {
                         day: 'numeric', month: 'short', year: 'numeric',
@@ -237,27 +239,32 @@ export default function AdminUsers() {
                     <td className={s.tableCellActions}>
                       <div className={s.actionsPanel}>
                         <div className={s.actionsPanelGroup}>
-                          <button className={s.btnGhostFixed} onClick={() => navigate(`/admin/users/${u.user_id}/boards`)}>
+                          <button
+                            className={s.btnGhostFixed}
+                            onClick={() => navigate(`/admin/users/${u.user_id}/boards`)}
+                          >
                             Boardy
                           </button>
-                          <button className={s.btnGhostFixed} onClick={() => navigate(`/admin/users/${u.user_id}/purgatory`)}>
+                          <button
+                            className={s.btnGhostFixed}
+                            onClick={() => navigate(`/admin/users/${u.user_id}/purgatory`)}
+                          >
                             Czyściec
                           </button>
                         </div>
                         <div className={s.actionsPanelSep} />
                         <div className={s.actionsPanelGroup}>
                           <button
-                            className={s.btnGhostFixed}
+                            className={isSelf ? s.btnDisabled : s.btnInfoFixed}
                             disabled={isSelf}
-                            style={isSelf
-                              ? { opacity: 0.4, cursor: 'not-allowed' }
-                              : { color: 'var(--color-danger)' }}
+                            title={isSelf ? 'Nie możesz wylogować siebie' : ''}
                             onClick={() => !isSelf && setSignoutConfirm({ userId: u.user_id, email: u.email })}
                           >
                             Wyloguj
                           </button>
                           <span className={s.tooltipWrapper}>
-                            <button className={s.btnGhostFixed} disabled style={{ opacity: 0.4, cursor: 'not-allowed' }}>
+                            <button className={isSelf ? s.btnDisabled : s.btnDangerFixed} disabled>
+
                               Usuń konto
                             </button>
                             <span className={s.tooltipText}>Wkrótce</span>
@@ -273,21 +280,6 @@ export default function AdminUsers() {
         </div>
       )}
 
-      {/* Role change confirm */}
-      <ConfirmModal
-        open={!!roleConfirm}
-        title="Zmienić rolę?"
-        description={roleConfirm
-          ? `Ustawić rolę „${roleConfirm.newRole}" dla ${roleConfirm.email}?`
-          : ''}
-        cancelLabel="Anuluj"
-        confirmLabel="Zmień rolę"
-        variant="primary"
-        onCancel={() => setRoleConfirm(null)}
-        onConfirm={confirmRoleChange}
-      />
-
-      {/* Force signout confirm */}
       <ConfirmModal
         open={!!signoutConfirm}
         title="Wylogować użytkownika?"
@@ -297,20 +289,6 @@ export default function AdminUsers() {
         variant="danger"
         onCancel={() => setSignoutConfirm(null)}
         onConfirm={handleForceSignout}
-      />
-
-      {/* Block user confirm */}
-      <ConfirmModal
-        open={!!blockConfirm}
-        title="Zablokować użytkownika?"
-        description={blockConfirm
-          ? `Użytkownik ${blockConfirm.email} zostanie zablokowany i natychmiast wylogowany ze wszystkich sesji.`
-          : ''}
-        cancelLabel="Anuluj"
-        confirmLabel="Zablokuj"
-        variant="danger"
-        onCancel={() => setBlockConfirm(null)}
-        onConfirm={confirmBlock}
       />
     </div>
   );

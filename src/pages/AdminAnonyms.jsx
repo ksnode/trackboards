@@ -61,22 +61,16 @@ export default function AdminAnonyms() {
 
   useEffect(() => { fetchData(); }, []);
 
-  // Close share mode on outside click
+  // Close share mode on outside click // Close portal options on outside click
   useEffect(() => {
-    if (!shareModeOpenId) return;
-    const handler = () => setShareModeOpenId(null);
+    if (!shareModeOpenId && !optionsOpenId) return;
+    const handler = () => {
+      setShareModeOpenId(null);
+      setOptionsOpenId(null);
+    };
     const t = setTimeout(() => document.addEventListener('mousedown', handler), 0);
     return () => { clearTimeout(t); document.removeEventListener('mousedown', handler); };
-  }, [shareModeOpenId]);
-
-  // Close portal options on outside click
-  useEffect(() => {
-    if (!optionsOpenId) return;
-    const handler = () => setOptionsOpenId(null);
-    // Delay to avoid immediate close from the same click
-    const t = setTimeout(() => document.addEventListener('mousedown', handler), 0);
-    return () => { clearTimeout(t); document.removeEventListener('mousedown', handler); };
-  }, [optionsOpenId]);
+  }, [shareModeOpenId, optionsOpenId]);
 
   const openShareMode = useCallback((boardId) => {
     if (shareModeOpenId === boardId) { setShareModeOpenId(null); return; }
@@ -220,7 +214,7 @@ export default function AdminAnonyms() {
                         {shareModeOpenId === board.id && createPortal(
                           <div
                             className={s.optionsDropdownPortal}
-                            style={{ top: shareModePos.top, left: shareModePos.left, minWidth: 100 }}
+                            style={{ top: shareModePos.top, left: shareModePos.left, minWidth: 85 }}
                             onMouseDown={e => e.stopPropagation()}
                           >
                             {SHARE_MODES.map(m => {
@@ -246,7 +240,7 @@ export default function AdminAnonyms() {
                           ref={el => { optionsBtnRefs.current[board.id] = el; }}
                           onClick={() => openOptions(board.id)}
                         >
-                          Opcje… <ChevronDown size={10} />
+                          Opcje… <ChevronDown size={10} className={optionsOpenId === board.id ? s.chevronOpen : ''} />
                         </button>
 
                         {/* Options portal dropdown */}

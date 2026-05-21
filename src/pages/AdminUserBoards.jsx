@@ -264,7 +264,7 @@ export default function AdminUserBoards() {
                         {shareModeOpenId === board.id && createPortal(
                           <div
                             className={s.optionsDropdownPortal}
-                            style={{ top: shareModePos.top, left: shareModePos.left, minWidth: 100 }}
+                            style={{ top: shareModePos.top, left: shareModePos.left, minWidth: 85 }}
                             onMouseDown={e => e.stopPropagation()}
                           >
                             {SHARE_MODES.map(m => {
@@ -290,7 +290,8 @@ export default function AdminUserBoards() {
                           ref={el => { optionsBtnRefs.current[board.id] = el; }}
                           onClick={() => openOptions(board.id)}
                         >
-                          Opcje… <ChevronDown size={10} />
+                          Opcje…
+                          <ChevronDown size={10} className={optionsOpenId === board.id ? s.chevronOpen : ''} />
                         </button>
 
                         {/* Options portal dropdown */}

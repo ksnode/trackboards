@@ -146,9 +146,9 @@ export default function Board() {
   const isOrphan = board && board.owner_id === null && board.share_guid;
 
   // Admin preview: full access always
-  const canEdit = (adminPreview && isAdmin)
+  const canEdit = adminPreview
     ? true
-    : (isOwner || (board && board.share_mode === 'write') || (isAdmin && !adminPreview));
+    : (isOwner || (board && board.share_mode === 'write'));
   const canEditStructure = canEdit;
   const canAdopt = user && isOrphan && !adminPreview;
 
@@ -331,7 +331,7 @@ export default function Board() {
                 className={board.share_mode ? styles.shareModeTogglePublic : styles.shareModeToggle}
                 onClick={() => setShareModeOpen(o => !o)}
               >
-                {(() => { const cur = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0]; const Icon = cur.icon; return <><Icon size={11} /> {cur.label}</>; })()}
+                {(() => { const cur = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0]; const Icon = cur.icon; return <><Icon size={14} /> {cur.label}</>; })()}
                 <ChevronDown size={12} className={shareModeOpen ? styles.chevronOpen : ''} />
               </button>
               {shareModeOpen && (

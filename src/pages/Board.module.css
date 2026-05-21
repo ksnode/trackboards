@@ -137,6 +137,7 @@
 }
 
 .shareModeToggle:hover {
+  border-color: var(--color-primary);
   background: var(--color-bg-tertiary);
   color: var(--color-text-primary);
 }
@@ -160,6 +161,7 @@
 }
 
 .shareModeTogglePublic:hover {
+  border-color: var(--color-primary);
   filter: brightness(1.05);
 }
 
