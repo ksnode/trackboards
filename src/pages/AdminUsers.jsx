@@ -57,7 +57,7 @@ export default function AdminUsers() {
   const [softDeleteConfirm, setSoftDeleteConfirm] = useState(null);
   const [hardDeleteConfirm, setHardDeleteConfirm] = useState(null);
   const [removeConfirm, setRemoveConfirm] = useState(null);
-  const [removeInput, setRemoveInput] = useState('');
+
 
   // Reassign modal
   const [reassignModal, setReassignModal] = useState(null);
@@ -170,7 +170,6 @@ export default function AdminUsers() {
     if (!softDeleteConfirm) return;
     try {
       await updateUserStatus(softDeleteConfirm.userId, 'soft_deleted');
-      try { await forceSignOutUser(softDeleteConfirm.userId); } catch { }
       setUsers(prev => prev.map(u =>
         u.user_id === softDeleteConfirm.userId ? { ...u, status: 'soft_deleted' } : u
       ));
@@ -204,7 +203,6 @@ export default function AdminUsers() {
       console.error('Remove error:', err);
     } finally {
       setRemoveConfirm(null);
-      setRemoveInput('');
     }
   };
 
@@ -465,7 +463,7 @@ export default function AdminUsers() {
                                 className={s.optionsItemDanger}
                                 onClick={() => {
                                   setRemoveConfirm({ userId: u.user_id, email: u.email });
-                                  setRemoveInput('');
+                                  /*setRemoveInput('');*/
                                   setDeleteOpenId(null);
                                 }}
                               >
@@ -521,28 +519,17 @@ export default function AdminUsers() {
         onConfirm={handleHardDelete}
       />
 
-      {/* Remove confirm with email input */}
+      {/* Remove confirm */}
       <ConfirmModal
         open={!!removeConfirm}
         title="Usunąć konto na zawsze?"
-        description={`Wpisz email użytkownika aby potwierdzić: ${removeConfirm?.email || ''}`}
+        description="Tej operacji nie można cofnąć."
         cancelLabel="Anuluj"
         confirmLabel="Usuń na zawsze"
         variant="danger"
-        disabled={removeInput !== removeConfirm?.email}
-        onCancel={() => { setRemoveConfirm(null); setRemoveInput(''); }}
+        onCancel={() => setRemoveConfirm(null)}
         onConfirm={handleRemove}
-      >
-        <input
-          type="text"
-          className={s.escapeInput}
-          placeholder="wpisz email..."
-          value={removeInput}
-          onChange={e => setRemoveInput(e.target.value)}
-          autoFocus
-          style={{ marginBottom: 0 }}
-        />
-      </ConfirmModal>
+      />
 
       {/* Reassign modal */}
       <ConfirmModal

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { supabase } from './supabase';
 import { updateUserStatus, getUserProfile } from './boards';
@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showReactivateModal, setShowReactivateModal] = useState(false);
+  const userRef = useRef(null);
 
   const fetchProfile = async (userId) => {
     const { data, error } = await supabase
@@ -65,13 +66,14 @@ export const AuthProvider = ({ children }) => {
 
         if (session?.user) {
           setUser(session.user);
+          userRef.current = session.user;
           const profileData = await fetchProfile(session.user.id);
           if (!mounted) return;
 
           if (profileData && profileData.status === 'soft_deleted') {
             setProfile(profileData);
             setShowReactivateModal(true);
-            await supabase.auth.signOut();
+            /*await supabase.auth.signOut();*/
           } else if (profileData && (profileData.status === 'hard_deleted' || profileData.status === 'blocked')) {
             await supabase.auth.signOut();
             const msg = profileData.status === 'blocked'
@@ -113,12 +115,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const reactivateAccount = async () => {
-    console.log('[auth] reactivateAccount called v2');
-    const { data: { user: currentUser } } = await supabase.auth.getUser();
-    console.log('[auth] currentUser:', currentUser);
+    const currentUser = userRef.current;
+    console.log('[auth] reactivateAccount called, userRef:', currentUser?.id);
     if (!currentUser) return;
     await updateUserStatus(currentUser.id, 'active');
     const fresh = await getUserProfile(currentUser.id);
+    console.log('[auth] fresh profile:', fresh);
     setProfile(fresh);
     setShowReactivateModal(false);
     window.location.reload();

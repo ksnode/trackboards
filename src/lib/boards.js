@@ -326,16 +326,15 @@ export const hardDeleteUser = async (userId, userEmail, isSelf = false) => {
   if (isSelf) {
     await supabase.rpc('self_hard_delete', { masked_email: masked });
   } else {
-    await supabase.rpc('admin_hard_delete', {
+    const rpcResult = await supabase.rpc('admin_hard_delete', {
       target_user_id: userId,
       masked_email: masked
     });
+    console.log('[hardDelete] RPC result:', rpcResult);
   }
 };
 
 export const removeUser = async (userId) => {
-  await supabase.from('boards').delete().eq('owner_id', userId);
-  await supabase.from('profiles').delete().eq('user_id', userId);
   return handleResponse(await supabase.rpc('admin_delete_user', { target_user_id: userId }));
 };
 
