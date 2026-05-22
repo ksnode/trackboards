@@ -6,6 +6,7 @@ import {
   updateBoardMeta, softDeleteBoard, adoptOrphanBoard,
   listSubscribedBoards, subscribeToBoard, unsubscribeFromBoard,
   parseBoardGuidFromUrl, getBoard,
+  toggleBoardPin, duplicateBoardToMyBoards,
 } from '../../lib/boards';
 import {
   GripVertical, Menu, Plus,
@@ -46,6 +47,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
   const navigate = useNavigate();
   const [themePref, setThemePref] = useState(localStorage.getItem('trackboards_theme') || 'auto');
   const [boards, setBoards] = useState([]);
+  const [pinnedBoards, setPinnedBoards] = useState([]);
   const [extBoards, setExtBoards] = useState([]);
   const [creating, setCreating] = useState(false);
   const [menuOpen, setMenuOpen] = useState(null);
@@ -63,6 +65,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
   const [extUnsubConfirm, setExtUnsubConfirm] = useState(null);
   const [adoptConfirm, setAdoptConfirm] = useState(null);
   const [signOutConfirm, setSignOutConfirm] = useState(false);
+  const [copiedExtId, setCopiedExtId] = useState(null);
   const menuRef = useRef(null);
   const extMenuRef = useRef(null);
 
@@ -87,7 +90,10 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
   const refreshBoards = useCallback(() => {
     if (!user) return;
     listMyBoards()
-      .then(data => setBoards(data || []))
+      .then(data => {
+        setPinnedBoards((data || []).filter(b => b.is_pinned));
+        setBoards((data || []).filter(b => !b.is_pinned));
+      })
       .catch(() => { });
   }, [user]);
 
@@ -349,8 +355,69 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
           {/* ── LOGGED IN: own boards + external ── */}
           {user && (
             <div className={styles.boardsList}>
+              {/* Section: ULUBIONE */}
+              {pinnedBoards.length > 0 && (
+                <>
+                  <div className={styles.sectionTitle}>Ulubione</div>
+                  {pinnedBoards.map((b, idx) => (
+                    <div
+                      key={b.id}
+                      className={styles.boardItemRow}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, idx)}
+                      onDragOver={(e) => handleDragOver(e, idx)}
+                      onDragEnd={handleDragEnd}
+                      onDrop={(e) => handleDrop(e, idx)}
+                    >
+                      <span className={styles.dragHandle}>
+                        <GripVertical size={14} />
+                      </span>
+                      <NavLink
+                        to={`/board/${b.id}`}
+                        className={({ isActive }) => isActive ? `${styles.boardItem} ${styles.active}` : styles.boardItem}
+                        onClick={handleLinkClick}
+                      >
+                        <span className={styles.boardDot} style={{ background: b.color }} />
+                        <span className={styles.boardItemTitle}>{b.title}</span>
+                        {b.share_mode != null && (
+                          <Globe size={14} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.6 }} />
+                        )}
+                      </NavLink>
+                      <div className={styles.boardMenuWrapper} ref={menuOpen === b.id ? menuRef : null}>
+                        <button
+                          className={styles.boardMenuBtn}
+                          onClick={(e) => { e.stopPropagation(); setMenuOpen(menuOpen === b.id ? null : b.id); }}
+                        >⋮</button>
+                        {menuOpen === b.id && (
+                          <div className={styles.boardMenuDropdown}>
+                            <button
+                              className={styles.boardMenuItem}
+                              onClick={async () => {
+                                await toggleBoardPin(b.id, false);
+                                window.dispatchEvent(new Event('boardsUpdated'));
+                                setMenuOpen(null);
+                              }}
+                            >Odepnij</button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+
               {/* Section: MOJE BOARDY */}
-              <div className={styles.sectionTitle}>Moje boardy</div>
+              <div className={styles.sectionTitleRow}>
+                <span className={styles.sectionTitle}>Moje boardy</span>
+                <button
+                  className={styles.addExtBtn}
+                  onClick={() => handleCreate(true)}
+                  title="Nowy board"
+                >
+                  <Plus size={12} />
+                </button>
+              </div>
+
               {boards.map((b, idx) => (
                 <div
                   key={b.id}
@@ -373,7 +440,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                     <span className={styles.boardItemTitle}>{b.title}</span>
                     {b.share_mode ? (
                       b.owner_id ? (
-                        <Globe size={12} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.6 }} />
+                        <Globe size={14} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.6 }} />
                       ) : (
                         <span className={styles.anonBadge}>A</span>
                       )
@@ -386,6 +453,14 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                     >⋮</button>
                     {menuOpen === b.id && (
                       <div className={styles.boardMenuDropdown}>
+                        <button
+                          className={styles.boardMenuItem}
+                          onClick={async () => {
+                            await toggleBoardPin(b.id, true);
+                            window.dispatchEvent(new Event('boardsUpdated'));
+                            setMenuOpen(null);
+                          }}
+                        >Przypnij</button>
                         <button
                           className={styles.boardMenuItemDanger}
                           onClick={() => setDeleteConfirm({ id: b.id, ownerId: b.owner_id })}
@@ -429,14 +504,14 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                           <span className={styles.boardDot} style={{ background: b.color || '#888' }} />
                           <span className={styles.boardItemTitle}>{b.title}</span>
                           {b.owner_id ? (
-                            <Globe size={12} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.5 }} />
+                            <Globe size={14} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.5 }} />
                           ) : (
                             <span className={styles.anonBadge}>A</span>
                           )}
                         </>
                       ) : (
                         <>
-                          <Unplug size={12} style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }} />
+                          <Unplug size={14} style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }} />
                           <span className={styles.boardItemTitle}>{b?.title || 'Niedostępny board'}</span>
                         </>
                       )}
@@ -448,22 +523,66 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                       >⋮</button>
                       {extMenuOpen === sub.id && (
                         <div className={styles.boardMenuDropdown}>
-                          {isAvailable && !b.owner_id && (
+                          {!isAvailable && (
                             <button
-                              className={styles.boardMenuItem}
+                              className={styles.boardMenuItemDanger}
                               onClick={() => {
                                 setExtMenuOpen(null);
-                                setAdoptConfirm(b.id);
+                                setExtUnsubConfirm(sub.board_id);
                               }}
-                            >Adoptuj</button>
+                            >Odłącz</button>
                           )}
-                          <button
-                            className={styles.boardMenuItemDanger}
-                            onClick={() => {
-                              setExtMenuOpen(null);
-                              setExtUnsubConfirm(sub.board_id);
-                            }}
-                          >Odłącz</button>
+                          {isAvailable && !b.owner_id && (
+                            <>
+                              <button
+                                className={styles.boardMenuItem}
+                                onClick={async () => {
+                                  await duplicateBoardToMyBoards(b.id);
+                                  setCopiedExtId(sub.id);
+                                  setTimeout(() => setCopiedExtId(null), 2000);
+                                  window.dispatchEvent(new Event('boardsUpdated'));
+                                  setExtMenuOpen(null);
+                                }}
+                              >{copiedExtId === sub.id ? '✓ Skopiowano' : 'Skopiuj do moich'}</button>
+                              <hr className={styles.boardMenuSep} />
+                              <button
+                                className={styles.boardMenuItem}
+                                onClick={() => {
+                                  setAdoptConfirm(b.id);
+                                  setExtMenuOpen(null);
+                                }}
+                              >Adoptuj</button>
+                              <button
+                                className={styles.boardMenuItemDanger}
+                                onClick={() => {
+                                  setExtUnsubConfirm(sub.board_id);
+                                  setExtMenuOpen(null);
+                                }}
+                              >Odłącz</button>
+                            </>
+                          )}
+                          {isAvailable && b.owner_id && (
+                            <>
+                              <button
+                                className={styles.boardMenuItem}
+                                onClick={async () => {
+                                  await duplicateBoardToMyBoards(b.id);
+                                  setCopiedExtId(sub.id);
+                                  setTimeout(() => setCopiedExtId(null), 2000);
+                                  window.dispatchEvent(new Event('boardsUpdated'));
+                                  setExtMenuOpen(null);
+                                }}
+                              >{copiedExtId === sub.id ? '✓ Skopiowano' : 'Skopiuj do moich'}</button>
+                              <hr className={styles.boardMenuSep} />
+                              <button
+                                className={styles.boardMenuItemDanger}
+                                onClick={() => {
+                                  setExtUnsubConfirm(sub.board_id);
+                                  setExtMenuOpen(null);
+                                }}
+                              >Odłącz</button>
+                            </>
+                          )}
                         </div>
                       )}
                     </div>

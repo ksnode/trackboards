@@ -61,6 +61,7 @@
   flex-shrink: 0;
   width: 100%;
 }
+
 .collapsedSpacer {
   flex: 1;
 }
@@ -323,6 +324,12 @@
 
 .boardMenuItemDanger:hover {
   background: var(--color-background-danger);
+}
+
+.boardMenuSep {
+  border: none;
+  border-top: 1px solid var(--color-border-primary);
+  margin: 2px 0;
 }
 
 /* ─── Delete modal ───────────────────────────────────── */
@@ -636,7 +643,7 @@
 /* ─── Anon badge ─────────────────────────────────────── */
 .anonBadge {
   flex-shrink: 0;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   line-height: 1;
   padding: 2px 4px;

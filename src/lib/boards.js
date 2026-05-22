@@ -219,6 +219,34 @@ export const adoptOrphanBoard = async (boardId) => {
   );
 };
 
+export const toggleBoardPin = async (id, isPinned) => {
+  return handleResponse(
+    await supabase
+      .from('boards')
+      .update({ is_pinned: isPinned })
+      .eq('id', id)
+  );
+};
+
+export const duplicateBoardToMyBoards = async (boardId) => {
+  const board = await getBoard(boardId);
+  if (!board) throw new Error('Board not found');
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Not authenticated');
+  return handleResponse(
+    await supabase.from('boards').insert({
+      owner_id: user.id,
+      title: board.title + ' (kopia)',
+      color: board.color,
+      data: board.data,
+      progress: board.progress,
+      share_mode: null,
+      share_guid: null,
+      is_pinned: false,
+    })
+  );
+};
+
 // Admin endpoints
 export const listAnonymousBoards = async () => {
   return handleResponse(
