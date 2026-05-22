@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
+import { ShieldMinus, Bomb } from 'lucide-react';
 import { updateUserStatus, hardDeleteUser } from '../lib/boards';
 import ConfirmModal from '../components/ConfirmModal';
 import pageStyles from '../components/Layout/PageContent.module.css';
@@ -55,10 +56,10 @@ export default function ProfileManage() {
         <span className={s.breadcrumbCurrent}>Zarządzaj</span>
       </div>
 
-      <div className={s.manageActions}>
+      <div className={s.navCards}>
         {/* Deactivate */}
         <div className={s.manageCard}>
-          <div className={s.manageCardTitle}>Dezaktywuj konto</div>
+          <div className={s.manageCardTitle}><ShieldMinus size={13} /> Dezaktywuj konto</div>
           <p className={s.manageCardDesc}>
             Twoje konto zostanie dezaktywowane. Możesz je reaktywować logując się ponownie.
           </p>
@@ -68,9 +69,9 @@ export default function ProfileManage() {
         </div>
 
         {/* Delete */}
-        <div className={s.escapeWarning}>
-          <div className={s.escapeWarningTitle}>Usuń konto</div>
-          <p className={s.escapeWarningText}>
+        <div className={s.manageCardDelete}>
+          <div className={s.manageCardTitle}><Bomb size={13} /> Usuń konto</div>
+          <p className={s.manageCardDesc}>
             Tej operacji nie można cofnąć. Twój email zostanie zamaskowany,
             a konto trwale usunięte.
           </p>
@@ -106,12 +107,11 @@ export default function ProfileManage() {
       >
         <input
           type="text"
-          className={s.escapeInput}
+          className={s.manageInput}
           placeholder="wpisz: potwierdzam"
           value={deleteInput}
           onChange={e => setDeleteInput(e.target.value)}
           autoFocus
-          style={{ marginBottom: 0 }}
         />
       </ConfirmModal>
     </div>

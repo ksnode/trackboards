@@ -749,13 +749,15 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
               try {
                 const raw = localStorage.getItem(RECENT_KEY);
                 if (raw) {
-                  const updated = JSON.parse(raw).filter(r => r.guid !== anonRemoveConfirm);
+                  const updated = JSON.parse(raw).filter(r =>
+                    typeof r === 'string' ? r !== anonRemoveConfirm : r.guid !== anonRemoveConfirm
+                  );
                   localStorage.setItem(RECENT_KEY, JSON.stringify(updated));
                 }
               } catch { }
+              setAnonBoards(prev => prev.filter(b => b.guid !== anonRemoveConfirm));
               setAnonRemoveConfirm(null);
               window.dispatchEvent(new Event('boardsUpdated'));
-              navigate('/boards');
             }}
           />
 

@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
+import { BrushCleaning, Settings } from 'lucide-react';
 import pageStyles from '../components/Layout/PageContent.module.css';
 import s from './ProfileAdmin.module.css';
 
@@ -44,13 +45,13 @@ export default function Profile() {
       {/* Navigation cards */}
       <div className={s.navCards}>
         <Link to="/profile/purgatory" className={s.navCard}>
-          <div className={s.navCardTitle}>Czyściec</div>
+          <div className={s.navCardTitle}><BrushCleaning size={12} /> Czyściec</div>
           <div className={s.navCardDesc}>Twoje usunięte boardy. Możesz je przywrócić.</div>
         </Link>
 
         {!isAdmin && (
           <Link to="/profile/manage" className={s.navCardDanger}>
-            <div className={s.navCardTitle}>Zarządzaj</div>
+            <div className={s.navCardTitle}><Settings size={12} /> Zarządzaj</div>
             <div className={s.navCardDesc}>Dezaktywuj lub usuń swoje konto.</div>
           </Link>
         )}

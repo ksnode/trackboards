@@ -182,11 +182,11 @@ export default function AdminUserPurgatory() {
                   boardId={previewBoard.id}
                   data={previewBoard.data}
                   progress={previewBoard.progress}
-                  onChange={() => {}}
+                  onChange={() => { }}
                   readOnly={true}
                   canEditStructure={false}
                   editMode={false}
-                  onEditModeChange={() => {}}
+                  onEditModeChange={() => { }}
                   saveStatus=""
                   createdAt={previewBoard.created_at}
                 />

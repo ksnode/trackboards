@@ -419,45 +419,6 @@
   text-align: center;
 }
 
-/* ── Escape page ── */
-.escapeWarning {
-  padding: var(--space-6);
-  border: 1px solid var(--color-border-danger);
-  border-radius: var(--border-radius-lg);
-  background: var(--color-background-danger);
-}
-
-.escapeWarningTitle {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-text-danger);
-  margin-bottom: var(--space-2);
-}
-
-.escapeWarningText {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-4);
-}
-
-.escapeInput {
-  width: 100%;
-  max-width: 320px;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  background: var(--color-bg);
-  color: var(--color-text-primary);
-  font-size: var(--font-size-sm);
-  margin-bottom: var(--space-4);
-  outline: none;
-  font-family: var(--font-ui);
-}
-
-.escapeInput:focus {
-  border-color: var(--color-danger);
-}
-
 /* ── Share mode dropdown ── */
 .shareModeToggle {
   display: inline-flex;
@@ -891,10 +852,6 @@
     align-items: flex-start;
   }
 
-  .manageActions {
-    flex-direction: column;
-  }
-
   .filterRow {
     flex-direction: column;
     align-items: flex-start;
@@ -933,15 +890,6 @@
 }
 
 /* ── Manage actions (ProfileManage) ── */
-.manageActions {
-  display: flex;
-  gap: var(--space-4);
-}
-
-.manageActions > * {
-  flex: 1;
-}
-
 .manageCard {
   padding: var(--space-6);
   border: 1px solid var(--color-border-primary);
@@ -962,21 +910,62 @@
   margin-bottom: var(--space-4);
 }
 
-/* ── Privacy sections ── */
+.manageCardDelete {
+  padding: var(--space-6);
+  border: 1px solid var(--color-border-danger);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-background-danger);
+}
+
+.manageCardDelete:hover {
+  border-color: var(--color-danger);
+  background: var(--color-background-danger);
+}
+
+/* ── Manage page ── */
+
+.manageInput {
+  width: 100%;
+  max-width: 320px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-4);
+  outline: none;
+  font-family: var(--font-ui);
+}
+
+.manageInput:focus {
+  border-color: var(--color-danger);
+}
+
+
+/* ── Privacy page ── */
+.privacyWrapper {}
+
+.privacySubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0 0 var(--space-4);
+}
+
 .privacySections {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  max-width: 640px;
 }
 
 .privacySection {
   display: flex;
-  gap: var(--space-4);
-  padding: var(--space-5);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-lg);
-  background: var(--color-bg-secondary);
+  gap: var(--space-3);
+  padding: 20px 0;
+  border-bottom: 1px solid var(--color-border-primary);
+}
+
+.privacySection:last-child {
+  border-bottom: none;
 }
 
 .privacySectionIcon {
@@ -995,6 +984,6 @@
 .privacySectionText {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  line-height: 1.5;
+  line-height: 1.6;
   margin: 0;
 }

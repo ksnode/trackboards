@@ -379,33 +379,8 @@ export default function Board() {
         </div>
 
         <div className={styles.boardHeaderGroup}>
-          {canAdopt && (
-            <button className={styles.adoptBtn} onClick={() => setShowAdoptConfirm(true)}>
-              Zaadoptuj ten board
-            </button>
-          )}
 
-          {canEdit && (
-            <button
-              className={styles.adoptBtn}
-              onClick={() => setEditMode(e => !e)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-            >
-              {editMode ? <Check size={14} /> : <Pencil size={14} />}
-              {editMode ? 'Zakończ edycję' : 'Edytuj'}
-            </button>
-          )}
-
-          {canDelete && (
-            <button
-              className={styles.deleteBtn}
-              onClick={() => setShowDeleteConfirm(true)}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
-            >
-              <Trash2 size={14} /> Usuń
-            </button>
-          )}
-
+          {/* Admin preview */}
           {adminPreview && isAdmin && (
             <>
               <button
@@ -452,6 +427,33 @@ export default function Board() {
                 }}
               />
             </>
+          )}
+
+          {canAdopt && (
+            <button className={styles.adoptBtn} onClick={() => setShowAdoptConfirm(true)}>
+              Zaadoptuj ten board
+            </button>
+          )}
+
+          {canEdit && (
+            <button
+              className={styles.adoptBtn}
+              onClick={() => setEditMode(e => !e)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+            >
+              {editMode ? <Check size={14} /> : <Pencil size={14} />}
+              {editMode ? 'Zakończ edycję' : 'Edytuj'}
+            </button>
+          )}
+
+          {canDelete && (
+            <button
+              className={styles.deleteBtn}
+              onClick={() => setShowDeleteConfirm(true)}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+            >
+              <Trash2 size={14} /> Usuń
+            </button>
           )}
         </div>
       </div>
