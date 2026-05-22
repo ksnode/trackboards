@@ -9,6 +9,8 @@ import Board from './pages/Board';
 import Profile from './pages/Profile';
 import ProfilePurgatory from './pages/ProfilePurgatory';
 import ProfileEscape from './pages/ProfileEscape';
+import ProfileManage from './pages/ProfileManage';
+import Privacy from './pages/Privacy';
 import Admin from './pages/Admin';
 import AdminAnonyms from './pages/AdminAnonyms';
 import AdminUsers from './pages/AdminUsers';
@@ -37,6 +39,8 @@ export default function App() {
             <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
             <Route path="/profile/purgatory" element={<RequireAuth><ProfilePurgatory /></RequireAuth>} />
             <Route path="/profile/escape" element={<RequireAuth><ProfileEscape /></RequireAuth>} />
+            <Route path="/profile/manage" element={<RequireAuth><ProfileManage /></RequireAuth>} />
+            <Route path="/privacy" element={<Privacy />} />
 
             {/* Admin routes */}
             <Route path="/admin" element={<RequireAdmin><Admin /></RequireAdmin>} />

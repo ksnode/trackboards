@@ -1,19 +1,24 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { supabase } from './supabase';
+import { updateUserStatus, getUserProfile } from './boards';
 
 const AuthContext = createContext({
   user: null,
   profile: null,
   loading: true,
+  showReactivateModal: false,
   signInWithGoogle: async () => { },
   signOut: async () => { },
+  reactivateAccount: async () => { },
+  cancelReactivation: async () => { },
 });
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showReactivateModal, setShowReactivateModal] = useState(false);
 
   const fetchProfile = async (userId) => {
     const { data, error } = await supabase
@@ -37,7 +42,7 @@ export const AuthProvider = ({ children }) => {
     const recoveryTimer = setTimeout(async () => {
       if (resolved || !mounted) return;
       console.warn('[auth] Init timeout — clearing stuck session');
-      try { await supabase.auth.signOut(); } catch {}
+      try { await supabase.auth.signOut(); } catch { }
       Object.keys(localStorage)
         .filter(k => k.startsWith('sb-'))
         .forEach(k => localStorage.removeItem(k));
@@ -62,10 +67,20 @@ export const AuthProvider = ({ children }) => {
           setUser(session.user);
           const profileData = await fetchProfile(session.user.id);
           if (!mounted) return;
-          setProfile(profileData);
-          if (profileData && profileData.is_active === false) {
+
+          if (profileData && profileData.status === 'soft_deleted') {
+            setProfile(profileData);
+            setShowReactivateModal(true);
             await supabase.auth.signOut();
-            alert("Twoje konto zostało zablokowane");
+          } else if (profileData && (profileData.status === 'hard_deleted' || profileData.status === 'blocked')) {
+            await supabase.auth.signOut();
+            const msg = profileData.status === 'blocked'
+              ? 'Twoje konto zostało zablokowane.'
+              : 'Twoje konto zostało usunięte.';
+            alert(msg);
+            return;
+          } else {
+            setProfile(profileData);
           }
         } else {
           setUser(null);
@@ -97,8 +112,25 @@ export const AuthProvider = ({ children }) => {
     await supabase.auth.signOut();
   };
 
+  const reactivateAccount = async () => {
+    console.log('[auth] reactivateAccount called v2');
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    console.log('[auth] currentUser:', currentUser);
+    if (!currentUser) return;
+    await updateUserStatus(currentUser.id, 'active');
+    const fresh = await getUserProfile(currentUser.id);
+    setProfile(fresh);
+    setShowReactivateModal(false);
+    window.location.reload();
+  };
+
+  const cancelReactivation = async () => {
+    setShowReactivateModal(false);
+    await supabase.auth.signOut();
+  };
+
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, profile, loading, showReactivateModal, signInWithGoogle, signOut, reactivateAccount, cancelReactivation }}>
       {children}
     </AuthContext.Provider>
   );
@@ -112,7 +144,7 @@ export const RequireAuth = ({ children }) => {
 
   if (loading) return <div>Ładowanie...</div>;
 
-  if (!user || (profile && !profile.is_active)) {
+  if (!user || (profile && profile.status !== 'active')) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
@@ -125,7 +157,7 @@ export const RequireAdmin = ({ children }) => {
 
   if (loading) return <div>Ładowanie...</div>;
 
-  if (!user || !profile || profile.role !== 'admin' || !profile.is_active) {
+  if (!user || !profile || profile.role !== 'admin' || profile.status !== 'active') {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 

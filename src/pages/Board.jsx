@@ -341,7 +341,7 @@ export default function Board() {
                     const Icon = m.icon;
                     return (
                       <button
-                        key={m.label}
+                        key={m.value ?? 'null'}
                         className={isActive ? styles.shareModeMenuItem_active : styles.shareModeMenuItem}
                         onClick={() => { handleShareModeChange(m.value); setShareModeOpen(false); }}
                       >

@@ -49,9 +49,9 @@ export default function Profile() {
         </Link>
 
         {!isAdmin && (
-          <Link to="/profile/escape" className={s.navCardDanger}>
-            <div className={s.navCardTitle}>Wyjście</div>
-            <div className={s.navCardDesc}>Usuń swoje konto na stałe.</div>
+          <Link to="/profile/manage" className={s.navCardDanger}>
+            <div className={s.navCardTitle}>Zarządzaj</div>
+            <div className={s.navCardDesc}>Dezaktywuj lub usuń swoje konto.</div>
           </Link>
         )}
       </div>

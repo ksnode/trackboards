@@ -10,8 +10,9 @@ import {
 } from '../../lib/boards';
 import {
   GripVertical, Menu, Plus,
-  Shield, User, LogOut, Monitor, Sun, Moon,
-  Globe, Unplug,
+  Shield, User, LogIn, LogOut, Monitor, Sun, Moon,
+  Globe, Unplug, Lock,
+  HatGlasses,
 } from 'lucide-react';
 import ConfirmModal from '../ConfirmModal';
 import { subscribeToBoardList } from '../../lib/realtime';
@@ -762,6 +763,9 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
           <div className={styles.footer}>
             {user ? (
               <>
+                <NavLink to="/privacy" className={styles.footerLink} onClick={handleLinkClick}>
+                  <HatGlasses size={14} /> Prywatność
+                </NavLink>
                 {profile?.role === 'admin' && (
                   <NavLink to="/admin" className={styles.footerLink} onClick={handleLinkClick}>
                     <Shield size={14} /> Admin
@@ -779,9 +783,13 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
               </>
             ) : (
               <>
-                <span className={styles.anonLabel}>Anonim</span>
-                <button onClick={signInWithGoogle} className={styles.loginBtnAccent}>
-                  Zaloguj przez Google
+                <NavLink to="/privacy" className={styles.footerLink} onClick={handleLinkClick}>
+                  <HatGlasses size={14} /> Prywatność
+                </NavLink>
+                <span className={styles.footerLink}>
+                  <User size={14} /> Anonim</span>
+                <button onClick={signInWithGoogle} className={`${styles.footerLink} ${styles.loginLink}`}>
+                  <LogIn size={14} /> Zaloguj przez Google
                 </button>
               </>
             )}
@@ -832,6 +840,9 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
             <div className={styles.separator} />
             {user ? (
               <>
+                <NavLink to="/privacy" className={styles.iconBtn} title="Prywatność" onClick={handleLinkClick}>
+                  <Lock size={18} />
+                </NavLink>
                 {profile?.role === 'admin' && (
                   <NavLink to="/admin" className={styles.iconBtn} title="Panel admina" onClick={handleLinkClick}>
                     <Shield size={18} />
@@ -845,9 +856,14 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                 </button>
               </>
             ) : (
-              <button onClick={signInWithGoogle} className={styles.iconBtn} title="Zaloguj się">
-                <User size={18} />
-              </button>
+              <>
+                <NavLink to="/privacy" className={styles.iconBtn} title="Prywatność" onClick={handleLinkClick}>
+                  <Lock size={18} />
+                </NavLink>
+                <button onClick={signInWithGoogle} className={styles.iconBtn} title="Zaloguj się">
+                  <User size={18} />
+                </button>
+              </>
             )}
             <div className={styles.separator} />
             <button onClick={cycleTheme} className={styles.iconBtn} title={THEME_LABELS[themePref]}>

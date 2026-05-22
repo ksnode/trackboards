@@ -156,6 +156,7 @@ export default function Boards() {
     await applyShareMode(board.id, newMode, board.share_guid);
   };
 
+
   const applyShareMode = async (boardId, newMode, shareGuid) => {
     try {
       await toggleShareMode(boardId, newMode, shareGuid);
@@ -228,86 +229,103 @@ export default function Boards() {
   return (
     <div className={`${pageStyles.root} ${styles.root}`}>
       <div className={styles.boardsList}>
-        {/* ── MOJE BOARDY ── */}
-        <div className={styles.sectionTitle}>Moje boardy</div>
-        {boards.map(board => {
-          const pct = calcBoardPct(board);
-          const isPublic = !!board.share_mode;
-          return (
-            <Link key={board.id} to={`/board/${board.id}`} className={styles.boardCard}>
-              <label
-                className={styles.colorDotLabel}
-                style={{ background: board.color }}
-                title="Zmień kolor"
-                onClick={e => e.stopPropagation()}
-              >
-                <input
-                  type="color"
-                  value={board.color}
-                  onChange={e => handleColorChange(board.id, e.target.value)}
-                  className={styles.colorInput}
-                  onClick={e => { e.preventDefault(); e.stopPropagation(); e.target.showPicker?.(); }}
-                />
-              </label>
-              <div className={styles.boardInfo}>
-                <span className={styles.boardTitle}>{board.title}</span>
-                <div className={styles.boardMeta}>
-                  {new Date(board.updated_at).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })}
-                </div>
-              </div>
+        {/* ── ULUBIONE ── */}
+        {(() => {
+          const pinned = boards.filter(b => b.is_pinned);
+          const unpinned = boards.filter(b => !b.is_pinned);
 
-              <div className={styles.progressSection}>
-                <div className={styles.boardProgressBar}>
-                  <div
-                    className={styles.boardProgressFill}
-                    style={{ width: `${pct}%`, background: board.color }}
-                  />
-                </div>
-                <span className={styles.boardPct}>{pct}%</span>
-              </div>
-
-              {/* Share mode dropdown (small) */}
-              <div
-                className={styles.shareModeDropdownSm}
-                ref={shareModeOpenId === board.id ? shareModeRef : null}
-                onClick={e => e.preventDefault()}
-              >
-                <button
-                  className={isPublic ? styles.shareModeToggleSmPublic : styles.shareModeToggleSm}
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShareModeOpenId(shareModeOpenId === board.id ? null : board.id); }}
+          const renderBoardCard = (board) => {
+            const pct = calcBoardPct(board);
+            const isPublic = !!board.share_mode;
+            return (
+              <Link key={board.id} to={`/board/${board.id}`} className={styles.boardCard}>
+                <label
+                  className={styles.colorDotLabel}
+                  style={{ background: board.color }}
+                  title="Zmień kolor"
+                  onClick={e => e.stopPropagation()}
                 >
-                  {(() => { const cur = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0]; const Icon = cur.icon; return <><Icon size={10} /> {cur.label}</>; })()}
-                  <ChevronDown size={10} className={shareModeOpenId === board.id ? styles.chevronOpen : ''} />
-                </button>
-                {shareModeOpenId === board.id && (
-                  <div className={styles.shareModeMenuSm}>
-                    {SHARE_MODES.map(m => {
-                      const isActive = board.share_mode === m.value;
-                      const Icon = m.icon;
-                      return (
-                        <button
-                          key={m.label}
-                          className={isActive ? styles.shareModeMenuItemSm_active : styles.shareModeMenuItemSm}
-                          onClick={(e) => { handleShareModeChange(e, board, m.value); setShareModeOpenId(null); }}
-                        >
-                          <Icon size={11} /> {m.label}
-                        </button>
-                      );
-                    })}
+                  <input
+                    type="color"
+                    value={board.color}
+                    onChange={e => handleColorChange(board.id, e.target.value)}
+                    className={styles.colorInput}
+                    onClick={e => { e.preventDefault(); e.stopPropagation(); e.target.showPicker?.(); }}
+                  />
+                </label>
+                <div className={styles.boardInfo}>
+                  <span className={styles.boardTitle}>{board.title}</span>
+                  <div className={styles.boardMeta}>
+                    {new Date(board.updated_at).toLocaleDateString('pl-PL', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </div>
-                )}
-              </div>
-            </Link>
+                </div>
+
+                <div className={styles.progressSection}>
+                  <div className={styles.boardProgressBar}>
+                    <div
+                      className={styles.boardProgressFill}
+                      style={{ width: `${pct}%`, background: board.color }}
+                    />
+                  </div>
+                  <span className={styles.boardPct}>{pct}%</span>
+                </div>
+
+                {/* Share mode dropdown (small) */}
+                <div
+                  className={styles.shareModeDropdownSm}
+                  ref={shareModeOpenId === board.id ? shareModeRef : null}
+                  onClick={e => e.preventDefault()}
+                >
+                  <button
+                    className={isPublic ? styles.shareModeToggleSmPublic : styles.shareModeToggleSm}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShareModeOpenId(shareModeOpenId === board.id ? null : board.id); }}
+                  >
+                    {(() => { const cur = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0]; const Icon = cur.icon; return <><Icon size={10} /> {cur.label}</>; })()}
+                    <ChevronDown size={10} className={shareModeOpenId === board.id ? styles.chevronOpen : ''} />
+                  </button>
+                  {shareModeOpenId === board.id && (
+                    <div className={styles.shareModeMenuSm}>
+                      {SHARE_MODES.map(m => {
+                        const isActive = board.share_mode === m.value;
+                        const Icon = m.icon;
+                        return (
+                          <button
+                            key={m.value ?? 'null'}
+                            className={isActive ? styles.shareModeMenuItemSm_active : styles.shareModeMenuItemSm}
+                            onClick={(e) => { handleShareModeChange(e, board, m.value); setShareModeOpenId(null); }}
+                          >
+                            <Icon size={11} /> {m.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            );
+          };
+
+          return (
+            <>
+              {pinned.length > 0 && (
+                <>
+                  <div className={styles.sectionTitle}>Ulubione</div>
+                  {pinned.map(renderBoardCard)}
+                </>
+              )}
+              <div className={styles.sectionTitle}>Moje boardy</div>
+              {unpinned.map(renderBoardCard)}
+              {unpinned.length === 0 && pinned.length === 0 && (
+                <div className={styles.emptyState}>
+                  <p className={styles.emptyText}>Nie masz jeszcze żadnych boardów</p>
+                  <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-tertiary)' }}>
+                    Użyj przycisku „+ Nowy board" w sidebarze
+                  </p>
+                </div>
+              )}
+            </>
           );
-        })}
-        {boards.length === 0 && (
-          <div className={styles.emptyState}>
-            <p className={styles.emptyText}>Nie masz jeszcze żadnych boardów</p>
-            <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-tertiary)' }}>
-              Użyj przycisku „+ Nowy board" w sidebarze
-            </p>
-          </div>
-        )}
+        })()}
 
         {/* ── ZEWNĘTRZNE ── */}
         {extBoards.length > 0 && (

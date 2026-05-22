@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useHeader } from '../lib/headerContext';
 import {
   listAnonymousBoards, hardDeleteBoard, assignOrphanToUser, listUsers,
-  toggleShareMode,
+  toggleShareMode, deleteAllAnonymousBoards,
 } from '../lib/boards';
 import { Lock, Eye, PenLine, ChevronDown } from 'lucide-react';
 import ConfirmModal from '../components/ConfirmModal';
@@ -23,6 +23,7 @@ export default function AdminAnonyms() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [deleteAllConfirm, setDeleteAllConfirm] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
 
   // Share mode (portal)
@@ -165,6 +166,20 @@ export default function AdminAnonyms() {
         <Link to="/admin" className={s.breadcrumbLink}>Admin</Link>
         <span className={s.breadcrumbSep}>›</span>
         <span className={s.breadcrumbCurrent}>Anonimowe boardy</span>
+      </div>
+
+      <div className={s.filterRow}>
+        <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+          {boards.length} {boards.length === 1 ? 'board' : 'boardów'}
+        </span>
+        {boards.length > 0 && (
+          <button
+            className={s.btnDanger}
+            onClick={() => setDeleteAllConfirm(true)}
+          >
+            Usuń wszystkie anonimowe
+          </button>
+        )}
       </div>
 
       {boards.length === 0 ? (
@@ -365,6 +380,27 @@ export default function AdminAnonyms() {
           </div>
         )}
       </ConfirmModal>
+
+      {/* Delete all confirm */}
+      <ConfirmModal
+        open={deleteAllConfirm}
+        title="Usunąć wszystkie anonimowe boardy?"
+        description="Tej operacji nie można cofnąć. Wszystkie anonimowe boardy zostaną trwale usunięte."
+        cancelLabel="Anuluj"
+        confirmLabel="Usuń wszystkie"
+        variant="danger"
+        onCancel={() => setDeleteAllConfirm(false)}
+        onConfirm={async () => {
+          try {
+            await deleteAllAnonymousBoards();
+            await fetchData();
+          } catch (err) {
+            console.error('Delete all error:', err);
+          } finally {
+            setDeleteAllConfirm(false);
+          }
+        }}
+      />
     </div>
   );
 }

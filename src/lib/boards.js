@@ -298,12 +298,59 @@ export const updateUserRole = async (userId, role) => {
   );
 };
 
-export const toggleUserActive = async (userId, isActive) => {
+export const updateUserStatus = async (userId, newStatus) => {
+  const updates = { status: newStatus };
+  if (['soft_deleted', 'hard_deleted'].includes(newStatus)) {
+    updates.deleted_at = new Date().toISOString();
+  }
+  if (newStatus === 'active') {
+    updates.deleted_at = null;
+  }
   return handleResponse(
-    await supabase
-      .from('profiles')
-      .update({ is_active: isActive })
-      .eq('user_id', userId)
+    await supabase.from('profiles').update(updates).eq('user_id', userId)
+  );
+};
+
+export const hardDeleteUser = async (userId, userEmail, isSelf = false) => {
+  const [local, domain] = userEmail.split('@');
+  const masked = `${local.slice(0, 2)}...${local.slice(-2)}@${domain}_${Math.random().toString(36).slice(2, 7)}_deleted`;
+
+  // Maskuj email w profiles
+  await supabase.from('profiles').update({
+    email: masked,
+    status: 'hard_deleted',
+    deleted_at: new Date().toISOString()
+  }).eq('user_id', userId);
+
+  // Maskuj email w auth.users (NIE usuwaj - żeby boardy zostały z owner_id)
+  if (isSelf) {
+    await supabase.rpc('self_hard_delete', { masked_email: masked });
+  } else {
+    await supabase.rpc('admin_hard_delete', {
+      target_user_id: userId,
+      masked_email: masked
+    });
+  }
+};
+
+export const removeUser = async (userId) => {
+  await supabase.from('boards').delete().eq('owner_id', userId);
+  await supabase.from('profiles').delete().eq('user_id', userId);
+  return handleResponse(await supabase.rpc('admin_delete_user', { target_user_id: userId }));
+};
+
+export const reassignAllBoards = async (fromUserId, toUserId) => {
+  return handleResponse(
+    await supabase.from('boards')
+      .update({ owner_id: toUserId })
+      .eq('owner_id', fromUserId)
+      .is('deleted_at', null)
+  );
+};
+
+export const deleteAllAnonymousBoards = async () => {
+  return handleResponse(
+    await supabase.from('boards').delete().is('owner_id', null)
   );
 };
 

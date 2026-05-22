@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../lib/auth';
 import { HeaderProvider, useHeader } from '../../lib/headerContext';
 import { Sidebar } from './Sidebar';
+import ConfirmModal from '../ConfirmModal';
 import styles from './Layout.module.css';
 
 function ContentHeader() {
@@ -49,7 +50,7 @@ function ContentHeader() {
 }
 
 export function Layout() {
-  const { user } = useAuth();
+  const { user, showReactivateModal, reactivateAccount, cancelReactivation } = useAuth();
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const [expanded, setExpanded] = useState(window.innerWidth >= 768);
@@ -90,6 +91,16 @@ export function Layout() {
           <Outlet />
         </main>
       </div>
+      <ConfirmModal
+        open={showReactivateModal}
+        title="Twoje konto jest dezaktywowane"
+        description="Czy chcesz reaktywować swoje konto i przywrócić wszystkie boardy?"
+        cancelLabel="Anuluj"
+        confirmLabel="Reaktywuj"
+        variant="primary"
+        onCancel={cancelReactivation}
+        onConfirm={reactivateAccount}
+      />
     </HeaderProvider>
   );
 }
