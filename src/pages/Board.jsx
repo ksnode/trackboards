@@ -6,7 +6,7 @@ import {
   getBoard, updateBoardData, updateBoardMeta, toggleShareMode, adoptOrphanBoard,
   softDeleteBoard, hardDeleteBoard, subscribeToBoard, unsubscribeFromBoard,
 } from '../lib/boards';
-import { Link as LinkIcon, Pencil, Check, Trash2, Lock, Eye, PenLine, ChevronDown, Shield } from 'lucide-react';
+import { Link as LinkIcon, Pencil, Check, Trash2, Lock, Eye, PenLine, ChevronDown, Shield, Download, Upload } from 'lucide-react';
 import paStyles from './ProfileAdmin.module.css';
 import { subscribeToBoardChanges } from '../lib/realtime';
 import BoardFramework from '../components/BoardFramework/BoardFramework';
@@ -58,6 +58,9 @@ export default function Board() {
   const [editMode, setEditMode] = useState(false);
   const [shareModeOpen, setShareModeOpen] = useState(false);
   const shareModeRef = useRef(null);
+  const importFileRef = useRef(null);
+  const [importConfirm, setImportConfirm] = useState(false);
+  const [importData, setImportData] = useState(null);
 
   const debounceRef = useRef(null);
 
@@ -402,6 +405,54 @@ export default function Board() {
               <Trash2 size={14} /> Usuń
             </button>
           )}
+
+          {adminPreview && isAdmin && (
+            <>
+              <button
+                className={styles.headerBtn}
+                onClick={() => {
+                  const json = JSON.stringify(board.data, null, 2);
+                  const blob = new Blob([json], { type: 'application/json' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `${board.title || 'board'}.json`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+              >
+                <Download size={14} /> Eksportuj
+              </button>
+              <button
+                className={styles.headerBtn}
+                onClick={() => importFileRef.current?.click()}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+              >
+                <Upload size={14} /> Importuj
+              </button>
+              <input
+                ref={importFileRef}
+                type="file"
+                accept=".json"
+                style={{ display: 'none' }}
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  try {
+                    const text = await file.text();
+                    const parsed = JSON.parse(text);
+                    setImportData(parsed);
+                    setImportConfirm(true);
+                  } catch (err) {
+                    console.error('Import parse error:', err);
+                    alert('Nie udało się wczytać pliku JSON.');
+                  }
+                  e.target.value = '';
+                }}
+              />
+            </>
+          )}
         </div>
       </div>
 
@@ -439,6 +490,28 @@ export default function Board() {
         variant="primary"
         onCancel={() => setShowAdoptConfirm(false)}
         onConfirm={() => { setShowAdoptConfirm(false); handleAdopt(); }}
+      />
+
+      {/* Import confirm modal */}
+      <ConfirmModal
+        open={importConfirm}
+        title="Importować dane?"
+        description="Obecna zawartość zostanie zastąpiona."
+        cancelLabel="Anuluj"
+        confirmLabel="Importuj"
+        variant="danger"
+        onCancel={() => { setImportConfirm(false); setImportData(null); }}
+        onConfirm={async () => {
+          try {
+            await updateBoardData(board.id, importData, { states: {}, collapsed: {} });
+            const fresh = await getBoard(guid);
+            setBoard(fresh);
+          } catch (err) {
+            console.error('Import error:', err);
+          }
+          setImportConfirm(false);
+          setImportData(null);
+        }}
       />
 
       {/* Board Framework */}

@@ -544,7 +544,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                                   window.dispatchEvent(new Event('boardsUpdated'));
                                   setExtMenuOpen(null);
                                 }}
-                              >{copiedExtId === sub.id ? '✓ Skopiowano' : 'Skopiuj do moich'}</button>
+                              >{copiedExtId === sub.id ? '✓ Skopiowano' : 'Skopiuj'}</button>
                               <hr className={styles.boardMenuSep} />
                               <button
                                 className={styles.boardMenuItem}
@@ -573,7 +573,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                                   window.dispatchEvent(new Event('boardsUpdated'));
                                   setExtMenuOpen(null);
                                 }}
-                              >{copiedExtId === sub.id ? '✓ Skopiowano' : 'Skopiuj do moich'}</button>
+                              >{copiedExtId === sub.id ? '✓ Skopiowano' : 'Skopiusj'}</button>
                               <hr className={styles.boardMenuSep} />
                               <button
                                 className={styles.boardMenuItemDanger}

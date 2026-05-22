@@ -15,13 +15,6 @@ export default function Privacy() {
     setHeader({ title: 'Prywatność', editable: false, showBack: false });
   }, [setHeader]);
 
-  // After sign-out redirect to /boards
-  useEffect(() => {
-    if (user === null) {
-      navigate('/boards');
-    }
-  }, [user, navigate]);
-
   return (
     <div className={pageStyles.root}>
       <div className={s.breadcrumb}>

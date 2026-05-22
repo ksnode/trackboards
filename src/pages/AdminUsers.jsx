@@ -458,17 +458,20 @@ export default function AdminUsers() {
                                   Hard delete
                                 </button>
                               )}
-                              <div className={s.optionsSep} />
-                              <button
-                                className={s.optionsItemDanger}
-                                onClick={() => {
-                                  setRemoveConfirm({ userId: u.user_id, email: u.email });
-                                  /*setRemoveInput('');*/
-                                  setDeleteOpenId(null);
-                                }}
-                              >
-                                Remove
-                              </button>
+                              {(isSoftDeleted || isHardDeleted) && (
+                                <>
+                                  <div className={s.optionsSep} />
+                                  <button
+                                    className={s.optionsItemDanger}
+                                    onClick={() => {
+                                      setRemoveConfirm({ userId: u.user_id, email: u.email });
+                                      setDeleteOpenId(null);
+                                    }}
+                                  >
+                                    Remove
+                                  </button>
+                                </>
+                              )}
                             </div>,
                             document.body
                           )}
