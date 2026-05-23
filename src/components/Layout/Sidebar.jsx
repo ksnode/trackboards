@@ -10,9 +10,9 @@ import {
 } from '../../lib/boards';
 import {
   GripVertical, Menu, Plus,
-  Shield, User, LogIn, LogOut, Monitor, Sun, Moon,
+  UserStar, User, LogIn, LogOut, Monitor, Sun, Moon,
   Globe, Unplug, Lock,
-  HatGlasses,
+  Ghost, HatGlasses,
 } from 'lucide-react';
 import ConfirmModal from '../ConfirmModal';
 import { subscribeToBoardList } from '../../lib/realtime';
@@ -371,7 +371,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                       onDrop={(e) => handleDrop(e, idx)}
                     >
                       <span className={styles.dragHandle}>
-                        <GripVertical size={14} />
+                        <GripVertical size={18} />
                       </span>
                       <NavLink
                         to={`/board/${b.id}`}
@@ -381,7 +381,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                         <span className={styles.boardDot} style={{ background: b.color }} />
                         <span className={styles.boardItemTitle}>{b.title}</span>
                         {b.share_mode != null && (
-                          <Globe size={14} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.6 }} />
+                          <Globe size={18} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.4 }} />
                         )}
                       </NavLink>
                       <div className={styles.boardMenuWrapper} ref={menuOpen === b.id ? menuRef : null}>
@@ -415,7 +415,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                   onClick={() => handleCreate(true)}
                   title="Nowy board"
                 >
-                  <Plus size={12} />
+                  <Plus size={16} />
                 </button>
               </div>
 
@@ -430,7 +430,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                   onDrop={(e) => handleDrop(e, idx)}
                 >
                   <span className={styles.dragHandle}>
-                    <GripVertical size={14} />
+                    <GripVertical size={18} />
                   </span>
                   <NavLink
                     to={`/board/${b.id}`}
@@ -441,9 +441,9 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                     <span className={styles.boardItemTitle}>{b.title}</span>
                     {b.share_mode ? (
                       b.owner_id ? (
-                        <Globe size={14} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.6 }} />
+                        <Globe size={18} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.4 }} />
                       ) : (
-                        <span className={styles.anonBadge}>A</span>
+                        <Ghost size={18} style={{ flexShrink: 0, color: 'var(--color-text-muted)', opacity: 0.4 }} />
                       )
                     ) : null}
                   </NavLink>
@@ -480,7 +480,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                   onClick={() => setShowSubscribeModal(true)}
                   title="Dodaj zewnętrzny board"
                 >
-                  <Plus size={12} />
+                  <Plus size={18} />
                 </button>
               </div>
               {extBoards.map(sub => {
@@ -505,14 +505,14 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                           <span className={styles.boardDot} style={{ background: b.color || '#888' }} />
                           <span className={styles.boardItemTitle}>{b.title}</span>
                           {b.owner_id ? (
-                            <Globe size={14} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.5 }} />
+                            <Globe size={18} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.4 }} />
                           ) : (
-                            <span className={styles.anonBadge}>A</span>
+                            <Ghost size={18} style={{ flexShrink: 0, color: 'var(--color-text-muted)', opacity: 0.4 }} />
                           )}
                         </>
                       ) : (
                         <>
-                          <Unplug size={14} style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }} />
+                          <Unplug size={18} style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }} />
                           <span className={styles.boardItemTitle}>{b?.title || 'Niedostępny board'}</span>
                         </>
                       )}
@@ -573,7 +573,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                                   window.dispatchEvent(new Event('boardsUpdated'));
                                   setExtMenuOpen(null);
                                 }}
-                              >{copiedExtId === sub.id ? '✓ Skopiowano' : 'Skopiusj'}</button>
+                              >{copiedExtId === sub.id ? '✓ Skopiowano' : 'Skopiuj'}</button>
                               <hr className={styles.boardMenuSep} />
                               <button
                                 className={styles.boardMenuItemDanger}
@@ -615,13 +615,13 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
                     {b.available ? (
                       b.share_mode ? (
                         b.owner_id ? (
-                          <Globe size={12} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.5 }} />
+                          <Globe size={18} style={{ flexShrink: 0, color: 'var(--color-text-info)', opacity: 0.4 }} />
                         ) : (
-                          <span className={styles.anonBadge}>A</span>
+                          <Ghost size={18} style={{ flexShrink: 0, color: 'var(--color-text-muted)', opacity: 0.4 }} />
                         )
                       ) : null
                     ) : (
-                      <Unplug size={12} style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }} />
+                      <Unplug size={18} style={{ flexShrink: 0, color: 'var(--color-text-tertiary)' }} />
                     )}
                   </NavLink>
                   <div className={styles.boardMenuWrapper} ref={menuOpen === b.guid ? menuRef : null}>
@@ -765,33 +765,32 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
           <div className={styles.footer}>
             {user ? (
               <>
-                <NavLink to="/privacy" className={styles.footerLink} onClick={handleLinkClick}>
-                  <HatGlasses size={14} /> Prywatność
-                </NavLink>
                 {profile?.role === 'admin' && (
                   <NavLink to="/admin" className={styles.footerLink} onClick={handleLinkClick}>
-                    <Shield size={14} /> Admin
+                    <UserStar size={18} /> Administrator
                   </NavLink>
                 )}
                 <NavLink to="/profile" className={styles.footerLink} onClick={handleLinkClick}>
-                  <User size={14} /> Profil
+                  <User size={18} /> Mój Profil
                 </NavLink>
-                <div className={styles.userInfo}>
-                  <button onClick={() => setSignOutConfirm(true)} className={`${styles.footerLink} ${styles.logoutLink}`}>
-                    <LogOut size={14} /> Wyloguj
-                  </button>
-                  <span className={styles.email} title={user.email}>({truncateEmail(user.email)})</span>
-                </div>
+                <NavLink to="/privacy" className={styles.footerLink} onClick={handleLinkClick}>
+                  <HatGlasses size={18} /> Prywatność
+                </NavLink>
+                <div className={styles.separator} />
+                <button onClick={() => setSignOutConfirm(true)} className={`${styles.footerLink} ${styles.logoutLink}`}>
+                  <LogOut size={18} /> Wyloguj <span className={styles.email} title={user.email}>({truncateEmail(user.email)})</span>
+                </button>
               </>
             ) : (
               <>
+                <span className={styles.footerLink} >
+                  <Ghost size={18} /> Anonim</span>
                 <NavLink to="/privacy" className={styles.footerLink} onClick={handleLinkClick}>
-                  <HatGlasses size={14} /> Prywatność
+                  <HatGlasses size={18} /> Prywatność
                 </NavLink>
-                <span className={styles.footerLink}>
-                  <User size={14} /> Anonim</span>
+                <div className={styles.separator} />
                 <button onClick={signInWithGoogle} className={`${styles.footerLink} ${styles.loginLink}`}>
-                  <LogIn size={14} /> Zaloguj przez Google
+                  <LogIn size={18} /> Zaloguj przez Google
                 </button>
               </>
             )}
@@ -842,17 +841,18 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
             <div className={styles.separator} />
             {user ? (
               <>
-                <NavLink to="/privacy" className={styles.iconBtn} title="Prywatność" onClick={handleLinkClick}>
-                  <Lock size={18} />
-                </NavLink>
                 {profile?.role === 'admin' && (
                   <NavLink to="/admin" className={styles.iconBtn} title="Panel admina" onClick={handleLinkClick}>
-                    <Shield size={18} />
+                    <UserStar size={18} />
                   </NavLink>
                 )}
                 <NavLink to="/profile" className={styles.iconBtn} title="Profil" onClick={handleLinkClick}>
                   <User size={18} />
                 </NavLink>
+                <NavLink to="/privacy" className={styles.iconBtn} title="Prywatność" onClick={handleLinkClick}>
+                  <HatGlasses size={18} />
+                </NavLink>
+                <div className={styles.separator} />
                 <button onClick={() => setSignOutConfirm(true)} className={`${styles.iconBtn} ${styles.iconBtnDanger}`} title="Wyloguj">
                   <LogOut size={18} />
                 </button>
@@ -860,10 +860,11 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
             ) : (
               <>
                 <NavLink to="/privacy" className={styles.iconBtn} title="Prywatność" onClick={handleLinkClick}>
-                  <Lock size={18} />
+                  <HatGlasses size={18} />
                 </NavLink>
-                <button onClick={signInWithGoogle} className={styles.iconBtn} title="Zaloguj się">
-                  <User size={18} />
+                <div className={styles.separator} />
+                <button onClick={signInWithGoogle} className={`${styles.iconBtn} ${styles.iconBtnInfo}`} title="Zaloguj się">
+                  <LogIn size={18} />
                 </button>
               </>
             )}

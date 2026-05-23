@@ -411,6 +411,22 @@
   background: var(--color-background-danger);
 }
 
+.iconBtnInfo {
+  font-size: var(--font-size-xs);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--color-border-info);
+  background: transparent;
+  color: var(--color-text-info);
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.iconBtnInfo:hover {
+  background: var(--color-background-info);
+  color: var(--color-info);
+}
+
 /* ─── Add buttons ─────────────────────────────────────── */
 .addStepBtn {
   font-size: var(--font-size-sm);

@@ -78,7 +78,7 @@
 
 .boardProgressBar {
   flex: 1;
-  height: 4px;
+  height: 5px;
   background: var(--color-border-secondary);
   border-radius: 2px;
   overflow: hidden;
@@ -471,5 +471,28 @@
 @media (max-width: 600px) {
   .welcomeCards {
     flex-direction: column;
+  }
+}
+
+@media (max-width: 500px) {
+  .boardCard {
+    flex-wrap: wrap;
+    row-gap: var(--space-3);
+  }
+
+  .boardInfo {
+    flex: 1 1 calc(100% - 30px);
+  }
+
+  .boardTitle {
+    max-width: none;
+  }
+
+  .boardCard> :nth-child(3) {
+    margin-left: 26px;
+  }
+
+  .progressSection {
+    flex: 1 1 auto;
   }
 }

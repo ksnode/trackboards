@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { listMyBoards, listSubscribedBoards, updateBoardMeta, toggleShareMode, getBoard } from '../lib/boards';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
-import { Lock, Eye, PenLine, ChevronDown, Globe } from 'lucide-react';
+import { Lock, Eye, PenLine, ChevronDown, Globe, Ghost } from 'lucide-react';
 import { createBoardAnonymous } from '../lib/boards';
 import { subscribeToBoardList } from '../lib/realtime';
 import { useNavigate } from 'react-router-dom';
@@ -367,7 +367,7 @@ export default function Boards() {
                   {/* Static badge instead of dropdown */}
                   {isAvailable ? (
                     <span className={styles.extBadge}>
-                      <Globe size={10} /> {b.owner_id ? 'Shared' : 'Anon'}
+                      {b.owner_id ? <><Globe size={10} /> Shared</> : <><Ghost size={10} /> Anonym</>}
                     </span>
                   ) : (
                     <span className={styles.extBadgeHidden}>Ukryty</span>

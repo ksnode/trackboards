@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
-import { listMyPurgatory, restoreBoard, getBoard } from '../lib/boards';
+import { listMyPurgatory, restoreBoard, getBoard, hardDeleteBoard } from '../lib/boards';
 import BoardFramework from '../components/BoardFramework/BoardFramework';
+import ConfirmModal from '../components/ConfirmModal';
 import pageStyles from '../components/Layout/PageContent.module.css';
 import s from './ProfileAdmin.module.css';
 
@@ -12,6 +13,8 @@ export default function ProfilePurgatory() {
   const { setHeader } = useHeader();
   const [boards, setBoards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [deleteAllConfirm, setDeleteAllConfirm] = useState(false);
 
   // Preview modal
   const [previewBoard, setPreviewBoard] = useState(null);
@@ -45,6 +48,19 @@ export default function ProfilePurgatory() {
     }
   };
 
+  const handleDelete = async () => {
+    if (!deleteConfirm) return;
+    try {
+      await hardDeleteBoard(deleteConfirm);
+      await fetchBoards();
+      window.dispatchEvent(new Event('boardsUpdated'));
+    } catch (err) {
+      console.error('Delete error:', err);
+    } finally {
+      setDeleteConfirm(null);
+    }
+  };
+
   const openPreview = async (boardId) => {
     setPreviewLoading(true);
     try {
@@ -67,6 +83,20 @@ export default function ProfilePurgatory() {
         <Link to="/profile" className={s.breadcrumbLink}>Profil</Link>
         <span className={s.breadcrumbSep}>›</span>
         <span className={s.breadcrumbCurrent}>Czyściec</span>
+      </div>
+
+      <div className={s.filterRow}>
+        <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
+          {boards.length} {boards.length === 1 ? 'board' : 'boardów'}
+        </span>
+        {boards.length > 0 && (
+          <button
+            className={s.btnDanger}
+            onClick={() => setDeleteAllConfirm(true)}
+          >
+            Usuń wszystkie
+          </button>
+        )}
       </div>
 
       {boards.length === 0 ? (
@@ -104,15 +134,12 @@ export default function ProfilePurgatory() {
                       <button className={s.btnGhost} onClick={() => openPreview(board.id)}>
                         Podgląd
                       </button>
-                      <button className={s.btnPrimary} onClick={() => handleRestore(board.id)}>
+                      <button className={s.btnGhostInfo} onClick={() => handleRestore(board.id)}>
                         Przywróć
                       </button>
-                      <span className={s.tooltipWrapper}>
-                        <button className={s.btnDisabled} disabled>
-                          Usuń na zawsze
-                        </button>
-                        <span className={s.tooltipText}>Wkrótce</span>
-                      </span>
+                      <button className={s.btnGhostDanger} onClick={() => setDeleteConfirm(board.id)}>
+                        Usuń na zawsze
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -132,7 +159,7 @@ export default function ProfilePurgatory() {
               </span>
               <div className={s.previewActions}>
                 {previewBoard && (
-                  <button className={s.btnPrimary} onClick={() => {
+                  <button className={s.btnGhostInfo} onClick={() => {
                     handleRestore(previewBoard.id);
                     setPreviewBoard(null);
                   }}>
@@ -165,6 +192,40 @@ export default function ProfilePurgatory() {
           </div>
         </div>
       )}
+
+      {/* Delete confirm */}
+      <ConfirmModal
+        open={!!deleteConfirm}
+        title="Usunąć board na zawsze?"
+        description="Tej operacji nie można cofnąć."
+        cancelLabel="Anuluj"
+        confirmLabel="Usuń na zawsze"
+        variant="danger"
+        onCancel={() => setDeleteConfirm(null)}
+        onConfirm={handleDelete}
+      />
+
+      {/* Delete all confirm */}
+      <ConfirmModal
+        open={deleteAllConfirm}
+        title="Usunąć wszystkie boardy z czyśćca?"
+        description="Tej operacji nie można cofnąć."
+        cancelLabel="Anuluj"
+        confirmLabel="Usuń wszystkie"
+        variant="danger"
+        onCancel={() => setDeleteAllConfirm(false)}
+        onConfirm={async () => {
+          try {
+            await Promise.all(boards.map(b => hardDeleteBoard(b.id)));
+            await fetchBoards();
+            window.dispatchEvent(new Event('boardsUpdated'));
+          } catch (err) {
+            console.error('Delete all error:', err);
+          } finally {
+            setDeleteAllConfirm(false);
+          }
+        }}
+      />
     </div>
   );
 }

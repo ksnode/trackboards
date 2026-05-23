@@ -103,6 +103,15 @@
   color: var(--color-danger);
 }
 
+.iconBtnInfo {
+  color: var(--color-info);
+}
+
+.iconBtnInfo:hover {
+  background: var(--color-background-info);
+  color: var(--color-info);
+}
+
 /* Separator line */
 .separator {
   border-top: 1px solid var(--color-border-primary);
@@ -201,7 +210,7 @@
 }
 
 .boardItemDragOver {
-  border-top: 2px solid var(--color-accent);
+  border: 2px solid var(--color-accent);
 }
 
 .boardItemDragging {
@@ -217,6 +226,10 @@
   flex-shrink: 0;
 }
 
+.dragHandle:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-tertiary);
+}
 
 .boardItem {
   display: flex;
@@ -262,7 +275,7 @@
 }
 
 .boardMenuBtn {
-  font-size: var(--font-size-base);
+  font-size: 24px;
   padding: 0 4px;
   background: transparent;
   color: var(--color-text-tertiary);
@@ -270,9 +283,9 @@
   border-radius: var(--border-radius-sm);
   line-height: 1;
   transition: color 0.15s;
+  display: flex;
+  align-items: center;
 }
-
-
 
 .boardMenuBtn:hover {
   color: var(--color-text-primary);
@@ -427,25 +440,12 @@
 
 .footerLink:hover {
   color: var(--color-text-primary);
-}
+  background: var(--color-bg-tertiary);
 
-.logoutLink {
-  color: var(--color-danger);
-}
-
-.logoutLink:hover {
-  color: var(--color-danger);
-  opacity: 0.8;
-}
-
-.userInfo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
 }
 
 .email {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   color: var(--color-text-tertiary);
   white-space: nowrap;
   overflow: hidden;
@@ -572,14 +572,27 @@
   font-style: italic;
 }
 
-/* ─── Anonymous label & accent login ─────────────────── */
+/* ─── Anonymous label & accent login / logout ─────────────────── */
 .loginLink {
   color: var(--color-accent);
+  font-weight: bold;
+
 }
 
 .loginLink:hover {
   color: var(--color-accent);
-  opacity: 0.8;
+  background: var(--color-background-info);
+
+}
+
+.logoutLink {
+  color: var(--color-danger);
+  font-weight: bold;
+}
+
+.logoutLink:hover {
+  color: var(--color-danger);
+  background: var(--color-background-danger);
 }
 
 /* ─── Subscribe modal input ──────────────────────────── */
@@ -625,17 +638,4 @@
 .modalConfirmBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-/* ─── Anon badge ─────────────────────────────────────── */
-.anonBadge {
-  flex-shrink: 0;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
-  padding: 2px 4px;
-  border-radius: var(--border-radius-sm);
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-tertiary);
-  user-select: none;
 }

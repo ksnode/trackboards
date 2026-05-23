@@ -125,10 +125,10 @@ export default function AdminUserPurgatory() {
                       <button className={s.btnGhost} onClick={() => openPreview(board.id)}>
                         Podgląd
                       </button>
-                      <button className={s.btnPrimary} onClick={() => handleRestore(board.id)}>
+                      <button className={s.btnGhostInfo} onClick={() => handleRestore(board.id)}>
                         Przywróć
                       </button>
-                      <button className={s.btnDanger} onClick={() => setDeleteConfirm(board.id)}>
+                      <button className={s.btnGhostDanger} onClick={() => setDeleteConfirm(board.id)}>
                         Usuń na zawsze
                       </button>
                     </div>
@@ -162,7 +162,7 @@ export default function AdminUserPurgatory() {
               </span>
               <div className={s.previewActions}>
                 {previewBoard && (
-                  <button className={s.btnPrimary} onClick={() => {
+                  <button className={s.btnGhostInfo} onClick={() => {
                     handleRestore(previewBoard.id);
                     setPreviewBoard(null);
                   }}>
