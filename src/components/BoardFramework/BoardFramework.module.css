@@ -211,9 +211,17 @@
   text-align: right;
 }
 
+
+
 .collapseArrow {
-  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
+  transform: rotate(90deg);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.collapseArrowCollapsed {
+  transform: rotate(0deg);
 }
 
 .moduleBody {

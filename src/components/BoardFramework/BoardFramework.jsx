@@ -7,6 +7,7 @@ import {
 } from './treeHelpers';
 import styles from './BoardFramework.module.css';
 import ConfirmModal from '../ConfirmModal';
+import { ChevronRight } from 'lucide-react';
 
 export default function BoardFramework({
   boardId,
@@ -358,7 +359,8 @@ export default function BoardFramework({
           }
 
           {hasChildren && !editMode && (
-            <span className={styles.collapseArrow}>{isCollapsedNode ? '▸' : '▾'}</span>
+            //< span className={styles.collapseArrow}>{isCollapsedNode ? '▸' : '▾'}</span>
+            <ChevronRight size={14} className={`${styles.collapseArrow} ${isCollapsedNode ? styles.collapseArrowCollapsed : ''}`} />
           )}
 
           {editMode && canEditStructure && !isPlaceholderMod && (
@@ -373,10 +375,12 @@ export default function BoardFramework({
           )}
         </div>
 
-        {hasChildren && !isCollapsedNode && node.children.map(child =>
-          renderNode(moduleId, child, color, depth + 1, isPlaceholderMod)
-        )}
-      </div>
+        {
+          hasChildren && !isCollapsedNode && node.children.map(child =>
+            renderNode(moduleId, child, color, depth + 1, isPlaceholderMod)
+          )
+        }
+      </div >
     );
   };
 
@@ -532,7 +536,10 @@ export default function BoardFramework({
                 </div>
               )}
               {!isPlaceholder && !editMode && <span className={styles.modulePct}>{pct}%</span>}
-              {!editMode && <span className={styles.collapseArrow}>{isCollapsedMod ? '▸' : '▾'}</span>}
+              {!editMode &&
+                //<span className={styles.collapseArrow}>{isCollapsedMod ? '▸' : '▾'}</span>
+                < ChevronRight size={16} className={`${styles.collapseArrow} ${isCollapsedMod ? styles.collapseArrowCollapsed : ''}`} />
+              }
             </div>
 
             {!isCollapsedMod && (
