@@ -119,7 +119,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
-  min-width: 80px;
+  min-width: 75px;
   justify-content: center;
 }
 

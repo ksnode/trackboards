@@ -25,11 +25,13 @@ button {
   cursor: pointer;
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   font-family: inherit;
 }
 
 #root {
   display: flex;
-  min-height: 100vh;
+  min-height: 100dvh;
 }

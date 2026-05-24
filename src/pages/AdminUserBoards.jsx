@@ -8,7 +8,7 @@ import {
   assignOrphanToUser,
 } from '../lib/boards';
 import { supabase } from '../lib/supabase';
-import { Lock, Eye, PenLine, ChevronDown } from 'lucide-react';
+import { Lock, Eye, PenLine, ChevronDown, MoveLeft } from 'lucide-react';
 import ConfirmModal from '../components/ConfirmModal';
 import pageStyles from '../components/Layout/PageContent.module.css';
 import s from './ProfileAdmin.module.css';
@@ -53,7 +53,7 @@ export default function AdminUserBoards() {
   const [copiedId, setCopiedId] = useState(null);
 
   useEffect(() => {
-    setHeader({ title: 'Boardy użytkownika', editable: false, showBack: true, backLabel: '← Użytkownicy', backTo: '/admin/users' });
+    setHeader({ title: 'Boardy użytkownika', editable: false, showBack: true, backLabel: <><MoveLeft size={14} /> Użytkownicy</>, backTo: '/admin/users' });
   }, [setHeader]);
 
   const fetchData = async () => {

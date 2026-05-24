@@ -87,6 +87,18 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
     return () => mq.removeEventListener('change', handler);
   }, [themePref, applyTheme]);
 
+  const [overlayActive, setOverlayActive] = useState(false);
+
+  useEffect(() => {
+    if (isMobile && expanded) {
+      setOverlayActive(true);
+    } else if (!expanded) {
+      const t = setTimeout(() => setOverlayActive(false), 250);
+      return () => clearTimeout(t);
+    }
+  }, [isMobile, expanded]);
+
+
   // Fetch own boards
   const refreshBoards = useCallback(() => {
     if (!user) return;
@@ -318,41 +330,50 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
     setThemePref(THEME_CYCLE[(idx + 1) % THEME_CYCLE.length]);
   };
 
-  const ThemeIcon = THEME_ICONS[themePref];
 
 
   return (
     <aside className={[
       styles.root,
       expanded ? styles.rootExpanded : styles.rootCollapsed,
-      isMobile && expanded ? styles.rootOverlay : '',
+      overlayActive ? styles.rootOverlay : '',
     ].filter(Boolean).join(' ')}>
+
+      {/* ── Headers ── */}
+      {expanded && (
+        <div className={styles.header}>
+          <button className={styles.hamburger} onClick={onToggle} aria-label="Menu" title="Zwiń">
+            <Menu size={20} />
+          </button>
+          <NavLink
+            to={user ? "/boards" : "/boards"}
+            className={styles.headerLogo}
+            onClick={handleLinkClick}
+          >Trackboards</NavLink>
+        </div>
+      )}
+      {!expanded && (
+        <div className={styles.collapsedHeader}>
+          <button className={styles.hamburger} onClick={onToggle} aria-label="Menu" title="Rozwiń">
+            <Menu size={20} />
+          </button>
+        </div>
+      )}
+
+      {/* New board button — always rendered, adapts via CSS */}
+      <button
+        onClick={user ? handleCreate : handleCreateAnonymous}
+        disabled={creating}
+        className={styles.newBoardBtn}
+        title={user ? "Nowy board" : "Nowy anonim board"}
+      >
+        <Plus size={16} />
+        <span className={styles.newBoardBtnLabel}>{user ? 'Nowy board' : 'Nowy anonim board'}</span>
+      </button>
 
       {/* ── EXPANDED view ── */}
       {expanded && (
         <>
-          {/* Header: [☰] [Trackboards] */}
-          <div className={styles.header}>
-            <button className={styles.hamburger} onClick={onToggle} aria-label="Menu" title="Zwiń">
-              <Menu size={20} />
-            </button>
-            <NavLink
-              to={user ? "/boards" : "/boards"}
-              className={styles.headerLogo}
-              onClick={handleLinkClick}
-            >Trackboards</NavLink>
-          </div>
-
-          {/* New board button */}
-          <button
-            onClick={user ? handleCreate : handleCreateAnonymous}
-            disabled={creating}
-            className={styles.newBoardBtnFull}
-            title={user ? "Nowy board" : "Nowy anonim board"}
-          >
-            <Plus size={14} /> {user ? 'Nowy board' : 'Nowy anonim board'}
-          </button>
-
           {/* ── LOGGED IN: own boards + external ── */}
           {user && (
             <div className={styles.boardsList}>
@@ -760,121 +781,73 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
               window.dispatchEvent(new Event('boardsUpdated'));
             }}
           />
-
-          {/* Footer */}
-          <div className={styles.footer}>
-            {user ? (
-              <>
-                {profile?.role === 'admin' && (
-                  <NavLink to="/admin" className={styles.footerLink} onClick={handleLinkClick}>
-                    <UserStar size={18} /> Administrator
-                  </NavLink>
-                )}
-                <NavLink to="/profile" className={styles.footerLink} onClick={handleLinkClick}>
-                  <User size={18} /> Mój Profil
-                </NavLink>
-                <NavLink to="/privacy" className={styles.footerLink} onClick={handleLinkClick}>
-                  <HatGlasses size={18} /> Prywatność
-                </NavLink>
-                <div className={styles.separator} />
-                <button onClick={() => setSignOutConfirm(true)} className={`${styles.footerLink} ${styles.logoutLink}`}>
-                  <LogOut size={18} /> Wyloguj <span className={styles.email} title={user.email}>({truncateEmail(user.email)})</span>
-                </button>
-              </>
-            ) : (
-              <>
-                <span className={styles.footerLink} >
-                  <Ghost size={18} /> Anonim</span>
-                <NavLink to="/privacy" className={styles.footerLink} onClick={handleLinkClick}>
-                  <HatGlasses size={18} /> Prywatność
-                </NavLink>
-                <div className={styles.separator} />
-                <button onClick={signInWithGoogle} className={`${styles.footerLink} ${styles.loginLink}`}>
-                  <LogIn size={18} /> Zaloguj przez Google
-                </button>
-              </>
-            )}
-            <div className={styles.separator} />
-            <div className={styles.segmentedGroup}>
-              {THEME_CYCLE.map(value => {
-                const Icon = THEME_ICONS[value];
-                return (
-                  <button
-                    key={value}
-                    onClick={() => setThemePref(value)}
-                    className={themePref === value ? styles.segmentActive : styles.segment}
-                  >
-                    <Icon size={12} /> {THEME_LABELS[value]}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
         </>
       )}
 
-      {/* ── COLLAPSED view (icons only) ── */}
-      {!expanded && (
-        <>
-          {/* Hamburger at top */}
-          <div className={styles.collapsedHeader}>
-            <button className={styles.hamburger} onClick={onToggle} aria-label="Menu" title="Rozwiń">
-              <Menu size={20} />
-            </button>
-          </div>
+      {/* Spacer — pushes footer to bottom when collapsed */}
+      {!expanded && <div style={{ flex: 1 }} />}
 
-          {/* New board icon */}
-          <button
-            onClick={user ? handleCreate : handleCreateAnonymous}
-            disabled={creating}
-            className={styles.newBoardBtnIcon}
-            title={user ? "Nowy board" : "Nowy anonim board"}
-          >
-            <Plus size={18} />
-          </button>
-
-          {/* Spacer pushes footer icons to bottom */}
-          <div className={styles.collapsedSpacer} />
-
-          {/* Footer icons at bottom */}
-          <div className={styles.collapsedFooter}>
-            <div className={styles.separator} />
-            {user ? (
-              <>
-                {profile?.role === 'admin' && (
-                  <NavLink to="/admin" className={styles.iconBtn} title="Panel admina" onClick={handleLinkClick}>
-                    <UserStar size={18} />
-                  </NavLink>
-                )}
-                <NavLink to="/profile" className={styles.iconBtn} title="Profil" onClick={handleLinkClick}>
-                  <User size={18} />
-                </NavLink>
-                <NavLink to="/privacy" className={styles.iconBtn} title="Prywatność" onClick={handleLinkClick}>
-                  <HatGlasses size={18} />
-                </NavLink>
-                <div className={styles.separator} />
-                <button onClick={() => setSignOutConfirm(true)} className={`${styles.iconBtn} ${styles.iconBtnDanger}`} title="Wyloguj">
-                  <LogOut size={18} />
-                </button>
-              </>
-            ) : (
-              <>
-                <NavLink to="/privacy" className={styles.iconBtn} title="Prywatność" onClick={handleLinkClick}>
-                  <HatGlasses size={18} />
-                </NavLink>
-                <div className={styles.separator} />
-                <button onClick={signInWithGoogle} className={`${styles.iconBtn} ${styles.iconBtnInfo}`} title="Zaloguj się">
-                  <LogIn size={18} />
-                </button>
-              </>
+      {/* Footer — always rendered, adapts via CSS */}
+      <div className={styles.footer}>
+        {user ? (
+          <>
+            {profile?.role === 'admin' && (
+              <NavLink to="/admin" className={styles.footerLink} onClick={handleLinkClick} title="Panel admina">
+                <UserStar size={18} />
+                <span className={styles.footerLabel}>Administrator</span>
+              </NavLink>
             )}
+            <NavLink to="/profile" className={styles.footerLink} onClick={handleLinkClick} title="Profil">
+              <User size={18} />
+              <span className={styles.footerLabel}>Mój Profil</span>
+            </NavLink>
+            <NavLink to="/privacy" className={styles.footerLink} onClick={handleLinkClick} title="Prywatność">
+              <HatGlasses size={18} />
+              <span className={styles.footerLabel}>Prywatność</span>
+            </NavLink>
             <div className={styles.separator} />
-            <button onClick={cycleTheme} className={styles.iconBtn} title={THEME_LABELS[themePref]}>
-              <ThemeIcon size={18} />
+            <button onClick={() => setSignOutConfirm(true)} className={`${styles.footerLink} ${styles.logoutLink}`} title="Wyloguj">
+              <LogOut size={18} />
+              <span className={styles.footerLabel}>Wyloguj</span>
+              <span className={`${styles.footerLabel} ${styles.email}`} title={user.email}>({truncateEmail(user.email)})</span>
             </button>
-          </div>
-        </>
-      )}
+          </>
+        ) : (
+          <>
+            <span className={styles.footerLink} title="Anonim">
+              <Ghost size={18} />
+              <span className={styles.footerLabel}>Anonim</span>
+            </span>
+            <NavLink to="/privacy" className={styles.footerLink} onClick={handleLinkClick} title="Prywatność">
+              <HatGlasses size={18} />
+              <span className={styles.footerLabel}>Prywatność</span>
+            </NavLink>
+            <div className={styles.separator} />
+            <button onClick={signInWithGoogle} className={`${styles.footerLink} ${styles.loginLink}`} title="Zaloguj się">
+              <LogIn size={18} />
+              <span className={styles.footerLabel}>Zaloguj przez Google</span>
+            </button>
+          </>
+        )}
+      </div>
+      {/* Theme switcher — always rendered, adapts via CSS */}
+      <div className={styles.separator} />
+      <div className={styles.themeSwitcher}>
+        {THEME_CYCLE.map(value => {
+          const Icon = THEME_ICONS[value];
+          const isActive = themePref === value;
+          return (
+            <button
+              key={value}
+              onClick={isActive && !expanded ? cycleTheme : () => setThemePref(value)}
+              className={isActive ? styles.themeSwitcherBtnActive : styles.themeSwitcherBtn}
+            >
+              <Icon size={18} />
+              <span className={styles.segmentLabel}>{THEME_LABELS[value]}</span>
+            </button>
+          );
+        })}
+      </div>
     </aside>
   );
 }

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
 import { listMyPurgatory, restoreBoard, getBoard, hardDeleteBoard } from '../lib/boards';
+import { MoveLeft } from 'lucide-react';
 import BoardFramework from '../components/BoardFramework/BoardFramework';
 import ConfirmModal from '../components/ConfirmModal';
 import pageStyles from '../components/Layout/PageContent.module.css';
@@ -21,7 +22,7 @@ export default function ProfilePurgatory() {
   const [previewLoading, setPreviewLoading] = useState(false);
 
   useEffect(() => {
-    setHeader({ title: 'Czyściec', editable: false, showBack: true, backLabel: '← Profil', backTo: '/profile' });
+    setHeader({ title: 'Czyściec', editable: false, showBack: true, backLabel: <><MoveLeft size={14} /> Profil</>, backTo: '/profile' });
   }, [setHeader]);
 
   const fetchBoards = async () => {

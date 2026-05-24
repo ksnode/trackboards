@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
-import { ShieldMinus, Bomb } from 'lucide-react';
+import { ShieldMinus, Bomb, MoveLeft } from 'lucide-react';
 import { updateUserStatus, hardDeleteUser } from '../lib/boards';
 import ConfirmModal from '../components/ConfirmModal';
 import pageStyles from '../components/Layout/PageContent.module.css';
@@ -17,7 +17,7 @@ export default function ProfileManage() {
   const [deleteInput, setDeleteInput] = useState('');
 
   useEffect(() => {
-    setHeader({ title: 'Zarządzaj', editable: false, showBack: true, backLabel: '← Profil', backTo: '/profile' });
+    setHeader({ title: 'Zarządzaj', editable: false, showBack: true, backLabel: <><MoveLeft size={14} /> Profil</>, backTo: '/profile' });
   }, [setHeader]);
 
   // Admin cannot delete their account

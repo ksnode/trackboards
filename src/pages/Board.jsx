@@ -6,7 +6,7 @@ import {
   getBoard, updateBoardData, updateBoardMeta, toggleShareMode, adoptOrphanBoard,
   softDeleteBoard, hardDeleteBoard, subscribeToBoard, unsubscribeFromBoard,
 } from '../lib/boards';
-import { Link as LinkIcon, Pencil, Check, Trash2, Lock, Eye, PenLine, ChevronDown, Shield, Download, Upload } from 'lucide-react';
+import { Link as LinkIcon, Pencil, Check, Trash2, Lock, Eye, PenLine, ChevronDown, Shield, Download, Upload, MoveLeft } from 'lucide-react';
 import paStyles from './ProfileAdmin.module.css';
 import { subscribeToBoardChanges } from '../lib/realtime';
 import BoardFramework from '../components/BoardFramework/BoardFramework';
@@ -104,7 +104,7 @@ export default function Board() {
             title: 'Brak dostępu',
             editable: false,
             showBack: true,
-            backLabel: user ? '← Wróć do listy' : '← Wróć do głównej',
+            backLabel: user ? <><MoveLeft size={14} /> Wróć do listy</> : <><MoveLeft size={14} /> Wróć do głównej</>,
           });
         }
       } finally {
@@ -209,7 +209,7 @@ export default function Board() {
       onTitleChange: (e) => setTitleDraft(e.target.value),
       onTitleBlur: handleTitleBlur,
       showBack: true,
-      backLabel: user ? '← Wróć do listy' : '← Wróć do głównej',
+      backLabel: user ? <><MoveLeft size={14} /> Wróć do listy</> : <><MoveLeft size={14} /> Wróć do głównej</>,
     });
   }, [board?.id, board?.title, titleDraft, canEdit, user, handleTitleBlur, setHeader]);
 
@@ -335,7 +335,7 @@ export default function Board() {
                 onClick={() => setShareModeOpen(o => !o)}
               >
                 {(() => { const cur = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0]; const Icon = cur.icon; return <><Icon size={14} /> {cur.label}</>; })()}
-                <ChevronDown size={12} className={shareModeOpen ? styles.chevronOpen : ''} />
+                <ChevronDown size={14} className={shareModeOpen ? styles.chevronOpen : ''} />
               </button>
               {shareModeOpen && (
                 <div className={styles.shareModeMenu}>
@@ -359,7 +359,7 @@ export default function Board() {
             /* Badge for non-owners */
             board.share_mode && (
               <span className={board.share_mode === 'write' ? styles.badgeWrite : styles.badgeRead}>
-                {board.share_mode === 'write' ? <><PenLine size={11} /> Public edit</> : <><Eye size={11} /> Public view</>}
+                {board.share_mode === 'write' ? <><PenLine size={14} /> Public edit</> : <><Eye size={14} /> Public view</>}
               </span>
             )
           )}
@@ -442,7 +442,7 @@ export default function Board() {
               style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             >
               {editMode ? <Check size={14} /> : <Pencil size={14} />}
-              {editMode ? 'Zakończ edycję' : 'Edytuj'}
+              {editMode ? 'Zakończ' : 'Edytuj'}
             </button>
           )}
 

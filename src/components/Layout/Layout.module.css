@@ -1,7 +1,7 @@
 .root {
   display: flex;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .content {
@@ -96,5 +96,6 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.4);
+  transition: opacity 0.25s ease;
   z-index: 49;
 }

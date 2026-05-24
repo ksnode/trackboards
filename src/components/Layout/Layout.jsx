@@ -4,6 +4,7 @@ import { useAuth } from '../../lib/auth';
 import { HeaderProvider, useHeader } from '../../lib/headerContext';
 import { Sidebar } from './Sidebar';
 import ConfirmModal from '../ConfirmModal';
+import { MoveLeft } from 'lucide-react';
 import styles from './Layout.module.css';
 
 function ContentHeader() {
@@ -41,7 +42,7 @@ function ContentHeader() {
         </div>
         {header.showBack && (
           <button className={styles.contentHeaderBackBtn} onClick={() => navigate(header.backTo || '/boards')}>
-            {header.backLabel || '← Wróć do listy'}
+            {header.backLabel || <><MoveLeft size={14} /> Wróć do listy</>}
           </button>
         )}
       </div>
@@ -77,15 +78,21 @@ export function Layout() {
   return (
     <HeaderProvider>
       <div className={styles.root}>
-        {isMobile && expanded && (
-          <div className={styles.overlay} onClick={collapse} />
+        {isMobile && (
+          <div
+            className={styles.overlay}
+            onClick={expanded ? collapse : undefined}
+            style={{ opacity: expanded ? 1 : 0, pointerEvents: expanded ? 'auto' : 'none' }}
+          />
         )}
-        <Sidebar
-          expanded={expanded}
-          isMobile={isMobile}
-          onToggle={toggleExpanded}
-          onCollapse={collapse}
-        />
+        <div style={{ width: isMobile ? (expanded ? 48 : 48) + 'px' : undefined, flexShrink: 0, transition: 'width 0.25s ease' }}>
+          <Sidebar
+            expanded={expanded}
+            isMobile={isMobile}
+            onToggle={toggleExpanded}
+            onCollapse={collapse}
+          />
+        </div>
         <main className={styles.content}>
           <ContentHeader />
           <Outlet />

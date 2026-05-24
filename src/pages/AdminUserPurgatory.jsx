@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useHeader } from '../lib/headerContext';
 import { getUserProfile, listUserPurgatory, restoreBoard, hardDeleteBoard, getBoard } from '../lib/boards';
+import { MoveLeft } from 'lucide-react';
 import BoardFramework from '../components/BoardFramework/BoardFramework';
 import ConfirmModal from '../components/ConfirmModal';
 import pageStyles from '../components/Layout/PageContent.module.css';
@@ -20,7 +21,7 @@ export default function AdminUserPurgatory() {
   const [previewLoading, setPreviewLoading] = useState(false);
 
   useEffect(() => {
-    setHeader({ title: 'Czyściec użytkownika', editable: false, showBack: true, backLabel: '← Użytkownicy', backTo: '/admin/users' });
+    setHeader({ title: 'Czyściec użytkownika', editable: false, showBack: true, backLabel: <><MoveLeft size={14} /> Użytkownicy</>, backTo: '/admin/users' });
   }, [setHeader]);
 
   const fetchData = async () => {

@@ -1,10 +1,10 @@
 .root {
-  height: 100vh;
+  height: 100dvh;
   background-color: var(--color-bg-secondary);
   border-right: 1px solid var(--color-border-primary);
   display: flex;
   flex-direction: column;
-  transition: width 0.25s ease;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: sticky;
   top: 0;
   flex-shrink: 0;
@@ -28,8 +28,9 @@
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
+  height: 100dvh;
   box-shadow: var(--shadow-md);
+  transition: width 0.25s ease;
 }
 
 /* ── Hamburger toggle ── */
@@ -62,66 +63,17 @@
   width: 100%;
 }
 
-.collapsedSpacer {
-  flex: 1;
-}
 
-.collapsedFooter {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-2) 0;
-}
-
-.iconBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: var(--border-radius-md);
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  text-decoration: none;
-}
-
-.iconBtn:hover {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-}
-
-.iconBtnDanger {
-  color: var(--color-danger);
-}
-
-.iconBtnDanger:hover {
-  background: var(--color-background-danger);
-  color: var(--color-danger);
-}
-
-.iconBtnInfo {
-  color: var(--color-info);
-}
-
-.iconBtnInfo:hover {
-  background: var(--color-background-info);
-  color: var(--color-info);
-}
 
 /* Separator line */
 .separator {
   border-top: 1px solid var(--color-border-primary);
-  margin: var(--space-1) 0;
   width: 100%;
 }
 
 .header {
   height: var(--header-height);
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-2);
   font-weight: 600;
   font-size: var(--font-size-lg);
   border-bottom: 1px solid var(--color-border-primary);
@@ -135,59 +87,59 @@
   text-decoration: none;
 }
 
-/* Full-width new board button (expanded sidebar) */
-.newBoardBtnFull {
+/* Unified new board button — adapts to expanded / collapsed */
+.newBoardBtn {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-1);
-  width: calc(100% - var(--space-3) * 2);
-  margin: var(--space-2) var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-accent);
-  background: var(--color-accent);
-  color: white;
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: 500;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.newBoardBtnFull:hover {
-  filter: brightness(1.15);
-}
-
-.newBoardBtnFull:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.newBoardBtnIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  margin: var(--space-2) auto;
-  border-radius: var(--border-radius-md);
   border: none;
   background: var(--color-accent);
   color: white;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  border-radius: var(--border-radius-md);
   flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 500;
+  transition: all 0.25s ease;
+
+  /* Expanded defaults */
+  width: calc(100% - var(--space-2) * 2);
+  margin: var(--space-2) var(--space-2);
+  padding: var(--space-2) var(--space-2);
+  font-size: var(--font-size-sm);
 }
 
-.newBoardBtnIcon:hover {
+.newBoardBtn:hover {
   filter: brightness(1.15);
 }
 
-.newBoardBtnIcon:disabled {
+.newBoardBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* Collapsed: square icon button */
+.rootCollapsed .newBoardBtn {
+  width: 32px;
+  height: 32px;
+  margin: var(--space-2) auto;
+  padding: 0;
+  font-size: 0;
+  gap: 0;
+}
+
+/* Label text inside the button */
+.newBoardBtnLabel {
+  transition: opacity 0.25s ease, width 0.25s ease;
+  opacity: 1;
+  overflow: hidden;
+}
+
+.rootCollapsed .newBoardBtnLabel {
+  opacity: 0;
+  width: 0;
 }
 
 /* ─── Board list ─────────────────────────────────────── */
@@ -417,31 +369,64 @@
 
 /* ─── Footer ─────────────────────────────────────────── */
 .footer {
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-2) var(--space-2);
   border-top: 1px solid var(--color-border-primary);
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+  transition: padding 0.25s ease;
+}
+
+.rootCollapsed .footer {
+  padding: var(--space-2) 0;
+  align-items: center;
 }
 
 .footerLink {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  height: 32px;
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   text-decoration: none;
-  padding: var(--space-1) 0;
+  padding: var(--space-1) var(--space-1);
   cursor: pointer;
   background: none;
   border: none;
   text-align: left;
+  border-radius: var(--border-radius-md);
+  white-space: nowrap;
+  overflow: hidden;
+  transition: gap 0.25s ease, padding 0.25s ease, background var(--transition-fast), color var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .footerLink:hover {
   color: var(--color-text-primary);
   background: var(--color-bg-tertiary);
+}
 
+/* Collapsed: icon-only links */
+.rootCollapsed .footerLink {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  justify-content: center;
+  gap: 0;
+}
+
+/* Footer label text — animated hide/show */
+.footerLabel {
+  overflow: hidden;
+  transition: opacity 0.25s ease, max-width 0.25s ease;
+  opacity: 1;
+  max-width: 200px;
+}
+
+.rootCollapsed .footerLabel {
+  opacity: 0;
+  max-width: 0;
 }
 
 .email {
@@ -452,71 +437,102 @@
   text-overflow: ellipsis;
 }
 
-.loginBtn {
-  text-align: left;
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: var(--space-1) 0;
-}
-
-.loginBtn:hover {
-  color: var(--color-text-primary);
-}
-
-.segmentedGroup {
+.themeSwitcher {
   display: flex;
+  height: 32px;
   border: 1px solid var(--color-border-primary);
   border-radius: var(--border-radius-md);
   overflow: hidden;
+  transition: width 0.25s ease, border-color 0.25s ease, margin 0.25s ease;
+  margin: var(--space-2) var(--space-2);
+  width: calc(100% - var(--space-2) * 2);
 }
 
-.segment {
+/* Collapsed: shrink to single icon */
+.rootCollapsed .themeSwitcher {
+  width: 32px;
+  height: 32px;
+  border-color: transparent;
+  margin: var(--space-2) var(--space-2);
+}
+
+.themeSwitcherBtn {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 3px;
-  padding: var(--space-1) 0;
+  height: 32px;
+  padding: 0;
   font-size: var(--font-size-xs);
   background: transparent;
   color: var(--color-text-tertiary);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: flex 0.25s ease, opacity 0.25s ease, padding 0.25s ease, background var(--transition-fast), color var(--transition-fast);
   text-align: center;
   border: none;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.segment:not(:last-child) {
+.themeSwitcherBtn:not(:last-child) {
   border-right: 1px solid var(--color-border-primary);
 }
 
-.segment:hover {
+.themeSwitcherBtn:hover {
   color: var(--color-text-primary);
   background: var(--color-bg-tertiary);
 }
 
-.segmentActive {
+/* Collapsed: non-active buttons shrink to zero */
+.rootCollapsed .themeSwitcherBtn {
+  flex: 0;
+  opacity: 0;
+  overflow: hidden;
+  border-right: none;
+}
+
+.themeSwitcherBtnActive {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 3px;
-  padding: var(--space-1) 0;
+  height: 32px;
+  padding: 0;
   font-size: var(--font-size-xs);
   background: var(--color-accent);
   color: white;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: flex 0.25s ease, gap 0.25s ease, border-radius 0.25s ease, background var(--transition-fast);
   text-align: center;
   border: none;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.segmentActive:hover {
+.themeSwitcherBtnActive:hover {
   background: var(--color-accent-hover);
   color: white;
+}
+
+/* Collapsed: active button fills the square, no text gap */
+.rootCollapsed .themeSwitcherBtnActive {
+  border-radius: var(--border-radius-md);
+  gap: 0;
+}
+
+/* Text labels inside buttons */
+.segmentLabel {
+  overflow: hidden;
+  transition: opacity 0.25s ease, max-width 0.25s ease;
+  opacity: 1;
+  max-width: 60px;
+}
+
+.rootCollapsed .segmentLabel {
+  opacity: 0;
+  max-width: 0;
 }
 
 /* ─── Section titles ─────────────────────────────────── */

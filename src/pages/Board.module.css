@@ -235,7 +235,7 @@
   user-select: none;
   line-height: 1.4;
   white-space: nowrap;
-  min-width: 120px;
+  min-width: 100px;
   justify-content: center;
 }
 
@@ -252,7 +252,7 @@
   user-select: none;
   line-height: 1.4;
   white-space: nowrap;
-  min-width: 120px;
+  min-width: 100px;
   justify-content: center;
 }
 

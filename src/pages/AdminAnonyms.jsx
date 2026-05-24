@@ -6,7 +6,7 @@ import {
   listAnonymousBoards, hardDeleteBoard, assignOrphanToUser, listUsers,
   toggleShareMode, deleteAllAnonymousBoards,
 } from '../lib/boards';
-import { Lock, Eye, PenLine, ChevronDown } from 'lucide-react';
+import { Lock, Eye, PenLine, ChevronDown, MoveLeft } from 'lucide-react';
 import ConfirmModal from '../components/ConfirmModal';
 import pageStyles from '../components/Layout/PageContent.module.css';
 import s from './ProfileAdmin.module.css';
@@ -43,7 +43,7 @@ export default function AdminAnonyms() {
   const [assignSelected, setAssignSelected] = useState(null); // { userId, email }
 
   useEffect(() => {
-    setHeader({ title: 'Anonimowe boardy', editable: false, showBack: true, backLabel: '← Admin', backTo: '/admin' });
+    setHeader({ title: 'Anonimowe boardy', editable: false, showBack: true, backLabel: <><MoveLeft size={14} /> Admin</>, backTo: '/admin' });
   }, [setHeader]);
 
   const fetchData = async () => {
