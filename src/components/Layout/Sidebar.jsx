@@ -788,6 +788,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
       {!expanded && <div style={{ flex: 1 }} />}
 
       {/* Footer — always rendered, adapts via CSS */}
+
       <div className={styles.footer}>
         {user ? (
           <>

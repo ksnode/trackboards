@@ -378,7 +378,7 @@
 }
 
 .rootCollapsed .footer {
-  padding: var(--space-2) 0;
+  /*padding: var(--space-2) 0;*/
   align-items: center;
 }
 
@@ -398,8 +398,9 @@
   border-radius: var(--border-radius-md);
   white-space: nowrap;
   overflow: hidden;
-  transition: gap 0.25s ease, padding 0.25s ease, background var(--transition-fast), color var(--transition-fast);
+  transition: all 0.25s ease;
   flex-shrink: 0;
+  width: calc(100% - var(--space-2) * 2);
 }
 
 .footerLink:hover {
@@ -412,21 +413,21 @@
   width: 32px;
   height: 32px;
   padding: 0;
-  justify-content: center;
   gap: 0;
+  justify-content: center;
 }
 
 /* Footer label text — animated hide/show */
 .footerLabel {
-  overflow: hidden;
-  transition: opacity 0.25s ease, max-width 0.25s ease;
+  transition: opacity 0.25s ease, width 0.25s ease;
   opacity: 1;
-  max-width: 200px;
+  width: auto;
+  overflow: hidden;
 }
 
 .rootCollapsed .footerLabel {
   opacity: 0;
-  max-width: 0;
+  width: 0;
 }
 
 .email {
@@ -501,7 +502,7 @@
   height: 32px;
   padding: 0;
   font-size: var(--font-size-xs);
-  background: var(--color-accent);
+  background: var(--color-text-tertiary);
   color: white;
   cursor: pointer;
   transition: flex 0.25s ease, gap 0.25s ease, border-radius 0.25s ease, background var(--transition-fast);
@@ -512,7 +513,7 @@
 }
 
 .themeSwitcherBtnActive:hover {
-  background: var(--color-accent-hover);
+  background: var(--color-warning-hover);
   color: white;
 }
 

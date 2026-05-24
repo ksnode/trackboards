@@ -10,11 +10,13 @@
   --color-border-secondary: #d4d4d8;
   --color-border-tertiary: #f4f4f5;
 
-  --color-accent: #6366f1;        /* indygo — single accent */
+  --color-accent: #6366f1;
+  /* indygo — single accent */
   --color-accent-hover: #4f46e5;
 
   --color-success: #16a34a;
   --color-warning: #ca8a04;
+  --color-warning-hover: #b67e05;
   --color-danger: #dc2626;
   --color-info: #2563eb;
 
@@ -59,8 +61,8 @@
   --space-8: 32px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
 
   /* Layout */
   --sidebar-width: 260px;
