@@ -419,22 +419,6 @@
   background: var(--color-background-danger);
 }
 
-.iconBtnInfo {
-  font-size: var(--font-size-xs);
-  padding: 1px 5px;
-  border-radius: 3px;
-  border: 1px solid var(--color-border-info);
-  background: transparent;
-  color: var(--color-text-info);
-  cursor: pointer;
-  line-height: 1.4;
-}
-
-.iconBtnInfo:hover {
-  background: var(--color-background-info);
-  color: var(--color-info);
-}
-
 /* ─── Add buttons ─────────────────────────────────────── */
 .addStepBtn {
   font-size: var(--font-size-sm);
@@ -468,90 +452,12 @@
   padding: 6px 0;
 }
 
-/* ─── Confirm Modal ───────────────────────────────────── */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-.modalContent {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border-secondary);
-  border-radius: var(--border-radius-lg);
-  padding: var(--space-6);
-  max-width: 360px;
-  width: 90%;
-}
-
-.modalText {
-  font-size: var(--font-size-base);
-  margin-bottom: var(--space-3);
-}
-
-.modalSubtext {
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-4);
-}
-
-.modalActions {
-  display: flex;
-  gap: var(--space-2);
-  margin-top: 16px;
-  justify-content: flex-end;
-}
-
-.modalCancelBtn {
-  font-size: var(--font-size-xs);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-border-secondary);
-  background: var(--color-bg-secondary);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-}
-
-.modalCancelBtn:hover {
-  background: var(--color-bg-tertiary);
-}
-
-.modalDeleteBtn {
-  font-size: var(--font-size-sm);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-border-danger);
-  background: var(--color-background-danger);
-  color: var(--color-text-danger);
-  cursor: pointer;
-}
-
-.modalDeleteBtn:hover {
-  opacity: 0.9;
-}
-
 /* ─── Footer ──────────────────────────────────────────── */
 .footer {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
   text-align: center;
 
-}
-
-.editToggle {
-  cursor: pointer;
-  text-decoration: underline;
-  color: var(--color-text-secondary);
-}
-
-.editToggleActive {
-  cursor: pointer;
-  text-decoration: underline;
-  color: var(--color-text-warning);
 }
 
 .saveStatusBar {

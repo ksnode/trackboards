@@ -297,76 +297,6 @@
   margin: 2px 0;
 }
 
-/* ─── Delete modal ───────────────────────────────────── */
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modalContent {
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-lg);
-  padding: var(--space-6);
-  max-width: 340px;
-  width: 90%;
-  text-align: center;
-  box-shadow: var(--shadow-md);
-}
-
-.modalText {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
-}
-
-.modalSubtext {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-tertiary);
-  margin-bottom: var(--space-5);
-}
-
-.modalActions {
-  display: flex;
-  gap: var(--space-3);
-  justify-content: center;
-}
-
-.modalCancelBtn {
-  padding: var(--space-2) var(--space-5);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-border-primary);
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-}
-
-.modalCancelBtn:hover {
-  background: var(--color-border-primary);
-}
-
-.modalDeleteBtn {
-  padding: var(--space-2) var(--space-5);
-  border-radius: var(--border-radius-md);
-  border: none;
-  background: var(--color-danger);
-  color: white;
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-}
-
-.modalDeleteBtn:hover {
-  filter: brightness(1.1);
-}
-
 /* ─── Footer ─────────────────────────────────────────── */
 .footer {
   padding: var(--space-2) var(--space-2);
@@ -628,31 +558,4 @@
 
 .subscribeInput:focus {
   border-color: var(--color-accent);
-}
-
-.subscribeError {
-  font-size: var(--font-size-xs);
-  color: var(--color-danger);
-  margin-bottom: var(--space-3);
-}
-
-.modalConfirmBtn {
-  padding: var(--space-2) var(--space-5);
-  border-radius: var(--border-radius-md);
-  border: none;
-  background: var(--color-accent);
-  color: white;
-  cursor: pointer;
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  transition: all var(--transition-fast);
-}
-
-.modalConfirmBtn:hover {
-  filter: brightness(1.1);
-}
-
-.modalConfirmBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
