@@ -321,7 +321,7 @@ export function Sidebar({ expanded, isMobile, onToggle, onCollapse }) {
 
   const truncateEmail = (email) => {
     if (!email) return '';
-    return email.length > 28 ? email.slice(0, 28) + '…' : email;
+    return email.length > 17 ? email.slice(0, 17) + '…' : email;
   };
 
   // Theme cycling (for collapsed icon)

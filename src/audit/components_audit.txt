@@ -1,0 +1,15 @@
+=== PLIK: BoardFramework.module.css ===
+UŻYWANA TYLKO W 1 PLIKU: .addModuleBtn, .addModuleWrapper, .addStepBtn, .addStepRow, .checkbox, .collapseArrow, .collapseArrowCollapsed, .emptyAddBtn, .emptyState, .emptyText, .footer, .globalHeader, .globalHours, .globalPct, .globalRow, .globalRowLabel, .globalRowLabelBold, .globalRowLast, .iconBtn, .iconBtnDanger, .inlineEditDisplay, .inlineEditInput, .moduleBody, .moduleCard, .moduleCardPlaceholder, .moduleColorDot, .moduleColorInput, .moduleColorPicker, .moduleEditControls, .moduleHeader, .moduleHeaderCollapsed, .moduleHeaderEdit, .modulePct, .moduleProgressBar, .moduleProgressFill, .moduleStats, .moduleTagBadge, .moduleTagLabel, .moduleTagSelect, .moduleTitle, .moduleTitleInlineEdit, .nodeEditControls, .nodeHours, .nodeHoursEdit, .nodeHoursUnit, .nodeLabel, .nodeLabelChild, .nodeLabelDone, .nodeLabelParent, .nodeLabelParentChild, .nodeLabelSkip, .nodeRow, .nodeRowDone, .nodeRowEdit, .nodeRowPlaceholder, .nodeRowSkip, .placeholderDot, .progressBarFill, .progressBarTrack, .root, .saveStatusBar
+NIEUŻYWANA: brak
+
+=== PLIK: ConfirmModal.module.css ===
+UŻYWANA TYLKO W 1 PLIKU: .actions, .body, .cancelBtn, .confirmBtn, .content, .dangerBtn, .description, .error, .overlay, .title
+NIEUŻYWANA: brak
+
+=== PLIK: Layout.module.css ===
+UŻYWANA TYLKO W 1 PLIKU: .content, .contentHeader, .contentHeaderBackBtn, .contentHeaderInner, .contentHeaderInput, .contentHeaderLeft, .contentHeaderTitle, .overlay, .root
+NIEUŻYWANA: brak
+
+=== PLIK: Sidebar.module.css ===
+UŻYWANA TYLKO W 1 PLIKU: .active, .addExtBtn, .boardDot, .boardItem, .boardItemDragOver, .boardItemDragging, .boardItemRow, .boardItemTitle, .boardMenuBtn, .boardMenuDropdown, .boardMenuItem, .boardMenuItemDanger, .boardMenuSep, .boardMenuWrapper, .boardsList, .collapsedHeader, .dragHandle, .email, .extBoardDisabled, .extEmpty, .footer, .footerLabel, .footerLink, .hamburger, .header, .headerLogo, .loginLink, .logoutLink, .newBoardBtn, .newBoardBtnLabel, .root, .rootCollapsed, .rootExpanded, .rootOverlay, .sectionTitle, .sectionTitleRow, .segmentLabel, .separator, .subscribeInput, .themeSwitcher, .themeSwitcherBtn, .themeSwitcherBtnActive
+NIEUŻYWANA: brak

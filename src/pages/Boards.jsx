@@ -277,11 +277,13 @@ export default function Boards() {
                   onClick={e => e.preventDefault()}
                 >
                   <button
-                    className={isPublic ? styles.shareModeToggleSmPublic : styles.shareModeToggleSm}
+                    //className={isPublic ? styles.shareModeToggleSmPublic : styles.shareModeToggleSm}
+                    className={isPublic ? sharedStyles.shareModeTogglePublic : sharedStyles.shareModeTogglePrivate}
+                    //className={board.share_mode ? sharedStyles.shareModeTogglePublic : sharedStyles.shareModeToggle}
                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShareModeOpenId(shareModeOpenId === board.id ? null : board.id); }}
                   >
                     {(() => { const cur = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0]; const Icon = cur.icon; return <><Icon size={10} /> {cur.label}</>; })()}
-                    <ChevronDown size={10} className={shareModeOpenId === board.id ? styles.chevronOpen : ''} />
+                    <ChevronDown size={10} className={shareModeOpenId === board.id ? sharedStyles.chevronOpen : ''} />
                   </button>
                   {shareModeOpenId === board.id && (
                     <div className={styles.shareModeMenuSm}>
@@ -291,7 +293,7 @@ export default function Boards() {
                         return (
                           <button
                             key={m.value ?? 'null'}
-                            className={isActive ? styles.shareModeMenuItemSm_active : styles.shareModeMenuItemSm}
+                            className={isActive ? sharedStyles.shareModeMenuItemActive : sharedStyles.shareModeMenuItem}
                             onClick={(e) => { handleShareModeChange(e, board, m.value); setShareModeOpenId(null); }}
                           >
                             <Icon size={11} /> {m.label}

@@ -59,57 +59,6 @@
   display: inline-flex;
 }
 
-.shareModeToggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: var(--space-1) var(--space-3);
-  font-size: var(--font-size-sm);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  min-width: 122px;
-  justify-content: center;
-}
-
-.shareModeToggle:hover {
-  border-color: var(--color-primary);
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-}
-
-.shareModeTogglePublic {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: var(--space-1) var(--space-3);
-  font-size: var(--font-size-sm);
-  /*border: 1px solid var(--color-text-info);*/
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  background: var(--color-background-info);
-  color: var(--color-text-info);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  min-width: 122px;
-  justify-content: center;
-}
-
-.shareModeTogglePublic:hover {
-  border-color: var(--color-primary);
-  filter: brightness(1.05);
-}
-
-.chevronOpen {
-  transform: rotate(180deg);
-  transition: transform var(--transition-fast);
-}
-
 .shareModeMenu {
   position: absolute;
   top: calc(100% + 4px);
@@ -119,47 +68,10 @@
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-md);
   z-index: 20;
-  min-width: 140px;
+  min-width: 112px;
   overflow: hidden;
 }
 
-.shareModeMenuItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-sm);
-  background: transparent;
-  color: var(--color-text-secondary);
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  transition: background var(--transition-fast);
-}
-
-.shareModeMenuItem:hover {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-}
-
-.shareModeMenuItem_active {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-sm);
-  background: var(--color-accent);
-  color: white;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-}
-
-.shareModeMenuItem_active:hover {
-  background: var(--color-accent-hover);
-}
 
 /* Non-owner badges */
 .badgeRead {
@@ -196,11 +108,11 @@
   justify-content: center;
 }
 
-.headerBtn {
+.stdBtn {
   font-size: var(--font-size-sm);
-  padding: var(--space-1) var(--space-3);
+  padding: 2px var(--space-2);
   border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-border-primary);
+  border: 1px solid var(--color-text-secondary);
   background: transparent;
   color: var(--color-text-secondary);
   cursor: pointer;
@@ -208,14 +120,14 @@
   white-space: nowrap;
 }
 
-.headerBtn:hover {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
+.stdBtn:hover {
+  background: var(--color-text-secondary);
+  color: white;
 }
 
-.adoptBtn {
+.editBtn {
   font-size: var(--font-size-sm);
-  padding: var(--space-1) var(--space-3);
+  padding: 2px var(--space-2);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-accent);
   background: transparent;
@@ -225,7 +137,7 @@
   white-space: nowrap;
 }
 
-.adoptBtn:hover {
+.editBtn:hover {
   background: var(--color-accent);
   color: white;
 }
@@ -295,9 +207,26 @@
   }
 }
 
+.copyBtn {
+  font-size: var(--font-size-sm);
+  padding: 2px var(--space-2);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-text-success);
+  background: transparent;
+  color: var(--color-text-success);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.copyBtn:hover {
+  background: var(--color-text-success);
+  color: white;
+}
+
 .deleteBtn {
   font-size: var(--font-size-sm);
-  padding: var(--space-1) var(--space-3);
+  padding: 2px var(--space-2);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-danger);
   background: transparent;
@@ -317,7 +246,7 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  padding: 2px var(--space-2);
+  padding: 0 var(--space-2);
   font-size: var(--font-size-sm);
   border-radius: var(--border-radius-md);
   border: 1px solid var(--color-background-warning);

@@ -4,11 +4,11 @@ CSS: src/pages/shared.module.css
 
 === JSX: src/pages/AdminAnonyms.jsx ===
 CSS: src/pages/shared.module.css
-  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .btnGhost, .chevronOpen, .colorDot, .emptyState, .filterRow, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeToggle, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .btnGhost, .chevronOpen, .colorDot, .emptyState, .filterRow, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeTogglePrivate, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
 
 === JSX: src/pages/AdminUserBoards.jsx ===
 CSS: src/pages/shared.module.css
-  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnGhost, .chevronOpen, .colorDot, .emptyState, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeToggle, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnGhost, .chevronOpen, .colorDot, .emptyState, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeTogglePrivate, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
 
 === JSX: src/pages/AdminUserPurgatory.jsx ===
 CSS: src/pages/shared.module.css
@@ -28,9 +28,9 @@ CSS: src/pages/shared.module.css
 
 === JSX: src/pages/ProfileManage.jsx ===
 CSS: src/pages/profile.module.css
-  .btnWarning, .manageCard, .manageCardDelete, .manageCardDesc, .manageCardTitle, .manageInput
+  .btnWarning, .manageInput
 CSS: src/pages/shared.module.css
-  .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .navCards, .root
+  .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .navCard, .navCardDanger, .navCardDesc, .navCardTitle, .navCards, .root
 
 === JSX: src/pages/ProfilePurgatory.jsx ===
 CSS: src/pages/shared.module.css

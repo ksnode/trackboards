@@ -219,7 +219,7 @@ export default function AdminAnonyms() {
                       <div className={sharedStyles.actionsRow}>
                         {/* Share mode dropdown (portal) */}
                         <button
-                          className={board.share_mode ? sharedStyles.shareModeTogglePublic : sharedStyles.shareModeToggle}
+                          className={board.share_mode ? sharedStyles.shareModeTogglePublic : sharedStyles.shareModeTogglePrivate}
                           ref={el => { shareModeBtnRefs.current[board.id] = el; }}
                           onClick={() => openShareMode(board.id)}
                         >

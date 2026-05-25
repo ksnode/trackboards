@@ -320,9 +320,10 @@ export default function Board() {
         <div className={styles.boardHeaderGroup}>
           {/* Admin mode badge — only in admin preview */}
           {adminPreview && isAdmin && (
-            <span className={styles.adminBadge}>
-              <Shield size={14} />
-              Admin mode
+            <span className={styles.adminBadge}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <Shield size={12} />
+              Admin
             </span>
           )}
 
@@ -330,11 +331,12 @@ export default function Board() {
           {(isOwner || (adminPreview && isAdmin)) ? (
             <div className={styles.shareModeDropdown} ref={shareModeRef}>
               <button
-                className={board.share_mode ? styles.shareModeTogglePublic : styles.shareModeToggle}
+                className={board.share_mode ? sharedStyles.shareModeTogglePublic : sharedStyles.shareModeTogglePrivate}
                 onClick={() => setShareModeOpen(o => !o)}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
               >
-                {(() => { const cur = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0]; const Icon = cur.icon; return <><Icon size={14} /> {cur.label}</>; })()}
-                <ChevronDown size={14} className={shareModeOpen ? styles.chevronOpen : ''} />
+                {(() => { const cur = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0]; const Icon = cur.icon; return <><Icon size={12} /> {cur.label}</>; })()}
+                <ChevronDown size={12} className={shareModeOpen ? sharedStyles.chevronOpen : ''} />
               </button>
               {shareModeOpen && (
                 <div className={styles.shareModeMenu}>
@@ -344,7 +346,7 @@ export default function Board() {
                     return (
                       <button
                         key={m.value ?? 'null'}
-                        className={isActive ? styles.shareModeMenuItem_active : styles.shareModeMenuItem}
+                        className={isActive ? sharedStyles.shareModeMenuItemActive : sharedStyles.shareModeMenuItem}
                         onClick={() => { handleShareModeChange(m.value); setShareModeOpen(false); }}
                       >
                         <Icon size={12} /> {m.label}
@@ -358,7 +360,7 @@ export default function Board() {
             /* Badge for non-owners */
             board.share_mode && (
               <span className={board.share_mode === 'write' ? styles.badgeWrite : styles.badgeRead}>
-                {board.share_mode === 'write' ? <><PenLine size={14} /> Public edit</> : <><Eye size={14} /> Public view</>}
+                {board.share_mode === 'write' ? <><PenLine size={12} /> Public edit</> : <><Eye size={12} /> Public view</>}
               </span>
             )
           )}
@@ -366,11 +368,11 @@ export default function Board() {
           {board.share_mode && (
             <span className={styles.copyLinkWrapper}>
               <button
-                className={styles.headerBtn}
+                className={styles.copyBtn}
                 onClick={handleCopyLink}
-                style={{ borderColor: 'var(--color-success, #2e8b57)', color: 'var(--color-success, #2e8b57)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
               >
-                <LinkIcon size={14} /> Skopiuj link
+                <LinkIcon size={12} /> Skopiuj link
               </button>
               {copyTooltip && <span className={styles.copyTooltip}><span className={styles.copyTooltipCheck}>✓</span> Skopiowano!</span>}
             </span>
@@ -383,7 +385,7 @@ export default function Board() {
           {adminPreview && isAdmin && (
             <>
               <button
-                className={styles.headerBtn}
+                className={styles.stdBtn}
                 onClick={() => {
                   const json = JSON.stringify(board.data, null, 2);
                   const blob = new Blob([json], { type: 'application/json' });
@@ -396,14 +398,14 @@ export default function Board() {
                 }}
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
               >
-                <Download size={14} /> Eksportuj
+                <Download size={12} /> Eksportuj
               </button>
               <button
-                className={styles.headerBtn}
+                className={styles.stdBtn}
                 onClick={() => importFileRef.current?.click()}
                 style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
               >
-                <Upload size={14} /> Importuj
+                <Upload size={12} /> Importuj
               </button>
               <input
                 ref={importFileRef}
@@ -429,18 +431,18 @@ export default function Board() {
           )}
 
           {canAdopt && (
-            <button className={styles.adoptBtn} onClick={() => setShowAdoptConfirm(true)}>
+            <button className={styles.editBtn} onClick={() => setShowAdoptConfirm(true)}>
               Zaadoptuj ten board
             </button>
           )}
 
           {canEdit && (
             <button
-              className={styles.adoptBtn}
+              className={styles.editBtn}
               onClick={() => setEditMode(e => !e)}
               style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             >
-              {editMode ? <Check size={14} /> : <Pencil size={14} />}
+              {editMode ? <Check size={12} /> : <Pencil size={12} />}
               {editMode ? 'Zakończ' : 'Edytuj'}
             </button>
           )}
@@ -451,7 +453,7 @@ export default function Board() {
               onClick={() => setShowDeleteConfirm(true)}
               style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}
             >
-              <Trash2 size={14} /> Usuń
+              <Trash2 size={12} /> Usuń
             </button>
           )}
         </div>

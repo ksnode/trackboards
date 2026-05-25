@@ -103,35 +103,6 @@
 .shareModeDropdownSm {
   position: relative;
   display: inline-flex;
-  flex-shrink: 0;
-}
-
-.shareModeToggleSm {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  min-width: 75px;
-  justify-content: center;
-}
-
-.shareModeToggleSm:hover {
-  border-color: var(--color-primary);
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-}
-
-.chevronOpen {
-  transform: rotate(180deg);
-  transition: transform var(--transition-fast);
 }
 
 .shareModeMenuSm {
@@ -143,48 +114,10 @@
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-md);
   z-index: 20;
-  min-width: 120px;
+  min-width: 85px;
   overflow: hidden;
 }
 
-.shareModeMenuItemSm {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  width: 100%;
-  padding: var(--space-1) var(--space-2);
-  font-size: var(--font-size-xs);
-  background: transparent;
-  color: var(--color-text-secondary);
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  transition: background var(--transition-fast);
-}
-
-.shareModeMenuItemSm:hover {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
-}
-
-.shareModeMenuItemSm_active {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  width: 100%;
-  padding: var(--space-1) var(--space-2);
-  font-size: var(--font-size-xs);
-  background: var(--color-accent);
-  color: white;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-}
-
-.shareModeMenuItemSm_active:hover {
-  background: var(--color-accent-hover);
-
-}
 
 /* ── Section titles ── */
 .sectionTitle {
@@ -194,30 +127,6 @@
   letter-spacing: 0.05em;
   padding: var(--space-2) 0 var(--space-1) 0;
   user-select: none;
-}
-
-/* ── Public toggle variant (blue) ── */
-.shareModeToggleSmPublic {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  background: var(--color-background-info);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  min-width: 80px;
-  justify-content: center;
-}
-
-.shareModeToggleSmPublic:hover {
-  /*filter: brightness(1.05);*/
-  border-color: var(--color-primary);
-  color: var(--color-text-info);
 }
 
 /* ── External board badges ── */
@@ -234,7 +143,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   white-space: nowrap;
-  min-width: 80px;
+  min-width: 85px;
   justify-content: center;
   /*flex-shrink: 0;*/
 }

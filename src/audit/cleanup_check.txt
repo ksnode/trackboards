@@ -1,0 +1,30 @@
+Wyniki audytu użycia wybranych klas CSS w plikach JSX (w katalogu src/):
+
+1. shareModeDropdownSm (z Boards.module.css)
+   - Status: UŻYWANA
+   - Lokalizacja:
+     - src/pages/Boards.jsx (linia 275): className={styles.shareModeDropdownSm}
+
+2. shareModeToggleSmPrivate (z Boards.module.css)
+   - Status: NIEUŻYWANA
+   - Lokalizacja: Brak aktywnego użycia w jakimkolwiek pliku JSX.
+
+3. shareModeMenuSm (z Boards.module.css)
+   - Status: UŻYWANA
+   - Lokalizacja:
+     - src/pages/Boards.jsx (linia 289): <div className={styles.shareModeMenuSm}>
+
+4. shareModeToggleSmPublic (z Boards.module.css)
+   - Status: NIEUŻYWANA (tylko w komentarzu)
+   - Lokalizacja:
+     - src/pages/Boards.jsx (linia 280): //className={isPublic ? styles.shareModeToggleSmPublic : styles.shareModeToggleSm}
+
+5. shareModeDropdown (z Board.module.css)
+   - Status: UŻYWANA
+   - Lokalizacja:
+     - src/pages/Board.jsx (linia 332): <div className={styles.shareModeDropdown} ref={shareModeRef}>
+
+6. shareModeMenu (z Board.module.css)
+   - Status: UŻYWANA
+   - Lokalizacja:
+     - src/pages/Board.jsx (linia 342): <div className={styles.shareModeMenu}>

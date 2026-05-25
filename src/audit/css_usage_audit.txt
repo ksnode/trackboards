@@ -8,14 +8,15 @@
 .btnGhost — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
 .btnGhostDanger — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
 .btnGhostInfo — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
-.chevronOpen — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+.chevronOpen — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx, Board.jsx, Boards.jsx]
 .colorDot — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
 .emptyState — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
 .filterRow — używana w: [AdminAnonyms.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
 .loading — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, Profile.jsx, ProfilePurgatory.jsx]
-.navCard — używana w: [Admin.jsx, Profile.jsx]
-.navCardDesc — używana w: [Admin.jsx, Profile.jsx]
-.navCardTitle — używana w: [Admin.jsx, Profile.jsx]
+.navCard — używana w: [Admin.jsx, Profile.jsx, ProfileManage.jsx]
+.navCardDanger — używana w: [Profile.jsx, ProfileManage.jsx]
+.navCardDesc — używana w: [Admin.jsx, Profile.jsx, ProfileManage.jsx]
+.navCardTitle — używana w: [Admin.jsx, Profile.jsx, ProfileManage.jsx]
 .navCards — używana w: [Admin.jsx, Profile.jsx, ProfileManage.jsx]
 .optionsDropdownPortal — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
 .optionsItem — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
@@ -28,10 +29,10 @@
 .previewOverlay — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
 .previewTitle — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
 .root — używana w: [Admin.jsx, AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, Board.jsx, Boards.jsx, Privacy.jsx, Profile.jsx, ProfileManage.jsx, ProfilePurgatory.jsx]
-.shareModeMenuItem — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
-.shareModeMenuItemActive — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
-.shareModeToggle — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx]
-.shareModeTogglePublic — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx]
+.shareModeMenuItem — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx, Board.jsx, Boards.jsx]
+.shareModeMenuItemActive — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx, Board.jsx, Boards.jsx]
+.shareModeTogglePrivate — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, Board.jsx, Boards.jsx]
+.shareModeTogglePublic — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, Board.jsx, Boards.jsx]
 .table — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
 .tableCell — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
 .tableCellActions — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
@@ -43,7 +44,7 @@
 .userPickerEmpty — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
 .userPickerItem — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
 .userPickerSearch — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
-UŻYWANA TYLKO W 1 PLIKU: .navCardDanger
+UŻYWANA TYLKO W 1 PLIKU: 
 NIEUŻYWANA: 
 
 === PLIK: admin.module.css ===
@@ -51,5 +52,5 @@ UŻYWANA TYLKO W 1 PLIKU: .actionsPanel, .actionsPanelGroup, .actionsPanelSep, .
 NIEUŻYWANA: 
 
 === PLIK: profile.module.css ===
-UŻYWANA TYLKO W 1 PLIKU: .accountDetails, .accountEmail, .accountMeta, .accountSection, .avatar, .btnWarning, .manageCard, .manageCardDelete, .manageCardDesc, .manageCardTitle, .manageInput, .roleBadge, .roleBadgeAdmin
+UŻYWANA TYLKO W 1 PLIKU: .accountDetails, .accountEmail, .accountMeta, .accountSection, .avatar, .btnWarning, .manageInput, .roleBadge, .roleBadgeAdmin
 NIEUŻYWANA:

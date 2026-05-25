@@ -36,11 +36,11 @@ CSS: src/pages/shared.module.css
 
 === JSX: src/pages/AdminAnonyms.jsx ===
 CSS: src/pages/shared.module.css
-  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .btnGhost, .chevronOpen, .colorDot, .emptyState, .filterRow, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeToggle, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .btnGhost, .chevronOpen, .colorDot, .emptyState, .filterRow, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeTogglePrivate, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
 
 === JSX: src/pages/AdminUserBoards.jsx ===
 CSS: src/pages/shared.module.css
-  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnGhost, .chevronOpen, .colorDot, .emptyState, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeToggle, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnGhost, .chevronOpen, .colorDot, .emptyState, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeTogglePrivate, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
 
 === JSX: src/pages/AdminUserPurgatory.jsx ===
 CSS: src/pages/shared.module.css
@@ -54,15 +54,15 @@ CSS: src/pages/admin.module.css
 
 === JSX: src/pages/Board.jsx ===
 CSS: src/pages/shared.module.css
-  .root
+  .chevronOpen, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeTogglePrivate, .shareModeTogglePublic
 CSS: src/pages/Board.module.css
-  .adminBadge, .adoptBtn, .backBtn, .badgeRead, .badgeWrite, .boardHeader, .boardHeaderGroup, .chevronOpen, .copyLinkWrapper, .copyTooltip, .copyTooltipCheck, .deleteBtn, .error, .errorText, .headerBtn, .loading, .root, .shareModeDropdown, .shareModeMenu, .shareModeMenuItem, .shareModeMenuItem_active, .shareModeToggle, .shareModeTogglePublic
+  .adminBadge, .adoptBtn, .backBtn, .badgeRead, .badgeWrite, .boardHeader, .boardHeaderGroup, .copyLinkWrapper, .copyTooltip, .copyTooltipCheck, .deleteBtn, .error, .errorText, .headerBtn, .loading, .root, .shareModeDropdown, .shareModeMenu
 
 === JSX: src/pages/Boards.jsx ===
 CSS: src/pages/shared.module.css
-  .root
+  .chevronOpen, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeToggle, .shareModeTogglePrivate, .shareModeTogglePublic
 CSS: src/pages/Boards.module.css
-  .boardCard, .boardCardDisabled, .boardInfo, .boardMeta, .boardPct, .boardProgressBar, .boardProgressFill, .boardTitle, .boardsList, .chevronOpen, .colorDotLabel, .colorInput, .emptyState, .emptyText, .extBadge, .extBadgeHidden, .loading, .progressSection, .recentItem, .recentItemDate, .recentItemTitle, .recentList, .recentSection, .recentTitle, .root, .sectionTitle, .shareModeDropdownSm, .shareModeMenuItemSm, .shareModeMenuItemSm_active, .shareModeMenuSm, .shareModeToggleSm, .shareModeToggleSmPublic, .welcomeCard, .welcomeCardAccent, .welcomeCardDesc, .welcomeCardTitle, .welcomeCards
+  .boardCard, .boardCardDisabled, .boardInfo, .boardMeta, .boardPct, .boardProgressBar, .boardProgressFill, .boardTitle, .boardsList, .colorDotLabel, .colorInput, .emptyState, .emptyText, .extBadge, .extBadgeHidden, .loading, .progressSection, .recentItem, .recentItemDate, .recentItemTitle, .recentList, .recentSection, .recentTitle, .root, .sectionTitle, .shareModeDropdownSm, .shareModeMenuSm, .shareModeToggleSm, .shareModeToggleSmPublic, .welcomeCard, .welcomeCardAccent, .welcomeCardDesc, .welcomeCardTitle, .welcomeCards
 
 === JSX: src/pages/Home.jsx ===
 
@@ -80,9 +80,9 @@ CSS: src/pages/shared.module.css
 
 === JSX: src/pages/ProfileManage.jsx ===
 CSS: src/pages/profile.module.css
-  .btnWarning, .manageCard, .manageCardDelete, .manageCardDesc, .manageCardTitle, .manageInput
+  .btnWarning, .manageInput
 CSS: src/pages/shared.module.css
-  .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .navCards, .root
+  .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .navCard, .navCardDanger, .navCardDesc, .navCardTitle, .navCards, .root
 
 === JSX: src/pages/ProfilePurgatory.jsx ===
 CSS: src/pages/shared.module.css

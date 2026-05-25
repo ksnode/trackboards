@@ -1,0 +1,55 @@
+=== PLIK: components/BoardFramework.module.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: components/ConfirmModal.module.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: components/Layout.module.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: components/Sidebar.module.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: index.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: pages/admin.module.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: pages/Board.module.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: pages/Boards.module.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: pages/privacy.module.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: pages/profile.module.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: pages/shared.module.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: styles/global.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: styles/theme.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak
+
+=== PLIK: styles/tokens.css ===
+NIEUŻYWANE: brak
+WSZYSTKIE UŻYWANE: tak

@@ -523,13 +523,11 @@
 .loginLink {
   color: var(--color-accent);
   font-weight: bold;
-
 }
 
 .loginLink:hover {
   color: var(--color-accent);
   background: var(--color-background-info);
-
 }
 
 .logoutLink {

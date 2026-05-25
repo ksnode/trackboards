@@ -1,0 +1,91 @@
+=== JSX: App.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak
+
+=== JSX: BoardFramework.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): brak
+
+=== JSX: BoardFrameworkCheckbox.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak
+
+=== JSX: BoardFrameworkEdit.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak
+
+=== JSX: ConfirmModal.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): .overlay
+
+=== JSX: Layout.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): .overlay
+
+=== JSX: Sidebar.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): .rootOverlay
+
+=== JSX: auth.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak
+
+=== JSX: headerContext.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak
+
+=== JSX: main.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak
+
+=== JSX: Admin.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak
+
+=== JSX: AdminAnonyms.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): brak
+
+=== JSX: AdminUserBoards.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): brak
+
+=== JSX: AdminUserPurgatory.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): .previewModal, .previewOverlay
+
+=== JSX: AdminUsers.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): brak
+
+=== JSX: Board.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): brak
+
+=== JSX: Boards.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): brak
+
+=== JSX: Home.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak
+
+=== JSX: Privacy.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak
+
+=== JSX: Profile.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak
+
+=== JSX: ProfileManage.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): brak
+
+=== JSX: ProfilePurgatory.jsx ===
+Używa ConfirmModal: tak
+Własne modale (klasy): .previewModal, .previewOverlay
+
+=== JSX: TestFramework.jsx ===
+Używa ConfirmModal: nie
+Własne modale (klasy): brak

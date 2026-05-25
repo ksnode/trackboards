@@ -58,9 +58,9 @@ export default function ProfileManage() {
 
       <div className={sharedStyles.navCards}>
         {/* Deactivate */}
-        <div className={profileStyles.manageCard}>
-          <div className={profileStyles.manageCardTitle}><ShieldMinus size={13} /> Dezaktywuj konto</div>
-          <p className={profileStyles.manageCardDesc}>
+        <div className={sharedStyles.navCard}>
+          <div className={sharedStyles.navCardTitle}><ShieldMinus size={12} /> Dezaktywuj konto</div>
+          <p className={sharedStyles.navCardDesc}>
             Twoje konto zostanie dezaktywowane. Możesz je reaktywować logując się ponownie.
           </p>
           <button className={profileStyles.btnWarning} onClick={() => setDeactivateConfirm(true)}>
@@ -69,14 +69,14 @@ export default function ProfileManage() {
         </div>
 
         {/* Delete */}
-        <div className={profileStyles.manageCardDelete}>
-          <div className={profileStyles.manageCardTitle}><Bomb size={13} /> Usuń konto</div>
-          <p className={profileStyles.manageCardDesc}>
+        <div className={sharedStyles.navCardDanger} style={{ background: 'var(--color-background-danger)' }}>
+          <div className={sharedStyles.navCardTitle}><Bomb size={12} /> Usuń konto</div>
+          <p className={sharedStyles.navCardDesc}>
             Tej operacji nie można cofnąć. Twój email zostanie zamaskowany,
             a konto trwale usunięte.
           </p>
           <button className={sharedStyles.btnDanger} onClick={() => setDeleteConfirm(true)}>
-            Usuń konto
+            Usuń całkowicie
           </button>
         </div>
       </div>
@@ -114,6 +114,6 @@ export default function ProfileManage() {
           autoFocus
         />
       </ConfirmModal>
-    </div>
+    </div >
   );
 }
