@@ -5,7 +5,7 @@ import { useHeader } from '../lib/headerContext';
 import { ShieldMinus, Bomb, MoveLeft } from 'lucide-react';
 import { updateUserStatus, hardDeleteUser } from '../lib/boards';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/Layout/PageContent.module.css';
+import pageStyles from '../components/PageContent.module.css';
 import s from './ProfileAdmin.module.css';
 
 export default function ProfileManage() {

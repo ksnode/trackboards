@@ -4,9 +4,9 @@ import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
 import { listMyPurgatory, restoreBoard, getBoard, hardDeleteBoard } from '../lib/boards';
 import { MoveLeft } from 'lucide-react';
-import BoardFramework from '../components/BoardFramework/BoardFramework';
+import BoardFramework from '../components/BoardFramework';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/Layout/PageContent.module.css';
+import pageStyles from '../components/PageContent.module.css';
 import s from './ProfileAdmin.module.css';
 
 export default function ProfilePurgatory() {

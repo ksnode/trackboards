@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { Checkbox } from './Checkbox';
-import { InlineEdit } from './InlineEdit';
+import { Checkbox } from './BoardFrameworkCheckbox';
+import { InlineEdit } from './BoardFrameworkEdit';
 import {
   genId, hToHMM, parseHMM, computeParentState,
   cloneTree, findNode, getDepth, findWithParent, MAX_DEPTH,
-} from './treeHelpers';
+} from '../lib/boardTreeHelpers';
 import styles from './BoardFramework.module.css';
-import ConfirmModal from '../ConfirmModal';
+import ConfirmModal from './ConfirmModal';
 import { ChevronRight } from 'lucide-react';
 
 export default function BoardFramework({

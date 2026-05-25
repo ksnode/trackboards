@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../lib/auth';
+import { useAuth } from '../lib/auth';
 import { useEffect, useState, useCallback, useRef } from 'react';
 import {
   listMyBoards, createBoardAuthenticated, createBoardAnonymous,
@@ -7,15 +7,15 @@ import {
   listSubscribedBoards, subscribeToBoard, unsubscribeFromBoard,
   parseBoardGuidFromUrl, getBoard,
   toggleBoardPin, duplicateBoardToMyBoards,
-} from '../../lib/boards';
+} from '../lib/boards';
 import {
   GripVertical, Menu, Plus,
   UserStar, User, LogIn, LogOut, Monitor, Sun, Moon,
   Globe, Unplug, Lock,
   Ghost, HatGlasses,
 } from 'lucide-react';
-import ConfirmModal from '../ConfirmModal';
-import { subscribeToBoardList } from '../../lib/realtime';
+import ConfirmModal from './ConfirmModal';
+import { subscribeToBoardList } from '../lib/realtime';
 import styles from './Sidebar.module.css';
 
 const RECENT_KEY = 'trackboards_recent';

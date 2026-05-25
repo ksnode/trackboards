@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import BoardFramework from '../components/BoardFramework/BoardFramework';
+import BoardFramework from '../components/BoardFramework';
 
 const MOCK_DATA = {
   modules: [

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
 import { Shield, Database, Trash2, KeyRound } from 'lucide-react';
-import pageStyles from '../components/Layout/PageContent.module.css';
+import pageStyles from '../components/PageContent.module.css';
 import s from './ProfileAdmin.module.css';
 
 export default function Privacy() {

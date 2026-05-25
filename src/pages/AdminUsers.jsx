@@ -9,7 +9,7 @@ import {
 } from '../lib/boards';
 import { ChevronDown, MoveLeft } from 'lucide-react';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/Layout/PageContent.module.css';
+import pageStyles from '../components/PageContent.module.css';
 import s from './ProfileAdmin.module.css';
 
 const STATUS_OPTIONS = [

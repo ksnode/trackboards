@@ -3,9 +3,9 @@ import { Link, useParams } from 'react-router-dom';
 import { useHeader } from '../lib/headerContext';
 import { getUserProfile, listUserPurgatory, restoreBoard, hardDeleteBoard, getBoard } from '../lib/boards';
 import { MoveLeft } from 'lucide-react';
-import BoardFramework from '../components/BoardFramework/BoardFramework';
+import BoardFramework from '../components/BoardFramework';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/Layout/PageContent.module.css';
+import pageStyles from '../components/PageContent.module.css';
 import s from './ProfileAdmin.module.css';
 
 export default function AdminUserPurgatory() {

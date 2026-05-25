@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../lib/auth';
-import { HeaderProvider, useHeader } from '../../lib/headerContext';
+import { useAuth } from '../lib/auth';
+import { HeaderProvider, useHeader } from '../lib/headerContext';
 import { Sidebar } from './Sidebar';
-import ConfirmModal from '../ConfirmModal';
+import ConfirmModal from './ConfirmModal';
 import { MoveLeft } from 'lucide-react';
 import styles from './Layout.module.css';
 

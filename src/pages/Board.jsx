@@ -9,9 +9,9 @@ import {
 import { Link as LinkIcon, Pencil, Check, Trash2, Lock, Eye, PenLine, ChevronDown, Shield, Download, Upload, MoveLeft } from 'lucide-react';
 import paStyles from './ProfileAdmin.module.css';
 import { subscribeToBoardChanges } from '../lib/realtime';
-import BoardFramework from '../components/BoardFramework/BoardFramework';
+import BoardFramework from '../components/BoardFramework';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/Layout/PageContent.module.css';
+import pageStyles from '../components/PageContent.module.css';
 import styles from './Board.module.css';
 
 const RECENT_KEY = 'trackboards_recent';

@@ -8,7 +8,7 @@ import { createBoardAnonymous } from '../lib/boards';
 import { subscribeToBoardList } from '../lib/realtime';
 import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/Layout/PageContent.module.css';
+import pageStyles from '../components/PageContent.module.css';
 import styles from './Boards.module.css';
 
 const RECENT_KEY = 'trackboards_recent';

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider, RequireAuth, RequireAdmin } from './lib/auth';
-import { Layout } from './components/Layout/Layout';
+import { Layout } from './components/Layout';
 
 // Pages
 import Home from './pages/Home';
