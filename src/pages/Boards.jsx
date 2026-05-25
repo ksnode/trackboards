@@ -8,7 +8,7 @@ import { createBoardAnonymous } from '../lib/boards';
 import { subscribeToBoardList } from '../lib/realtime';
 import { useNavigate } from 'react-router-dom';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/PageContent.module.css';
+import sharedStyles from './shared.module.css';
 import styles from './Boards.module.css';
 
 const RECENT_KEY = 'trackboards_recent';
@@ -192,7 +192,7 @@ export default function Boards() {
   // ── Welcome screen for unauthenticated ──
   if (!user) {
     return (
-      <div className={`${pageStyles.root} ${styles.root}`}>
+      <div className={`${sharedStyles.root} ${styles.root}`}>
         <div className={styles.welcomeCards}>
           <button className={styles.welcomeCard} onClick={handleCreateAnonymous} disabled={creating}>
             <div className={styles.welcomeCardTitle}>
@@ -227,7 +227,7 @@ export default function Boards() {
   if (loading) return <div className={styles.loading}>Ładowanie...</div>;
 
   return (
-    <div className={`${pageStyles.root} ${styles.root}`}>
+    <div className={`${sharedStyles.root} ${styles.root}`}>
       <div className={styles.boardsList}>
         {/* ── ULUBIONE ── */}
         {(() => {

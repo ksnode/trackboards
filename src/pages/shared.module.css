@@ -1,126 +1,5 @@
 /* ── Shared styles for Profile & Admin pages ── */
 
-/* ── Account section ── */
-.accountSection {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-6);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-lg);
-  background: var(--color-bg-secondary);
-  margin-bottom: var(--space-4);
-}
-
-.avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--color-accent);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: var(--font-size-xl);
-  font-weight: 400;
-  text-transform: uppercase;
-  flex-shrink: 0;
-  user-select: none;
-}
-
-.accountDetails {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.accountEmail {
-  font-size: var(--font-size-base);
-  font-weight: 500;
-  color: var(--color-text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.accountMeta {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-tertiary);
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-}
-
-.roleBadge {
-  font-size: var(--font-size-xs);
-  font-weight: 600;
-  padding: 1px var(--space-2);
-  border-radius: var(--border-radius-sm);
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.roleBadgeAdmin {
-  background: var(--color-accent);
-  color: white;
-}
-
-/* ── Navigation cards ── */
-.navCards {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  max-width: 50%;
-}
-
-.navCard {
-  display: block;
-  padding: var(--space-6);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-lg);
-  background: var(--color-bg-secondary);
-  text-decoration: none;
-  color: inherit;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
-}
-
-.navCard:hover {
-  border-color: var(--color-accent);
-  background: var(--color-bg-tertiary);
-}
-
-.navCardDanger {
-  display: block;
-  padding: var(--space-6);
-  border: 1px solid var(--color-border-danger);
-  border-radius: var(--border-radius-lg);
-  background: var(--color-bg-secondary);
-  text-decoration: none;
-  color: inherit;
-  transition: border-color var(--transition-fast), background var(--transition-fast);
-}
-
-.navCardDanger:hover {
-  border-color: var(--color-danger);
-  background: var(--color-background-danger);
-}
-
-.navCardTitle {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-1);
-}
-
-.navCardDesc {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-}
-
 /* ── Breadcrumb ── */
 .breadcrumb {
   display: flex;
@@ -152,23 +31,6 @@
 }
 
 /* ── Buttons ── */
-.btnWarning {
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-text-warning);
-  background: transparent;
-  color: var(--color-text-warning);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-}
-
-.btnWarning:hover {
-  background: var(--color-warning);
-  color: white;
-}
-
 .btnDanger {
   padding: 2px var(--space-2);
   font-size: var(--font-size-xs);
@@ -225,23 +87,6 @@
   border-color: var(--color-danger);
   background: var(--color-bg-tertiary);
   color: var(--color-danger);
-}
-
-.btnDisabled {
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-border-primary);
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-tertiary);
-  cursor: not-allowed;
-  white-space: nowrap;
-  opacity: 0.6;
-}
-
-.btnDisabled:hover {
-  border-color: var(--color-primary);
-  background: var(--color-bg-tertiary);
 }
 
 /* ── Table layout ── */
@@ -454,59 +299,6 @@
   transition: transform var(--transition-fast);
 }
 
-/* ── Admin mode badge ── */
-.adminBadge {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-sm);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-background-warning);
-  border-color: var(--color-primary);
-  background: var(--color-background-warning);
-  color: var(--color-text-warning);
-  white-space: nowrap;
-  user-select: none;
-}
-
-/* ── Base toggle button (role + status) ── */
-.toggleBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  min-width: 75px;
-  justify-content: space-between;
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  font-weight: 500;
-}
-
-.toggleBtn:hover:not(:disabled) {
-  border-color: var(--color-primary);
-}
-
-.toggleBtnInfo {
-  background: var(--color-background-info);
-  color: var(--color-info);
-}
-
-.toggleBtnInfo:hover:not(:disabled) {
-  border-color: var(--color-info);
-}
-
-.toggleBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
 /* ── Options dropdown ── */
 .optionsItem {
   display: block;
@@ -560,85 +352,6 @@
   box-shadow: var(--shadow-md);
   z-index: 9999;
   overflow: hidden;
-}
-
-/* ── Actions panel (2x2) ── */
-.actionsPanel {
-  display: flex;
-  align-items: stretch;
-  gap: var(--space-2);
-}
-
-.actionsPanelGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.actionsPanelSep {
-  width: 1px;
-  background: var(--color-border-primary);
-  align-self: stretch;
-  flex-shrink: 0;
-}
-
-/* ── Fixed-width action buttons ── */
-.btnGhostFixed {
-  composes: btnGhost;
-  min-width: 75px;
-  text-align: center;
-  justify-content: center;
-}
-
-.btnInfoFixed {
-  padding: 2px var(--space-2);
-  font-size: var(--font-size-xs);
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--color-text-info);
-  background: transparent;
-  color: var(--color-text-info);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  white-space: nowrap;
-  min-width: 75px;
-  text-align: center;
-  justify-content: center;
-}
-
-.btnInfoFixed:hover {
-  background: var(--color-info);
-  color: white;
-}
-
-.btnDangerFixed {
-  composes: btnDanger;
-  min-width: 75px;
-  text-align: center;
-  justify-content: center;
-}
-
-/* ── Search input ── */
-.searchInput {
-  width: 100%;
-  max-width: 320px;
-  padding: var(--space-2) var(--space-3);
-  font-size: var(--font-size-sm);
-  font-family: var(--font-ui);
-  color: var(--color-text-primary);
-  background: var(--color-bg-secondary);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  outline: none;
-  transition: border-color var(--transition-fast);
-  margin-bottom: var(--space-4);
-}
-
-.searchInput:focus {
-  border-color: var(--color-accent);
-}
-
-.searchInput::placeholder {
-  color: var(--color-text-tertiary);
 }
 
 /* ── Board preview modal ── */
@@ -709,28 +422,6 @@
   color: var(--color-text-secondary);
 }
 
-/* ── Responsive ── */
-@media (max-width: 600px) {
-  .navCards {
-    max-width: 100%;
-  }
-
-  /*.accountSection {
-    flex-direction: column;
-    text-align: center;
-  }*/
-
-  .actionsRow {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  /*.filterRow {
-    flex-direction: column;
-    align-items: flex-start;
-  }*/
-}
-
 /* ── Filter row ── */
 .filterRow {
   display: flex;
@@ -740,123 +431,76 @@
   flex-wrap: wrap;
 }
 
-.filterChecks {
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .actionsRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ── Navigation cards ── */
+.navCards {
   display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 50%;
 }
 
-.filterCheckLabel {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  user-select: none;
-}
-
-.filterCheckLabel input[type="checkbox"] {
-  accent-color: var(--color-accent);
-  cursor: pointer;
-}
-
-/* ── Manage actions (ProfileManage) ── */
-.manageCard {
+.navCard {
+  display: block;
   padding: var(--space-6);
   border: 1px solid var(--color-border-primary);
   border-radius: var(--border-radius-lg);
   background: var(--color-bg-secondary);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
-.manageCardTitle {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--space-2);
+.navCard:hover {
+  border-color: var(--color-accent);
+  background: var(--color-bg-tertiary);
 }
 
-.manageCardDesc {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-4);
-}
-
-.manageCardDelete {
+.navCardDanger {
+  display: block;
   padding: var(--space-6);
   border: 1px solid var(--color-border-danger);
   border-radius: var(--border-radius-lg);
-  background: var(--color-background-danger);
+  background: var(--color-bg-secondary);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
 }
 
-.manageCardDelete:hover {
+.navCardDanger:hover {
   border-color: var(--color-danger);
   background: var(--color-background-danger);
 }
 
-/* ── Manage page ── */
-
-.manageInput {
-  width: 100%;
-  max-width: 320px;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--color-border-primary);
-  border-radius: var(--border-radius-md);
-  background: var(--color-bg);
-  color: var(--color-text-primary);
-  font-size: var(--font-size-sm);
-  margin-bottom: var(--space-4);
-  outline: none;
-  font-family: var(--font-ui);
-}
-
-.manageInput:focus {
-  border-color: var(--color-danger);
-}
-
-
-/* ── Privacy page ── */
-.privacyWrapper {}
-
-.privacySubtitle {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin: 0 0 var(--space-4);
-}
-
-.privacySections {
-  display: flex;
-  flex-direction: column;
-}
-
-.privacySection {
-  display: flex;
-  gap: var(--space-3);
-  padding: 20px 0;
-  border-bottom: 1px solid var(--color-border-primary);
-}
-
-.privacySection:last-child {
-  border-bottom: none;
-}
-
-.privacySectionIcon {
-  flex-shrink: 0;
-  color: var(--color-accent);
-  padding-top: 2px;
-}
-
-.privacySectionTitle {
+.navCardTitle {
   font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: var(--space-1);
 }
 
-.privacySectionText {
+.navCardDesc {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  line-height: 1.6;
-  margin: 0;
 }
+
+@media (max-width: 600px) {
+  .navCards {
+    max-width: 100%;
+  }
+}
+
+/* ── Page Root Layout ── */
+.root {
+  max-width: var(--content-max-width);
+  padding: var(--content-padding-y) var(--content-padding-x);
+  width: 100%;
+}
+

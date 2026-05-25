@@ -8,8 +8,8 @@ import {
 } from '../lib/boards';
 import { Lock, Eye, PenLine, ChevronDown, MoveLeft } from 'lucide-react';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/PageContent.module.css';
-import s from './ProfileAdmin.module.css';
+import sharedStyles from './shared.module.css';
+
 
 const SHARE_MODES = [
   { value: null, label: 'Private', icon: Lock },
@@ -158,23 +158,23 @@ export default function AdminAnonyms() {
     u.email.toLowerCase().includes(assignSearch.toLowerCase())
   );
 
-  if (loading) return <div className={s.loading}>Ładowanie...</div>;
+  if (loading) return <div className={sharedStyles.loading}>Ładowanie...</div>;
 
   return (
-    <div className={pageStyles.root}>
-      <div className={s.breadcrumb}>
-        <Link to="/admin" className={s.breadcrumbLink}>Admin</Link>
-        <span className={s.breadcrumbSep}>›</span>
-        <span className={s.breadcrumbCurrent}>Anonimowe boardy</span>
+    <div className={sharedStyles.root}>
+      <div className={sharedStyles.breadcrumb}>
+        <Link to="/admin" className={sharedStyles.breadcrumbLink}>Admin</Link>
+        <span className={sharedStyles.breadcrumbSep}>›</span>
+        <span className={sharedStyles.breadcrumbCurrent}>Anonimowe boardy</span>
       </div>
 
-      <div className={s.filterRow}>
+      <div className={sharedStyles.filterRow}>
         <span style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)' }}>
           {boards.length} {boards.length === 1 ? 'board' : 'boardów'}
         </span>
         {boards.length > 0 && (
           <button
-            className={s.btnDanger}
+            className={sharedStyles.btnDanger}
             onClick={() => setDeleteAllConfirm(true)}
           >
             Usuń wszystkie anonimowe
@@ -183,16 +183,16 @@ export default function AdminAnonyms() {
       </div>
 
       {boards.length === 0 ? (
-        <div className={s.emptyState}>Brak anonimowych boardów</div>
+        <div className={sharedStyles.emptyState}>Brak anonimowych boardów</div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <table className={s.table}>
-            <thead className={s.tableHead}>
+          <table className={sharedStyles.table}>
+            <thead className={sharedStyles.tableHead}>
               <tr>
-                <th className={s.tableHeadCell}>Nazwa</th>
-                <th className={s.tableHeadCell}>Utworzono</th>
-                <th className={s.tableHeadCell}>Ostatnia aktywność</th>
-                <th className={s.tableHeadCell}>Akcje</th>
+                <th className={sharedStyles.tableHeadCell}>Nazwa</th>
+                <th className={sharedStyles.tableHeadCell}>Utworzono</th>
+                <th className={sharedStyles.tableHeadCell}>Ostatnia aktywność</th>
+                <th className={sharedStyles.tableHeadCell}>Akcje</th>
               </tr>
             </thead>
             <tbody>
@@ -200,35 +200,35 @@ export default function AdminAnonyms() {
                 const curMode = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0];
                 const CurIcon = curMode.icon;
                 return (
-                  <tr key={board.id} className={s.tableRow}>
-                    <td className={s.tableCell}>
+                  <tr key={board.id} className={sharedStyles.tableRow}>
+                    <td className={sharedStyles.tableCell}>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                        <span className={s.colorDot} style={{ background: board.color || '#888' }} />
-                        <span className={s.titleTruncate} title={board.title}>{truncate(board.title)}</span>
+                        <span className={sharedStyles.colorDot} style={{ background: board.color || '#888' }} />
+                        <span className={sharedStyles.titleTruncate} title={board.title}>{truncate(board.title)}</span>
                       </span>
                     </td>
-                    <td className={`${s.tableCell} ${s.tableCellMono}`}>
+                    <td className={`${sharedStyles.tableCell} ${sharedStyles.tableCellMono}`}>
                       {new Date(board.created_at).toLocaleDateString('pl-PL', {
                         day: 'numeric', month: 'short', year: 'numeric',
                       })}
                     </td>
-                    <td className={`${s.tableCell} ${s.tableCellMono}`}>
+                    <td className={`${sharedStyles.tableCell} ${sharedStyles.tableCellMono}`}>
                       {new Date(board.updated_at).toLocaleString('pl-PL')}
                     </td>
-                    <td className={s.tableCellActions}>
-                      <div className={s.actionsRow}>
+                    <td className={sharedStyles.tableCellActions}>
+                      <div className={sharedStyles.actionsRow}>
                         {/* Share mode dropdown (portal) */}
                         <button
-                          className={board.share_mode ? s.shareModeTogglePublic : s.shareModeToggle}
+                          className={board.share_mode ? sharedStyles.shareModeTogglePublic : sharedStyles.shareModeToggle}
                           ref={el => { shareModeBtnRefs.current[board.id] = el; }}
                           onClick={() => openShareMode(board.id)}
                         >
                           <CurIcon size={10} /> {curMode.label}
-                          <ChevronDown size={10} className={shareModeOpenId === board.id ? s.chevronOpen : ''} />
+                          <ChevronDown size={10} className={shareModeOpenId === board.id ? sharedStyles.chevronOpen : ''} />
                         </button>
                         {shareModeOpenId === board.id && createPortal(
                           <div
-                            className={s.optionsDropdownPortal}
+                            className={sharedStyles.optionsDropdownPortal}
                             style={{ top: shareModePos.top, left: shareModePos.left, minWidth: 85 }}
                             onMouseDown={e => e.stopPropagation()}
                           >
@@ -238,7 +238,7 @@ export default function AdminAnonyms() {
                               return (
                                 <button
                                   key={m.label + (m.value || 'null')}
-                                  className={isActive ? s.shareModeMenuItemActive : s.shareModeMenuItem}
+                                  className={isActive ? sharedStyles.shareModeMenuItemActive : sharedStyles.shareModeMenuItem}
                                   onClick={() => { handleShareModeChange(board, m.value); setShareModeOpenId(null); }}
                                 >
                                   <Icon size={11} /> {m.label}
@@ -251,29 +251,29 @@ export default function AdminAnonyms() {
 
                         {/* Options button */}
                         <button
-                          className={s.btnGhost}
+                          className={sharedStyles.btnGhost}
                           ref={el => { optionsBtnRefs.current[board.id] = el; }}
                           onClick={() => openOptions(board.id)}
                         >
-                          Opcje… <ChevronDown size={10} className={optionsOpenId === board.id ? s.chevronOpen : ''} />
+                          Opcje… <ChevronDown size={10} className={optionsOpenId === board.id ? sharedStyles.chevronOpen : ''} />
                         </button>
 
                         {/* Options portal dropdown */}
                         {optionsOpenId === board.id && createPortal(
                           <div
-                            className={s.optionsDropdownPortal}
+                            className={sharedStyles.optionsDropdownPortal}
                             style={{ top: optionsPos.top, left: optionsPos.left }}
                             onMouseDown={e => e.stopPropagation()}
                           >
                             <Link
                               to={`/board/${board.share_guid || board.id}?adminPreview=true`}
-                              className={s.optionsItem}
+                              className={sharedStyles.optionsItem}
                               onClick={() => setOptionsOpenId(null)}
                             >
                               Otwórz (admin)
                             </Link>
                             <button
-                              className={s.optionsItem}
+                              className={sharedStyles.optionsItem}
                               onClick={() => {
                                 setAssignModal({ boardId: board.id, boardTitle: board.title });
                                 setAssignSelected(null);
@@ -285,15 +285,15 @@ export default function AdminAnonyms() {
                             </button>
                             {board.share_mode && (
                               <button
-                                className={s.optionsItem}
+                                className={sharedStyles.optionsItem}
                                 onClick={() => { handleCopyLink(board); setOptionsOpenId(null); }}
                               >
                                 {copiedId === board.id ? '✓ Skopiowano' : 'Skopiuj link'}
                               </button>
                             )}
-                            <div className={s.optionsSep} />
+                            <div className={sharedStyles.optionsSep} />
                             <button
-                              className={s.optionsItemDanger}
+                              className={sharedStyles.optionsItemDanger}
                               onClick={() => { setDeleteConfirm(board.id); setOptionsOpenId(null); }}
                             >
                               Usuń na zawsze
@@ -349,7 +349,7 @@ export default function AdminAnonyms() {
       >
         <input
           type="text"
-          className={s.userPickerSearch}
+          className={sharedStyles.userPickerSearch}
           placeholder="Szukaj po emailu…"
           value={assignSearch}
           onChange={(e) => { setAssignSearch(e.target.value); setAssignSelected(null); }}
@@ -358,12 +358,12 @@ export default function AdminAnonyms() {
         />
         <div style={{ maxHeight: 200, overflowY: 'auto' }}>
           {filteredUsers.length === 0 ? (
-            <div className={s.userPickerEmpty}>Brak wyników</div>
+            <div className={sharedStyles.userPickerEmpty}>Brak wyników</div>
           ) : (
             filteredUsers.map(u => (
               <button
                 key={u.user_id}
-                className={s.userPickerItem}
+                className={sharedStyles.userPickerItem}
                 style={assignSelected?.userId === u.user_id
                   ? { background: 'var(--color-accent)', color: 'white' }
                   : {}}

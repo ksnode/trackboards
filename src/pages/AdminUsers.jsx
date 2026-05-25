@@ -9,8 +9,9 @@ import {
 } from '../lib/boards';
 import { ChevronDown, MoveLeft } from 'lucide-react';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/PageContent.module.css';
-import s from './ProfileAdmin.module.css';
+import sharedStyles from './shared.module.css';
+import adminStyles from './admin.module.css';
+
 
 const STATUS_OPTIONS = [
   { value: 'active', label: 'Active', btnClass: 'toggleBtnSuccess' },
@@ -231,7 +232,7 @@ export default function AdminUsers() {
     );
   };
 
-  if (loading) return <div className={s.loading}>Ładowanie...</div>;
+  if (loading) return <div className={sharedStyles.loading}>Ładowanie...</div>;
 
   const filteredUsers = users
     .filter(u => statusFilter.includes(u.status || 'active'))
@@ -244,26 +245,26 @@ export default function AdminUsers() {
   const getStatusOption = (status) => STATUS_OPTIONS.find(o => o.value === status) || STATUS_OPTIONS[0];
 
   return (
-    <div className={pageStyles.root}>
-      <div className={s.breadcrumb}>
-        <Link to="/admin" className={s.breadcrumbLink}>Admin</Link>
-        <span className={s.breadcrumbSep}>›</span>
-        <span className={s.breadcrumbCurrent}>Użytkownicy</span>
+    <div className={sharedStyles.root}>
+      <div className={sharedStyles.breadcrumb}>
+        <Link to="/admin" className={sharedStyles.breadcrumbLink}>Admin</Link>
+        <span className={sharedStyles.breadcrumbSep}>›</span>
+        <span className={sharedStyles.breadcrumbCurrent}>Użytkownicy</span>
       </div>
 
       {/* Filters */}
-      <div className={s.filterRow}>
+      <div className={sharedStyles.filterRow}>
         <input
           type="text"
-          className={s.searchInput}
+          className={adminStyles.searchInput}
           placeholder="Szukaj po emailu..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
           style={{ marginBottom: 0 }}
         />
-        <div className={s.filterChecks}>
+        <div className={adminStyles.filterChecks}>
           {STATUS_OPTIONS.map(opt => (
-            <label key={opt.value} className={s.filterCheckLabel}>
+            <label key={opt.value} className={adminStyles.filterCheckLabel}>
               <input
                 type="checkbox"
                 checked={statusFilter.includes(opt.value)}
@@ -276,20 +277,20 @@ export default function AdminUsers() {
       </div>
 
       {filteredUsers.length === 0 ? (
-        <div className={s.emptyState}>
+        <div className={sharedStyles.emptyState}>
           {users.length === 0 ? 'Brak użytkowników' : 'Brak użytkowników pasujących do filtrów'}
         </div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <table className={s.table}>
-            <thead className={s.tableHead}>
+          <table className={sharedStyles.table}>
+            <thead className={sharedStyles.tableHead}>
               <tr>
-                <th className={s.tableHeadCell}>Email</th>
-                <th className={s.tableHeadCell}>Rola</th>
-                <th className={s.tableHeadCell}>Status</th>
-                <th className={s.tableHeadCell}>Boardy</th>
-                <th className={s.tableHeadCell}>Rejestracja</th>
-                <th className={s.tableHeadCell}>Akcje</th>
+                <th className={sharedStyles.tableHeadCell}>Email</th>
+                <th className={sharedStyles.tableHeadCell}>Rola</th>
+                <th className={sharedStyles.tableHeadCell}>Status</th>
+                <th className={sharedStyles.tableHeadCell}>Boardy</th>
+                <th className={sharedStyles.tableHeadCell}>Rejestracja</th>
+                <th className={sharedStyles.tableHeadCell}>Akcje</th>
               </tr>
             </thead>
             <tbody>
@@ -301,19 +302,19 @@ export default function AdminUsers() {
                 const isSoftDeleted = u.status === 'soft_deleted';
                 const isActiveOrBlocked = u.status === 'active' || u.status === 'blocked';
                 return (
-                  <tr key={u.user_id} className={s.tableRow}>
-                    <td className={s.tableCell}>{u.email}</td>
-                    <td className={s.tableCell}>
+                  <tr key={u.user_id} className={sharedStyles.tableRow}>
+                    <td className={sharedStyles.tableCell}>{u.email}</td>
+                    <td className={sharedStyles.tableCell}>
                       {isHardDeleted ? (
-                        <button className={s.toggleBtn} disabled style={{ opacity: 0.5 }}>
+                        <button className={adminStyles.toggleBtn} disabled style={{ opacity: 0.5 }}>
                           deleted
                         </button>
                       ) : (
                         <>
                           <button
                             className={u.role === 'admin'
-                              ? `${s.toggleBtn} ${s.toggleBtnInfo}`
-                              : s.toggleBtn}
+                              ? `${adminStyles.toggleBtn} ${adminStyles.toggleBtnInfo}`
+                              : adminStyles.toggleBtn}
                             ref={el => { roleBtnRefs.current[u.user_id] = el; }}
                             onClick={() => !isSelf && openRole(u.user_id)}
                             disabled={isSelf}
@@ -323,14 +324,14 @@ export default function AdminUsers() {
                           </button>
                           {roleOpenId === u.user_id && createPortal(
                             <div
-                              className={s.optionsDropdownPortal}
+                              className={sharedStyles.optionsDropdownPortal}
                               style={{ top: rolePos.top, left: rolePos.left, minWidth: 75 }}
                               onMouseDown={e => e.stopPropagation()}
                             >
                               {['admin', 'user'].map(role => (
                                 <button
                                   key={role}
-                                  className={u.role === role ? s.shareModeMenuItemActive : s.shareModeMenuItem}
+                                  className={u.role === role ? sharedStyles.shareModeMenuItemActive : sharedStyles.shareModeMenuItem}
                                   onClick={() => { handleRoleChange(u.user_id, role); setRoleOpenId(null); }}
                                 >
                                   {role}
@@ -342,27 +343,27 @@ export default function AdminUsers() {
                         </>
                       )}
                     </td>
-                    <td className={s.tableCell}>
+                    <td className={sharedStyles.tableCell}>
                       <button
-                        className={`${s.toggleBtn} ${statusOpt.btnClass ? s[statusOpt.btnClass] : ''}`}
+                        className={`${adminStyles.toggleBtn} ${statusOpt.btnClass ? adminStyles[statusOpt.btnClass] : ''}`}
                         ref={el => { statusBtnRefs.current[u.user_id] = el; }}
                         onClick={() => !isSelf && !isHardDeleted && openStatus(u.user_id)}
                         disabled={isSelf || isHardDeleted}
                         title={isSelf ? 'Nie możesz zmienić własnego statusu' : isHardDeleted ? 'Konto trwale usunięte' : ''}
                       >
                         {statusOpt.label}
-                        {!isSelf && !isHardDeleted && <ChevronDown size={10} className={statusOpenId === u.user_id ? s.chevronOpen : ''} />}
+                        {!isSelf && !isHardDeleted && <ChevronDown size={10} className={statusOpenId === u.user_id ? sharedStyles.chevronOpen : ''} />}
                       </button>
                       {statusOpenId === u.user_id && createPortal(
                         <div
-                          className={s.optionsDropdownPortal}
+                          className={sharedStyles.optionsDropdownPortal}
                           style={{ top: statusPos.top, left: statusPos.left, minWidth: 100 }}
                           onMouseDown={e => e.stopPropagation()}
                         >
                           {STATUS_OPTIONS.filter(o => o.value !== 'hard_deleted' && o.value !== 'soft_deleted').map(opt => (
                             <button
                               key={opt.value}
-                              className={u.status === opt.value ? s.shareModeMenuItemActive : s.shareModeMenuItem}
+                              className={u.status === opt.value ? sharedStyles.shareModeMenuItemActive : sharedStyles.shareModeMenuItem}
                               onClick={() => {
                                 if (u.status !== opt.value) handleStatusChange(u.user_id, opt.value);
                                 setStatusOpenId(null);
@@ -375,33 +376,33 @@ export default function AdminUsers() {
                         document.body
                       )}
                     </td>
-                    <td className={`${s.tableCell} ${s.tableCellMono}`}>{boardCount}</td>
-                    <td className={`${s.tableCell} ${s.tableCellMono}`}>
+                    <td className={`${sharedStyles.tableCell} ${sharedStyles.tableCellMono}`}>{boardCount}</td>
+                    <td className={`${sharedStyles.tableCell} ${sharedStyles.tableCellMono}`}>
                       {new Date(u.created_at).toLocaleDateString('pl-PL', {
                         day: 'numeric', month: 'short', year: 'numeric',
                       })}
                     </td>
-                    <td className={s.tableCellActions}>
-                      <div className={s.actionsPanel}>
-                        <div className={s.actionsPanelGroup}>
+                    <td className={sharedStyles.tableCellActions}>
+                      <div className={adminStyles.actionsPanel}>
+                        <div className={adminStyles.actionsPanelGroup}>
                           <button
-                            className={s.btnGhostFixed}
+                            className={adminStyles.btnGhostFixed}
                             onClick={() => navigate(`/admin/users/${u.user_id}/boards`)}
                           >
                             Boardy
                           </button>
                           <button
-                            className={s.btnGhostFixed}
+                            className={adminStyles.btnGhostFixed}
                             onClick={() => navigate(`/admin/users/${u.user_id}/purgatory`)}
                           >
                             Czyściec
                           </button>
                         </div>
-                        <div className={s.actionsPanelSep} />
-                        <div className={s.actionsPanelGroup}>
+                        <div className={adminStyles.actionsPanelSep} />
+                        <div className={adminStyles.actionsPanelGroup}>
                           {isActiveOrBlocked && (
                             <button
-                              className={isSelf ? s.btnDisabled : s.btnInfoFixed}
+                              className={isSelf ? adminStyles.btnDisabled : adminStyles.btnInfoFixed}
                               disabled={isSelf}
                               title={isSelf ? 'Nie możesz wylogować siebie' : ''}
                               onClick={() => !isSelf && setSignoutConfirm({ userId: u.user_id, email: u.email })}
@@ -411,7 +412,7 @@ export default function AdminUsers() {
                           )}
                           {(isSoftDeleted || isHardDeleted) && (
                             <button
-                              className={s.btnInfoFixed}
+                              className={adminStyles.btnInfoFixed}
                               onClick={() => {
                                 setReassignModal({ userId: u.user_id, email: u.email });
                                 setReassignSelected(null);
@@ -423,22 +424,22 @@ export default function AdminUsers() {
                           )}
                           {/* Delete dropdown */}
                           <button
-                            className={isSelf ? s.btnDisabled : s.btnDangerFixed}
+                            className={isSelf ? adminStyles.btnDisabled : adminStyles.btnDangerFixed}
                             ref={el => { deleteBtnRefs.current[u.user_id] = el; }}
                             disabled={isSelf}
                             onClick={() => !isSelf && openDelete(u.user_id)}
                           >
-                            Usuń… <ChevronDown size={10} className={deleteOpenId === u.user_id ? s.chevronOpen : ''} />
+                            Usuń… <ChevronDown size={10} className={deleteOpenId === u.user_id ? sharedStyles.chevronOpen : ''} />
                           </button>
                           {deleteOpenId === u.user_id && createPortal(
                             <div
-                              className={s.optionsDropdownPortal}
+                              className={sharedStyles.optionsDropdownPortal}
                               style={{ top: deletePos.top, left: deletePos.left, minWidth: 160 }}
                               onMouseDown={e => e.stopPropagation()}
                             >
                               {isActiveOrBlocked && (
                                 <button
-                                  className={s.optionsItem}
+                                  className={sharedStyles.optionsItem}
                                   onClick={() => {
                                     setSoftDeleteConfirm({ userId: u.user_id, email: u.email });
                                     setDeleteOpenId(null);
@@ -449,7 +450,7 @@ export default function AdminUsers() {
                               )}
                               {!isHardDeleted && (
                                 <button
-                                  className={s.optionsItem}
+                                  className={sharedStyles.optionsItem}
                                   onClick={() => {
                                     setHardDeleteConfirm({ userId: u.user_id, email: u.email });
                                     setDeleteOpenId(null);
@@ -460,9 +461,9 @@ export default function AdminUsers() {
                               )}
                               {(isSoftDeleted || isHardDeleted) && (
                                 <>
-                                  <div className={s.optionsSep} />
+                                  <div className={sharedStyles.optionsSep} />
                                   <button
-                                    className={s.optionsItemDanger}
+                                    className={sharedStyles.optionsItemDanger}
                                     onClick={() => {
                                       setRemoveConfirm({ userId: u.user_id, email: u.email });
                                       setDeleteOpenId(null);
@@ -548,7 +549,7 @@ export default function AdminUsers() {
       >
         <input
           type="text"
-          className={s.userPickerSearch}
+          className={sharedStyles.userPickerSearch}
           placeholder="Szukaj po emailu…"
           value={reassignSearch}
           onChange={(e) => { setReassignSearch(e.target.value); setReassignSelected(null); }}
@@ -557,12 +558,12 @@ export default function AdminUsers() {
         />
         <div style={{ maxHeight: 200, overflowY: 'auto' }}>
           {reassignFilteredUsers.length === 0 ? (
-            <div className={s.userPickerEmpty}>Brak wyników</div>
+            <div className={sharedStyles.userPickerEmpty}>Brak wyników</div>
           ) : (
             reassignFilteredUsers.map(u => (
               <button
                 key={u.user_id}
-                className={s.userPickerItem}
+                className={sharedStyles.userPickerItem}
                 style={reassignSelected?.userId === u.user_id
                   ? { background: 'var(--color-accent)', color: 'white' }
                   : {}}

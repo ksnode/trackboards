@@ -1,0 +1,55 @@
+=== PLIK: shared.module.css ===
+.actionsRow — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.breadcrumb — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfileManage.jsx, ProfilePurgatory.jsx]
+.breadcrumbCurrent — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfileManage.jsx, ProfilePurgatory.jsx]
+.breadcrumbLink — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, Privacy.jsx, ProfileManage.jsx, ProfilePurgatory.jsx]
+.breadcrumbSep — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfileManage.jsx, ProfilePurgatory.jsx]
+.btnDanger — używana w: [AdminAnonyms.jsx, ProfileManage.jsx, ProfilePurgatory.jsx]
+.btnGhost — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.btnGhostDanger — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.btnGhostInfo — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.chevronOpen — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+.colorDot — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.emptyState — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
+.filterRow — używana w: [AdminAnonyms.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
+.loading — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, Profile.jsx, ProfilePurgatory.jsx]
+.navCard — używana w: [Admin.jsx, Profile.jsx]
+.navCardDesc — używana w: [Admin.jsx, Profile.jsx]
+.navCardTitle — używana w: [Admin.jsx, Profile.jsx]
+.navCards — używana w: [Admin.jsx, Profile.jsx, ProfileManage.jsx]
+.optionsDropdownPortal — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+.optionsItem — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+.optionsItemDanger — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+.optionsSep — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+.previewActions — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.previewBody — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.previewHeader — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.previewModal — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.previewOverlay — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.previewTitle — używana w: [AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.root — używana w: [Admin.jsx, AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, Board.jsx, Boards.jsx, Privacy.jsx, Profile.jsx, ProfileManage.jsx, ProfilePurgatory.jsx]
+.shareModeMenuItem — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+.shareModeMenuItemActive — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+.shareModeToggle — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx]
+.shareModeTogglePublic — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx]
+.table — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
+.tableCell — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
+.tableCellActions — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
+.tableCellMono — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
+.tableHead — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
+.tableHeadCell — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
+.tableRow — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, AdminUsers.jsx, ProfilePurgatory.jsx]
+.titleTruncate — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUserPurgatory.jsx, ProfilePurgatory.jsx]
+.userPickerEmpty — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+.userPickerItem — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+.userPickerSearch — używana w: [AdminAnonyms.jsx, AdminUserBoards.jsx, AdminUsers.jsx]
+UŻYWANA TYLKO W 1 PLIKU: .navCardDanger
+NIEUŻYWANA: 
+
+=== PLIK: admin.module.css ===
+UŻYWANA TYLKO W 1 PLIKU: .actionsPanel, .actionsPanelGroup, .actionsPanelSep, .btnDangerFixed, .btnDisabled, .btnGhostFixed, .btnInfoFixed, .filterCheckLabel, .filterChecks, .searchInput, .toggleBtn, .toggleBtnInfo
+NIEUŻYWANA: 
+
+=== PLIK: profile.module.css ===
+UŻYWANA TYLKO W 1 PLIKU: .accountDetails, .accountEmail, .accountMeta, .accountSection, .avatar, .btnWarning, .manageCard, .manageCardDelete, .manageCardDesc, .manageCardTitle, .manageInput, .roleBadge, .roleBadgeAdmin
+NIEUŻYWANA:

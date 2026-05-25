@@ -5,8 +5,8 @@ import { getUserProfile, listUserPurgatory, restoreBoard, hardDeleteBoard, getBo
 import { MoveLeft } from 'lucide-react';
 import BoardFramework from '../components/BoardFramework';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/PageContent.module.css';
-import s from './ProfileAdmin.module.css';
+import sharedStyles from './shared.module.css';
+
 
 export default function AdminUserPurgatory() {
   const { id: userId } = useParams();
@@ -77,59 +77,59 @@ export default function AdminUserPurgatory() {
 
   const truncate = (str, max = 30) => str && str.length > max ? str.slice(0, max) + '…' : str;
 
-  if (loading) return <div className={s.loading}>Ładowanie...</div>;
+  if (loading) return <div className={sharedStyles.loading}>Ładowanie...</div>;
 
   const email = targetUser?.email || 'Nieznany';
 
   return (
-    <div className={pageStyles.root}>
-      <div className={s.breadcrumb}>
-        <Link to="/admin" className={s.breadcrumbLink}>Admin</Link>
-        <span className={s.breadcrumbSep}>›</span>
-        <Link to="/admin/users" className={s.breadcrumbLink}>Użytkownicy</Link>
-        <span className={s.breadcrumbSep}>›</span>
-        <span className={s.breadcrumbCurrent}>Czyściec ({email})</span>
+    <div className={sharedStyles.root}>
+      <div className={sharedStyles.breadcrumb}>
+        <Link to="/admin" className={sharedStyles.breadcrumbLink}>Admin</Link>
+        <span className={sharedStyles.breadcrumbSep}>›</span>
+        <Link to="/admin/users" className={sharedStyles.breadcrumbLink}>Użytkownicy</Link>
+        <span className={sharedStyles.breadcrumbSep}>›</span>
+        <span className={sharedStyles.breadcrumbCurrent}>Czyściec ({email})</span>
       </div>
 
       {boards.length === 0 ? (
-        <div className={s.emptyState}>Brak usuniętych boardów</div>
+        <div className={sharedStyles.emptyState}>Brak usuniętych boardów</div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <table className={s.table}>
-            <thead className={s.tableHead}>
+          <table className={sharedStyles.table}>
+            <thead className={sharedStyles.tableHead}>
               <tr>
-                <th className={s.tableHeadCell}>Nazwa</th>
-                <th className={s.tableHeadCell}>Utworzono</th>
-                <th className={s.tableHeadCell}>Usunięto</th>
-                <th className={s.tableHeadCell}>Akcje</th>
+                <th className={sharedStyles.tableHeadCell}>Nazwa</th>
+                <th className={sharedStyles.tableHeadCell}>Utworzono</th>
+                <th className={sharedStyles.tableHeadCell}>Usunięto</th>
+                <th className={sharedStyles.tableHeadCell}>Akcje</th>
               </tr>
             </thead>
             <tbody>
               {boards.map(board => (
-                <tr key={board.id} className={s.tableRow}>
-                  <td className={s.tableCell}>
+                <tr key={board.id} className={sharedStyles.tableRow}>
+                  <td className={sharedStyles.tableCell}>
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                      <span className={s.colorDot} style={{ background: board.color || '#888' }} />
-                      <span className={s.titleTruncate} title={board.title}>{truncate(board.title)}</span>
+                      <span className={sharedStyles.colorDot} style={{ background: board.color || '#888' }} />
+                      <span className={sharedStyles.titleTruncate} title={board.title}>{truncate(board.title)}</span>
                     </span>
                   </td>
-                  <td className={`${s.tableCell} ${s.tableCellMono}`}>
+                  <td className={`${sharedStyles.tableCell} ${sharedStyles.tableCellMono}`}>
                     {new Date(board.created_at).toLocaleDateString('pl-PL', {
                       day: 'numeric', month: 'short', year: 'numeric',
                     })}
                   </td>
-                  <td className={`${s.tableCell} ${s.tableCellMono}`}>
+                  <td className={`${sharedStyles.tableCell} ${sharedStyles.tableCellMono}`}>
                     {new Date(board.deleted_at).toLocaleString('pl-PL')}
                   </td>
-                  <td className={s.tableCellActions}>
-                    <div className={s.actionsRow}>
-                      <button className={s.btnGhost} onClick={() => openPreview(board.id)}>
+                  <td className={sharedStyles.tableCellActions}>
+                    <div className={sharedStyles.actionsRow}>
+                      <button className={sharedStyles.btnGhost} onClick={() => openPreview(board.id)}>
                         Podgląd
                       </button>
-                      <button className={s.btnGhostInfo} onClick={() => handleRestore(board.id)}>
+                      <button className={sharedStyles.btnGhostInfo} onClick={() => handleRestore(board.id)}>
                         Przywróć
                       </button>
-                      <button className={s.btnGhostDanger} onClick={() => setDeleteConfirm(board.id)}>
+                      <button className={sharedStyles.btnGhostDanger} onClick={() => setDeleteConfirm(board.id)}>
                         Usuń na zawsze
                       </button>
                     </div>
@@ -155,29 +155,29 @@ export default function AdminUserPurgatory() {
 
       {/* Preview modal */}
       {(previewBoard || previewLoading) && (
-        <div className={s.previewOverlay} onClick={() => { setPreviewBoard(null); setPreviewLoading(false); }}>
-          <div className={s.previewModal} onClick={e => e.stopPropagation()}>
-            <div className={s.previewHeader}>
-              <span className={s.previewTitle}>
+        <div className={sharedStyles.previewOverlay} onClick={() => { setPreviewBoard(null); setPreviewLoading(false); }}>
+          <div className={sharedStyles.previewModal} onClick={e => e.stopPropagation()}>
+            <div className={sharedStyles.previewHeader}>
+              <span className={sharedStyles.previewTitle}>
                 {previewLoading ? 'Ładowanie...' : previewBoard?.title}
               </span>
-              <div className={s.previewActions}>
+              <div className={sharedStyles.previewActions}>
                 {previewBoard && (
-                  <button className={s.btnGhostInfo} onClick={() => {
+                  <button className={sharedStyles.btnGhostInfo} onClick={() => {
                     handleRestore(previewBoard.id);
                     setPreviewBoard(null);
                   }}>
                     Przywróć
                   </button>
                 )}
-                <button className={s.btnGhost} onClick={() => { setPreviewBoard(null); setPreviewLoading(false); }}>
+                <button className={sharedStyles.btnGhost} onClick={() => { setPreviewBoard(null); setPreviewLoading(false); }}>
                   Zamknij
                 </button>
               </div>
             </div>
-            <div className={s.previewBody}>
+            <div className={sharedStyles.previewBody}>
               {previewLoading ? (
-                <div className={s.loading}>Ładowanie boardu...</div>
+                <div className={sharedStyles.loading}>Ładowanie boardu...</div>
               ) : previewBoard ? (
                 <BoardFramework
                   boardId={previewBoard.id}

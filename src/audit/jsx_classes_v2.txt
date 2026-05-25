@@ -1,0 +1,91 @@
+=== JSX: src/App.jsx ===
+
+=== JSX: src/components/BoardFramework.jsx ===
+CSS: src/components/BoardFramework.module.css
+  .addModuleBtn, .addModuleWrapper, .addStepBtn, .addStepRow, .collapseArrow, .collapseArrowCollapsed, .emptyAddBtn, .emptyState, .emptyText, .footer, .globalHeader, .globalHours, .globalPct, .globalRow, .globalRowLabel, .globalRowLabelBold, .globalRowLast, .iconBtn, .iconBtnDanger, .moduleBody, .moduleCard, .moduleCardPlaceholder, .moduleColorDot, .moduleColorInput, .moduleColorPicker, .moduleEditControls, .moduleHeader, .moduleHeaderCollapsed, .moduleHeaderEdit, .modulePct, .moduleProgressBar, .moduleProgressFill, .moduleStats, .moduleTagBadge, .moduleTagLabel, .moduleTagSelect, .moduleTitle, .moduleTitleInlineEdit, .nodeEditControls, .nodeHours, .nodeHoursEdit, .nodeHoursUnit, .nodeLabel, .nodeLabelChild, .nodeLabelDone, .nodeLabelParent, .nodeLabelParentChild, .nodeLabelSkip, .nodeRow, .nodeRowDone, .nodeRowEdit, .nodeRowPlaceholder, .nodeRowSkip, .placeholderDot, .progressBarFill, .progressBarTrack, .root, .saveStatusBar
+
+=== JSX: src/components/BoardFrameworkCheckbox.jsx ===
+CSS: src/components/BoardFramework.module.css
+  .checkbox
+
+=== JSX: src/components/BoardFrameworkEdit.jsx ===
+CSS: src/components/BoardFramework.module.css
+  .inlineEditDisplay, .inlineEditInput
+
+=== JSX: src/components/ConfirmModal.jsx ===
+CSS: src/components/ConfirmModal.module.css
+  .actions, .body, .cancelBtn, .confirmBtn, .content, .dangerBtn, .description, .error, .overlay, .title
+
+=== JSX: src/components/Layout.jsx ===
+CSS: src/components/Layout.module.css
+  .content, .contentHeader, .contentHeaderBackBtn, .contentHeaderInner, .contentHeaderInput, .contentHeaderLeft, .contentHeaderTitle, .overlay, .root
+
+=== JSX: src/components/Sidebar.jsx ===
+CSS: src/components/Sidebar.module.css
+  .active, .addExtBtn, .boardDot, .boardItem, .boardItemDragOver, .boardItemDragging, .boardItemRow, .boardItemTitle, .boardMenuBtn, .boardMenuDropdown, .boardMenuItem, .boardMenuItemDanger, .boardMenuSep, .boardMenuWrapper, .boardsList, .collapsedHeader, .dragHandle, .email, .extBoardDisabled, .extEmpty, .footer, .footerLabel, .footerLink, .hamburger, .header, .headerLogo, .loginLink, .logoutLink, .newBoardBtn, .newBoardBtnLabel, .root, .rootCollapsed, .rootExpanded, .rootOverlay, .sectionTitle, .sectionTitleRow, .segmentLabel, .separator, .subscribeInput, .themeSwitcher, .themeSwitcherBtn, .themeSwitcherBtnActive
+
+=== JSX: src/lib/auth.jsx ===
+
+=== JSX: src/lib/headerContext.jsx ===
+
+=== JSX: src/main.jsx ===
+
+=== JSX: src/pages/Admin.jsx ===
+CSS: src/pages/shared.module.css
+  .navCard, .navCardDesc, .navCardTitle, .navCards, .root
+
+=== JSX: src/pages/AdminAnonyms.jsx ===
+CSS: src/pages/shared.module.css
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .btnGhost, .chevronOpen, .colorDot, .emptyState, .filterRow, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeToggle, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
+
+=== JSX: src/pages/AdminUserBoards.jsx ===
+CSS: src/pages/shared.module.css
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnGhost, .chevronOpen, .colorDot, .emptyState, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeToggle, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
+
+=== JSX: src/pages/AdminUserPurgatory.jsx ===
+CSS: src/pages/shared.module.css
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnGhost, .btnGhostDanger, .btnGhostInfo, .colorDot, .emptyState, .loading, .previewActions, .previewBody, .previewHeader, .previewModal, .previewOverlay, .previewTitle, .root, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate
+
+=== JSX: src/pages/AdminUsers.jsx ===
+CSS: src/pages/shared.module.css
+  .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .chevronOpen, .emptyState, .filterRow, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .userPickerEmpty, .userPickerItem, .userPickerSearch
+CSS: src/pages/admin.module.css
+  .actionsPanel, .actionsPanelGroup, .actionsPanelSep, .btnDangerFixed, .btnDisabled, .btnGhostFixed, .btnInfoFixed, .filterCheckLabel, .filterChecks, .searchInput, .toggleBtn, .toggleBtnInfo
+
+=== JSX: src/pages/Board.jsx ===
+CSS: src/pages/shared.module.css
+  .root
+CSS: src/pages/Board.module.css
+  .adminBadge, .adoptBtn, .backBtn, .badgeRead, .badgeWrite, .boardHeader, .boardHeaderGroup, .chevronOpen, .copyLinkWrapper, .copyTooltip, .copyTooltipCheck, .deleteBtn, .error, .errorText, .headerBtn, .loading, .root, .shareModeDropdown, .shareModeMenu, .shareModeMenuItem, .shareModeMenuItem_active, .shareModeToggle, .shareModeTogglePublic
+
+=== JSX: src/pages/Boards.jsx ===
+CSS: src/pages/shared.module.css
+  .root
+CSS: src/pages/Boards.module.css
+  .boardCard, .boardCardDisabled, .boardInfo, .boardMeta, .boardPct, .boardProgressBar, .boardProgressFill, .boardTitle, .boardsList, .chevronOpen, .colorDotLabel, .colorInput, .emptyState, .emptyText, .extBadge, .extBadgeHidden, .loading, .progressSection, .recentItem, .recentItemDate, .recentItemTitle, .recentList, .recentSection, .recentTitle, .root, .sectionTitle, .shareModeDropdownSm, .shareModeMenuItemSm, .shareModeMenuItemSm_active, .shareModeMenuSm, .shareModeToggleSm, .shareModeToggleSmPublic, .welcomeCard, .welcomeCardAccent, .welcomeCardDesc, .welcomeCardTitle, .welcomeCards
+
+=== JSX: src/pages/Home.jsx ===
+
+=== JSX: src/pages/Privacy.jsx ===
+CSS: src/pages/privacy.module.css
+  .privacySection, .privacySectionIcon, .privacySectionText, .privacySectionTitle, .privacySections, .privacySubtitle, .privacyWrapper
+CSS: src/pages/shared.module.css
+  .breadcrumbLink, .root
+
+=== JSX: src/pages/Profile.jsx ===
+CSS: src/pages/profile.module.css
+  .accountDetails, .accountEmail, .accountMeta, .accountSection, .avatar, .roleBadge, .roleBadgeAdmin
+CSS: src/pages/shared.module.css
+  .loading, .navCard, .navCardDanger, .navCardDesc, .navCardTitle, .navCards, .root
+
+=== JSX: src/pages/ProfileManage.jsx ===
+CSS: src/pages/profile.module.css
+  .btnWarning, .manageCard, .manageCardDelete, .manageCardDesc, .manageCardTitle, .manageInput
+CSS: src/pages/shared.module.css
+  .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .navCards, .root
+
+=== JSX: src/pages/ProfilePurgatory.jsx ===
+CSS: src/pages/shared.module.css
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .btnGhost, .btnGhostDanger, .btnGhostInfo, .colorDot, .emptyState, .filterRow, .loading, .previewActions, .previewBody, .previewHeader, .previewModal, .previewOverlay, .previewTitle, .root, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate
+
+=== JSX: src/pages/TestFramework.jsx ===

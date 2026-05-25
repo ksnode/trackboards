@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../lib/auth';
 import { useHeader } from '../lib/headerContext';
 import { BrushCleaning, Settings } from 'lucide-react';
-import pageStyles from '../components/PageContent.module.css';
-import s from './ProfileAdmin.module.css';
+import profileStyles from './profile.module.css';
+import sharedStyles from './shared.module.css';
 
 export default function Profile() {
   const { profile } = useAuth();
@@ -14,19 +14,19 @@ export default function Profile() {
     setHeader({ title: 'Profil', editable: false, showBack: false });
   }, [setHeader]);
 
-  if (!profile) return <div className={s.loading}>Ładowanie...</div>;
+  if (!profile) return <div className={sharedStyles.loading}>Ładowanie...</div>;
 
   const initial = (profile.email || '?')[0].toUpperCase();
   const isAdmin = profile.role === 'admin';
 
   return (
-    <div className={pageStyles.root}>
+    <div className={sharedStyles.root}>
       {/* Account section */}
-      <div className={s.accountSection}>
-        <div className={s.avatar}>{initial}</div>
-        <div className={s.accountDetails}>
-          <span className={s.accountEmail}>{profile.email}</span>
-          <div className={s.accountMeta}>
+      <div className={profileStyles.accountSection}>
+        <div className={profileStyles.avatar}>{initial}</div>
+        <div className={profileStyles.accountDetails}>
+          <span className={profileStyles.accountEmail}>{profile.email}</span>
+          <div className={profileStyles.accountMeta}>
             <span>
               Zarejestrowano{' '}
               {new Date(profile.created_at).toLocaleDateString('pl-PL', {
@@ -35,7 +35,7 @@ export default function Profile() {
                 year: 'numeric',
               })}
             </span>
-            <span className={`${s.roleBadge} ${isAdmin ? s.roleBadgeAdmin : ''}`}>
+            <span className={`${profileStyles.roleBadge} ${isAdmin ? profileStyles.roleBadgeAdmin : ''}`}>
               {profile.role}
             </span>
           </div>
@@ -43,16 +43,16 @@ export default function Profile() {
       </div>
 
       {/* Navigation cards */}
-      <div className={s.navCards}>
-        <Link to="/profile/purgatory" className={s.navCard}>
-          <div className={s.navCardTitle}><BrushCleaning size={12} /> Czyściec</div>
-          <div className={s.navCardDesc}>Twoje usunięte boardy. Możesz je przywrócić.</div>
+      <div className={sharedStyles.navCards}>
+        <Link to="/profile/purgatory" className={sharedStyles.navCard}>
+          <div className={sharedStyles.navCardTitle}><BrushCleaning size={12} /> Czyściec</div>
+          <div className={sharedStyles.navCardDesc}>Twoje usunięte boardy. Możesz je przywrócić.</div>
         </Link>
 
         {!isAdmin && (
-          <Link to="/profile/manage" className={s.navCardDanger}>
-            <div className={s.navCardTitle}><Settings size={12} /> Zarządzaj</div>
-            <div className={s.navCardDesc}>Dezaktywuj lub usuń swoje konto.</div>
+          <Link to="/profile/manage" className={sharedStyles.navCardDanger}>
+            <div className={sharedStyles.navCardTitle}><Settings size={12} /> Zarządzaj</div>
+            <div className={sharedStyles.navCardDesc}>Dezaktywuj lub usuń swoje konto.</div>
           </Link>
         )}
       </div>

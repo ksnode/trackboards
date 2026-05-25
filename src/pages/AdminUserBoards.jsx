@@ -10,8 +10,8 @@ import {
 import { supabase } from '../lib/supabase';
 import { Lock, Eye, PenLine, ChevronDown, MoveLeft } from 'lucide-react';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/PageContent.module.css';
-import s from './ProfileAdmin.module.css';
+import sharedStyles from './shared.module.css';
+
 
 const SHARE_MODES = [
   { value: null, label: 'Private', icon: Lock },
@@ -203,31 +203,31 @@ export default function AdminUserBoards() {
     u.user_id !== userId && u.email.toLowerCase().includes(assignSearch.toLowerCase())
   );
 
-  if (loading) return <div className={s.loading}>Ładowanie...</div>;
+  if (loading) return <div className={sharedStyles.loading}>Ładowanie...</div>;
 
   const email = targetUser?.email || 'Nieznany';
 
   return (
-    <div className={pageStyles.root}>
-      <div className={s.breadcrumb}>
-        <Link to="/admin" className={s.breadcrumbLink}>Admin</Link>
-        <span className={s.breadcrumbSep}>›</span>
-        <Link to="/admin/users" className={s.breadcrumbLink}>Użytkownicy</Link>
-        <span className={s.breadcrumbSep}>›</span>
-        <span className={s.breadcrumbCurrent}>Boardy ({email})</span>
+    <div className={sharedStyles.root}>
+      <div className={sharedStyles.breadcrumb}>
+        <Link to="/admin" className={sharedStyles.breadcrumbLink}>Admin</Link>
+        <span className={sharedStyles.breadcrumbSep}>›</span>
+        <Link to="/admin/users" className={sharedStyles.breadcrumbLink}>Użytkownicy</Link>
+        <span className={sharedStyles.breadcrumbSep}>›</span>
+        <span className={sharedStyles.breadcrumbCurrent}>Boardy ({email})</span>
       </div>
 
       {boards.length === 0 ? (
-        <div className={s.emptyState}>Brak aktywnych boardów</div>
+        <div className={sharedStyles.emptyState}>Brak aktywnych boardów</div>
       ) : (
         <div style={{ overflowX: 'auto' }}>
-          <table className={s.table}>
-            <thead className={s.tableHead}>
+          <table className={sharedStyles.table}>
+            <thead className={sharedStyles.tableHead}>
               <tr>
-                <th className={s.tableHeadCell}>Nazwa</th>
-                <th className={s.tableHeadCell}>Utworzono</th>
-                <th className={s.tableHeadCell}>Ostatnia aktywność</th>
-                <th className={s.tableHeadCell}>Akcje</th>
+                <th className={sharedStyles.tableHeadCell}>Nazwa</th>
+                <th className={sharedStyles.tableHeadCell}>Utworzono</th>
+                <th className={sharedStyles.tableHeadCell}>Ostatnia aktywność</th>
+                <th className={sharedStyles.tableHeadCell}>Akcje</th>
               </tr>
             </thead>
             <tbody>
@@ -235,35 +235,35 @@ export default function AdminUserBoards() {
                 const curMode = SHARE_MODES.find(m => m.value === board.share_mode) || SHARE_MODES[0];
                 const CurIcon = curMode.icon;
                 return (
-                  <tr key={board.id} className={s.tableRow}>
-                    <td className={s.tableCell}>
+                  <tr key={board.id} className={sharedStyles.tableRow}>
+                    <td className={sharedStyles.tableCell}>
                       <span style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                        <span className={s.colorDot} style={{ background: board.color || '#888' }} />
-                        <span className={s.titleTruncate} title={board.title}>{truncate(board.title)}</span>
+                        <span className={sharedStyles.colorDot} style={{ background: board.color || '#888' }} />
+                        <span className={sharedStyles.titleTruncate} title={board.title}>{truncate(board.title)}</span>
                       </span>
                     </td>
-                    <td className={`${s.tableCell} ${s.tableCellMono}`}>
+                    <td className={`${sharedStyles.tableCell} ${sharedStyles.tableCellMono}`}>
                       {new Date(board.created_at).toLocaleDateString('pl-PL', {
                         day: 'numeric', month: 'short', year: 'numeric',
                       })}
                     </td>
-                    <td className={`${s.tableCell} ${s.tableCellMono}`}>
+                    <td className={`${sharedStyles.tableCell} ${sharedStyles.tableCellMono}`}>
                       {new Date(board.updated_at).toLocaleString('pl-PL')}
                     </td>
-                    <td className={s.tableCellActions}>
-                      <div className={s.actionsRow}>
+                    <td className={sharedStyles.tableCellActions}>
+                      <div className={sharedStyles.actionsRow}>
                         {/* Share mode dropdown (portal) */}
                         <button
-                          className={board.share_mode ? s.shareModeTogglePublic : s.shareModeToggle}
+                          className={board.share_mode ? sharedStyles.shareModeTogglePublic : sharedStyles.shareModeToggle}
                           ref={el => { shareModeBtnRefs.current[board.id] = el; }}
                           onClick={() => openShareMode(board.id)}
                         >
                           <CurIcon size={10} /> {curMode.label}
-                          <ChevronDown size={10} className={shareModeOpenId === board.id ? s.chevronOpen : ''} />
+                          <ChevronDown size={10} className={shareModeOpenId === board.id ? sharedStyles.chevronOpen : ''} />
                         </button>
                         {shareModeOpenId === board.id && createPortal(
                           <div
-                            className={s.optionsDropdownPortal}
+                            className={sharedStyles.optionsDropdownPortal}
                             style={{ top: shareModePos.top, left: shareModePos.left, minWidth: 85 }}
                             onMouseDown={e => e.stopPropagation()}
                           >
@@ -273,7 +273,7 @@ export default function AdminUserBoards() {
                               return (
                                 <button
                                   key={m.label + (m.value || 'null')}
-                                  className={isActive ? s.shareModeMenuItemActive : s.shareModeMenuItem}
+                                  className={isActive ? sharedStyles.shareModeMenuItemActive : sharedStyles.shareModeMenuItem}
                                   onClick={() => { handleShareModeChange(board, m.value); setShareModeOpenId(null); }}
                                 >
                                   <Icon size={11} /> {m.label}
@@ -286,30 +286,30 @@ export default function AdminUserBoards() {
 
                         {/* Options button */}
                         <button
-                          className={s.btnGhost}
+                          className={sharedStyles.btnGhost}
                           ref={el => { optionsBtnRefs.current[board.id] = el; }}
                           onClick={() => openOptions(board.id)}
                         >
                           Opcje…
-                          <ChevronDown size={10} className={optionsOpenId === board.id ? s.chevronOpen : ''} />
+                          <ChevronDown size={10} className={optionsOpenId === board.id ? sharedStyles.chevronOpen : ''} />
                         </button>
 
                         {/* Options portal dropdown */}
                         {optionsOpenId === board.id && createPortal(
                           <div
-                            className={s.optionsDropdownPortal}
+                            className={sharedStyles.optionsDropdownPortal}
                             style={{ top: optionsPos.top, left: optionsPos.left }}
                             onMouseDown={e => e.stopPropagation()}
                           >
                             <Link
                               to={`/board/${board.id}?adminPreview=true`}
-                              className={s.optionsItem}
+                              className={sharedStyles.optionsItem}
                               onClick={() => setOptionsOpenId(null)}
                             >
                               Otwórz (admin)
                             </Link>
                             <button
-                              className={s.optionsItem}
+                              className={sharedStyles.optionsItem}
                               onClick={() => {
                                 setAssignModal({ boardId: board.id, boardTitle: board.title });
                                 setAssignSelected(null);
@@ -320,28 +320,28 @@ export default function AdminUserBoards() {
                               Przepisz do innego usera
                             </button>
                             <button
-                              className={s.optionsItem}
+                              className={sharedStyles.optionsItem}
                               onClick={() => { setOrphanConfirm(board.id); setOptionsOpenId(null); }}
                             >
                               Przepisz do anonima
                             </button>
                             {board.share_mode && (
                               <button
-                                className={s.optionsItem}
+                                className={sharedStyles.optionsItem}
                                 onClick={() => { handleCopyLink(board); setOptionsOpenId(null); }}
                               >
                                 {copiedId === board.id ? '✓ Skopiowano' : 'Skopiuj link'}
                               </button>
                             )}
-                            <div className={s.optionsSep} />
+                            <div className={sharedStyles.optionsSep} />
                             <button
-                              className={s.optionsItemDanger}
+                              className={sharedStyles.optionsItemDanger}
                               onClick={() => { setTrashConfirm(board.id); setOptionsOpenId(null); }}
                             >
                               Przenieś do kosza
                             </button>
                             <button
-                              className={s.optionsItemDanger}
+                              className={sharedStyles.optionsItemDanger}
                               onClick={() => { setDeleteConfirm(board.id); setOptionsOpenId(null); }}
                             >
                               Usuń na zawsze
@@ -394,7 +394,7 @@ export default function AdminUserBoards() {
         onConfirm={handleAssign}
       >
         <input
-          type="text" className={s.userPickerSearch} placeholder="Szukaj po emailu…"
+          type="text" className={sharedStyles.userPickerSearch} placeholder="Szukaj po emailu…"
           value={assignSearch}
           onChange={(e) => { setAssignSearch(e.target.value); setAssignSelected(null); }}
           autoFocus
@@ -402,10 +402,10 @@ export default function AdminUserBoards() {
         />
         <div style={{ maxHeight: 200, overflowY: 'auto' }}>
           {filteredUsers.length === 0 ? (
-            <div className={s.userPickerEmpty}>Brak wyników</div>
+            <div className={sharedStyles.userPickerEmpty}>Brak wyników</div>
           ) : (
             filteredUsers.map(u => (
-              <button key={u.user_id} className={s.userPickerItem}
+              <button key={u.user_id} className={sharedStyles.userPickerItem}
                 style={assignSelected?.userId === u.user_id ? { background: 'var(--color-accent)', color: 'white' } : {}}
                 onClick={() => setAssignSelected({ userId: u.user_id, email: u.email })}
               >

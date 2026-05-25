@@ -1,0 +1,157 @@
+/* ── Admin page styles ── */
+
+/* ── Actions panel ── */
+.actionsPanel {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+.actionsPanelGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.actionsPanelSep {
+  width: 1px;
+  background: var(--color-border-primary);
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+/* ── Fixed-width action buttons ── */
+.btnGhostFixed {
+  composes: btnGhost from './shared.module.css';
+  min-width: 75px;
+  text-align: center;
+  justify-content: center;
+}
+
+.btnInfoFixed {
+  padding: 2px var(--space-2);
+  font-size: var(--font-size-xs);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-text-info);
+  background: transparent;
+  color: var(--color-text-info);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  min-width: 75px;
+  text-align: center;
+  justify-content: center;
+}
+
+.btnInfoFixed:hover {
+  background: var(--color-info);
+  color: white;
+}
+
+.btnDangerFixed {
+  composes: btnDanger from './shared.module.css';
+  min-width: 75px;
+  text-align: center;
+  justify-content: center;
+}
+
+.btnDisabled {
+  padding: 2px var(--space-2);
+  font-size: var(--font-size-xs);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border-primary);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
+  white-space: nowrap;
+  opacity: 0.6;
+}
+
+.btnDisabled:hover {
+  border-color: var(--color-primary);
+  background: var(--color-bg-tertiary);
+}
+
+/* ── Base toggle button ── */
+.toggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 75px;
+  justify-content: space-between;
+  padding: 2px var(--space-2);
+  font-size: var(--font-size-xs);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.toggleBtn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+
+.toggleBtnInfo {
+  background: var(--color-background-info);
+  color: var(--color-info);
+}
+
+.toggleBtnInfo:hover:not(:disabled) {
+  border-color: var(--color-info);
+}
+
+.toggleBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Filter check options ── */
+.filterChecks {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.filterCheckLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.filterCheckLabel input[type="checkbox"] {
+  accent-color: var(--color-accent);
+  cursor: pointer;
+}
+
+/* ── Search input ── */
+.searchInput {
+  width: 100%;
+  max-width: 320px;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-ui);
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  outline: none;
+  transition: border-color var(--transition-fast);
+  margin-bottom: var(--space-4);
+}
+
+.searchInput:focus {
+  border-color: var(--color-accent);
+}
+
+.searchInput::placeholder {
+  color: var(--color-text-tertiary);
+}

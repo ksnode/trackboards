@@ -1,0 +1,144 @@
+/* ── Profile page styles ── */
+
+/* ── Account section ── */
+.accountSection {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-bg-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+  font-weight: 400;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.accountDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.accountEmail {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.accountMeta {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.roleBadge {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 1px var(--space-2);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.roleBadgeAdmin {
+  background: var(--color-accent);
+  color: white;
+}
+
+
+
+/* ── Warning button ── */
+.btnWarning {
+  padding: 2px var(--space-2);
+  font-size: var(--font-size-xs);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-text-warning);
+  background: transparent;
+  color: var(--color-text-warning);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btnWarning:hover {
+  background: var(--color-warning);
+  color: white;
+}
+
+/* ── Manage actions (ProfileManage) ── */
+.manageCard {
+  padding: var(--space-6);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-bg-secondary);
+}
+
+.manageCardTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.manageCardDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+}
+
+.manageCardDelete {
+  padding: var(--space-6);
+  border: 1px solid var(--color-border-danger);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-background-danger);
+}
+
+.manageCardDelete:hover {
+  border-color: var(--color-danger);
+  background: var(--color-background-danger);
+}
+
+/* ── Manage page input ── */
+.manageInput {
+  width: 100%;
+  max-width: 320px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border-primary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--space-4);
+  outline: none;
+  font-family: var(--font-ui);
+}
+
+.manageInput:focus {
+  border-color: var(--color-danger);
+}
+
+

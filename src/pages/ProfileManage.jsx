@@ -5,8 +5,8 @@ import { useHeader } from '../lib/headerContext';
 import { ShieldMinus, Bomb, MoveLeft } from 'lucide-react';
 import { updateUserStatus, hardDeleteUser } from '../lib/boards';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/PageContent.module.css';
-import s from './ProfileAdmin.module.css';
+import profileStyles from './profile.module.css';
+import sharedStyles from './shared.module.css';
 
 export default function ProfileManage() {
   const { user, profile, signOut } = useAuth();
@@ -49,33 +49,33 @@ export default function ProfileManage() {
   };
 
   return (
-    <div className={pageStyles.root}>
-      <div className={s.breadcrumb}>
-        <a href="/profile" className={s.breadcrumbLink}>Profil</a>
-        <span className={s.breadcrumbSep}>›</span>
-        <span className={s.breadcrumbCurrent}>Zarządzaj</span>
+    <div className={sharedStyles.root}>
+      <div className={sharedStyles.breadcrumb}>
+        <a href="/profile" className={sharedStyles.breadcrumbLink}>Profil</a>
+        <span className={sharedStyles.breadcrumbSep}>›</span>
+        <span className={sharedStyles.breadcrumbCurrent}>Zarządzaj</span>
       </div>
 
-      <div className={s.navCards}>
+      <div className={sharedStyles.navCards}>
         {/* Deactivate */}
-        <div className={s.manageCard}>
-          <div className={s.manageCardTitle}><ShieldMinus size={13} /> Dezaktywuj konto</div>
-          <p className={s.manageCardDesc}>
+        <div className={profileStyles.manageCard}>
+          <div className={profileStyles.manageCardTitle}><ShieldMinus size={13} /> Dezaktywuj konto</div>
+          <p className={profileStyles.manageCardDesc}>
             Twoje konto zostanie dezaktywowane. Możesz je reaktywować logując się ponownie.
           </p>
-          <button className={s.btnWarning} onClick={() => setDeactivateConfirm(true)}>
+          <button className={profileStyles.btnWarning} onClick={() => setDeactivateConfirm(true)}>
             Dezaktywuj
           </button>
         </div>
 
         {/* Delete */}
-        <div className={s.manageCardDelete}>
-          <div className={s.manageCardTitle}><Bomb size={13} /> Usuń konto</div>
-          <p className={s.manageCardDesc}>
+        <div className={profileStyles.manageCardDelete}>
+          <div className={profileStyles.manageCardTitle}><Bomb size={13} /> Usuń konto</div>
+          <p className={profileStyles.manageCardDesc}>
             Tej operacji nie można cofnąć. Twój email zostanie zamaskowany,
             a konto trwale usunięte.
           </p>
-          <button className={s.btnDanger} onClick={() => setDeleteConfirm(true)}>
+          <button className={sharedStyles.btnDanger} onClick={() => setDeleteConfirm(true)}>
             Usuń konto
           </button>
         </div>
@@ -107,7 +107,7 @@ export default function ProfileManage() {
       >
         <input
           type="text"
-          className={s.manageInput}
+          className={profileStyles.manageInput}
           placeholder="wpisz: potwierdzam"
           value={deleteInput}
           onChange={e => setDeleteInput(e.target.value)}

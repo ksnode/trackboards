@@ -1,0 +1,37 @@
+=== JSX: src/pages/Admin.jsx ===
+CSS: src/pages/shared.module.css
+  .navCard, .navCardDesc, .navCardTitle, .navCards, .root
+
+=== JSX: src/pages/AdminAnonyms.jsx ===
+CSS: src/pages/shared.module.css
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .btnGhost, .chevronOpen, .colorDot, .emptyState, .filterRow, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeToggle, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
+
+=== JSX: src/pages/AdminUserBoards.jsx ===
+CSS: src/pages/shared.module.css
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnGhost, .chevronOpen, .colorDot, .emptyState, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .shareModeToggle, .shareModeTogglePublic, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate, .userPickerEmpty, .userPickerItem, .userPickerSearch
+
+=== JSX: src/pages/AdminUserPurgatory.jsx ===
+CSS: src/pages/shared.module.css
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnGhost, .btnGhostDanger, .btnGhostInfo, .colorDot, .emptyState, .loading, .previewActions, .previewBody, .previewHeader, .previewModal, .previewOverlay, .previewTitle, .root, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate
+
+=== JSX: src/pages/AdminUsers.jsx ===
+CSS: src/pages/shared.module.css
+  .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .chevronOpen, .emptyState, .filterRow, .loading, .optionsDropdownPortal, .optionsItem, .optionsItemDanger, .optionsSep, .root, .shareModeMenuItem, .shareModeMenuItemActive, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .userPickerEmpty, .userPickerItem, .userPickerSearch
+CSS: src/pages/admin.module.css
+  .actionsPanel, .actionsPanelGroup, .actionsPanelSep, .btnDangerFixed, .btnDisabled, .btnGhostFixed, .btnInfoFixed, .filterCheckLabel, .filterChecks, .searchInput, .toggleBtn, .toggleBtnInfo
+
+=== JSX: src/pages/Profile.jsx ===
+CSS: src/pages/profile.module.css
+  .accountDetails, .accountEmail, .accountMeta, .accountSection, .avatar, .roleBadge, .roleBadgeAdmin
+CSS: src/pages/shared.module.css
+  .loading, .navCard, .navCardDanger, .navCardDesc, .navCardTitle, .navCards, .root
+
+=== JSX: src/pages/ProfileManage.jsx ===
+CSS: src/pages/profile.module.css
+  .btnWarning, .manageCard, .manageCardDelete, .manageCardDesc, .manageCardTitle, .manageInput
+CSS: src/pages/shared.module.css
+  .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .navCards, .root
+
+=== JSX: src/pages/ProfilePurgatory.jsx ===
+CSS: src/pages/shared.module.css
+  .actionsRow, .breadcrumb, .breadcrumbCurrent, .breadcrumbLink, .breadcrumbSep, .btnDanger, .btnGhost, .btnGhostDanger, .btnGhostInfo, .colorDot, .emptyState, .filterRow, .loading, .previewActions, .previewBody, .previewHeader, .previewModal, .previewOverlay, .previewTitle, .root, .table, .tableCell, .tableCellActions, .tableCellMono, .tableHead, .tableHeadCell, .tableRow, .titleTruncate

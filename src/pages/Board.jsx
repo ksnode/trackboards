@@ -7,11 +7,10 @@ import {
   softDeleteBoard, hardDeleteBoard, subscribeToBoard, unsubscribeFromBoard,
 } from '../lib/boards';
 import { Link as LinkIcon, Pencil, Check, Trash2, Lock, Eye, PenLine, ChevronDown, Shield, Download, Upload, MoveLeft } from 'lucide-react';
-import paStyles from './ProfileAdmin.module.css';
 import { subscribeToBoardChanges } from '../lib/realtime';
 import BoardFramework from '../components/BoardFramework';
 import ConfirmModal from '../components/ConfirmModal';
-import pageStyles from '../components/PageContent.module.css';
+import sharedStyles from './shared.module.css';
 import styles from './Board.module.css';
 
 const RECENT_KEY = 'trackboards_recent';
@@ -315,13 +314,13 @@ export default function Board() {
   }
 
   return (
-    <div className={`${pageStyles.root} ${styles.root}`}>
+    <div className={`${sharedStyles.root} ${styles.root}`}>
       {/* Action buttons — left/right split */}
       <div className={styles.boardHeader}>
         <div className={styles.boardHeaderGroup}>
           {/* Admin mode badge — only in admin preview */}
           {adminPreview && isAdmin && (
-            <span className={paStyles.adminBadge}>
+            <span className={styles.adminBadge}>
               <Shield size={14} />
               Admin mode
             </span>
